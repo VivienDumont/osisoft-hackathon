@@ -1,5 +1,5 @@
 {
-  "name": "example-symbol-library",
+  "name": "symasol-symbol-library",
   "version": "1.0.0",
   "scripts": {
     "clean": "rimraf out-tsc dist node_modules",
@@ -73,6 +73,6 @@
     "typedoc": "0.9.0",
     "typescript": "2.5.3",
     "@osisoft/piwebapi": "2.1.0-rc.1",
-    "tslib": "^1.9.0"   
+    "tslib": "^1.9.0"
   }
 }

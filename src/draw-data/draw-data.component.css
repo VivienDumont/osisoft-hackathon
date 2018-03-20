@@ -6,6 +6,7 @@
   }
 }
 
+
 .container-1{
   flex-wrap:wrap
 }
@@ -24,6 +25,7 @@
   overflow: auto;
   padding: 5px;
 }
+
 
 .container-1 div{
   border:1px rgba(64, 73, 202, 0.781) solid;

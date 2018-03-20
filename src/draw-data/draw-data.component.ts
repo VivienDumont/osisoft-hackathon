@@ -6,11 +6,11 @@
 import { Component, Input, OnChanges } from '@angular/core';
 
 @Component({
-  selector: 'example',
-  templateUrl: 'example.component.html',
-  styleUrls: ['example.component.css']
+  selector: 'draw-data',
+  templateUrl: 'draw-data.component.html',
+  styleUrls: ['draw-data.component.css']
 })
-export class ExampleComponent implements OnChanges {
+export class DrawDataComponent implements OnChanges {
   @Input() fgColor: string;
   @Input() bkColor: string;
   @Input() data: any;
