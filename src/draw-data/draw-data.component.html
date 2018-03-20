@@ -1,8 +1,7 @@
-<div class="top" [style.background]="bkColor">
-  <div class="items" [style.color]="fgColor">
-    <div class="container-1">
-      <div *ngFor="let val of values; index as i" class="box">
-       
+  <div class="events" [style.background]="lineColor">
+    <div class="primary-event">
+      <div *ngFor="let val of values; index as i" class="event">
+        <div>{{ primaryEvent }}</div>
         <div [style.flex]='i'> {{val.path}} -  {{i}}</div>
         <div>{{val.value}}</div>
       </div>

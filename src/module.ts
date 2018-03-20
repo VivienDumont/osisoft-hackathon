@@ -6,12 +6,13 @@ import { LibModuleNgFactory } from './module.ngfactory';
 import { ExampleComponent } from './example/example.component';
 
 import { ExtractDataComponent } from './extract-data/extract-data.component';
+import { DrawDataComponent } from './draw-data/draw-data.component'
 
 @NgModule({
-  declarations: [ ExampleComponent, ExtractDataComponent ],
+  declarations: [ExampleComponent, DrawDataComponent, ExtractDataComponent ],
   imports: [ CommonModule ] ,
-  exports: [ ExampleComponent, ExtractDataComponent ],
-  entryComponents: [ ExampleComponent, ExtractDataComponent ]
+  exports: [ExampleComponent, DrawDataComponent, ExtractDataComponent ],
+  entryComponents: [ExampleComponent, DrawDataComponent, ExtractDataComponent ]
 })
 export class LibModule { }
 
@@ -20,22 +21,29 @@ export class ExtensionLibrary extends NgLibrary {
   moduleFactory = LibModuleNgFactory;
   symbols: SymbolType[] = [
     {
-      name: 'example-symbol',
-      displayName: 'Example Symbol',
+      name: 'draw-data-symbol',
+      displayName: 'DrawData Symbol',
       dataParams: { shape: 'single' },
       thumbnail: '^/assets/images/example.svg',
-      compCtor: ExampleComponent,
+      compCtor: DrawDataComponent,
       inputs: [
         SymbolInputType.Data,
-        SymbolInputType.PathPrefix
+        SymbolInputType.PathPrefix,
       ],
       generalConfig: [
         {
-          name: 'Example Options',
+          name: 'DrawData Options',
           isExpanded: true,
           configProps: [
+            { propName: 'primaryEvent',  displayName: 'Primary Event', configType: ConfigPropType.Dropdown,
+            configItems: [
+              { text: 'Downtime', value: 'downtime' },
+              { text: 'Production', value: 'production'}
+            ],
+            defaultVal: 'production' },
+            { propName: 'defaultEventHeight', displayName: 'Default Event Height', configType: ConfigPropType.Num, defaultVal: 50 },
             { propName: 'bkColor', displayName: 'Background color', configType: ConfigPropType.Color, defaultVal: 'white' },
-            { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' }
+            { propName: 'lineColor', displayName: 'Line Color', configType: ConfigPropType.Color, defaultVal: 'black' },
           ]
         }
       ],
