@@ -44,7 +44,7 @@ export class ExtensionLibrary extends NgLibrary {
     },
     {
       name: 'extract-data-symbol',
-      displayName: 'ExtractData Symbol',
+      displayName: 'Extract Data Symbol',
       dataParams: { shape: 'single' },
       thumbnail: '^/assets/images/example.svg',
       compCtor: ExtractDataComponent,
@@ -58,7 +58,8 @@ export class ExtensionLibrary extends NgLibrary {
           isExpanded: true,
           configProps: [
             { propName: 'bkColor', displayName: 'Background color', configType: ConfigPropType.Color, defaultVal: 'white' },
-            { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' }
+            { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' },
+            { propName: 'serverName', displayName: 'Server Name', configType: ConfigPropType.Text, defaultVal: 'PISRV01' }
           ]
         }
       ],
