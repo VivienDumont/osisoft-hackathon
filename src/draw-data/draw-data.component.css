@@ -1,0 +1,68 @@
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {...} 
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {...} 
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {...} 
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {...} 
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {...}
+
+
+@media only screen and (min-width:768px){
+  .primary-event{
+    /* color: #58a3b6 */
+    /* align-items: flex-start;
+    display:flex; */
+    /* background: red; */
+  }
+}
+
+.primary-event{
+  display:flex;
+  align-items: flex-start;
+  display:inline-flex;
+}
+
+.primary-event{
+  flex-wrap:nowrap;
+}
+
+/* :host {
+  display: inline-block;
+} */
+
+/* .items, .top, :host {
+  width: 100%;
+  height: 100%;
+} */
+
+.events {
+  font-size: 16pt;
+  overflow: auto;
+  padding: 10px;
+  margin: 0 3px 0 0;
+  width: 100%;
+  height: 100%;
+}
+
+.event{
+  border-radius: 10px;
+}            
+
+.primary-event div{
+  flex:1;
+  /* background:rgba(64, 73, 202, 0.781); */
+  padding:3px;
+  width: 100%;
+}
+
+.row-1, .row-2, .row-3{
+  display: inline-flex;
+}
