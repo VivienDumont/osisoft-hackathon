@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgLibrary, SymbolType, SymbolInputType, ConfigPropType } from './framework';
 import { LibModuleNgFactory } from './module.ngfactory';
@@ -7,6 +7,9 @@ import { ExampleComponent } from './example/example.component';
 
 import { ExtractDataComponent } from './extract-data/extract-data.component';
 import { DrawDataComponent } from './draw-data/draw-data.component'
+
+import { PIWEBAPI_TOKEN } from 'framework';
+import { PiWebApiService } from '@osisoft/piwebapi';
 
 @NgModule({
   declarations: [ExampleComponent, DrawDataComponent, ExtractDataComponent ],
@@ -17,6 +20,7 @@ import { DrawDataComponent } from './draw-data/draw-data.component'
 export class LibModule { }
 
 export class ExtensionLibrary extends NgLibrary {
+
   module = LibModule;
   moduleFactory = LibModuleNgFactory;
   symbols: SymbolType[] = [
@@ -35,20 +39,24 @@ export class ExtensionLibrary extends NgLibrary {
           name: 'DrawData Options',
           isExpanded: true,
           configProps: [
-            { propName: 'primaryEvent',  displayName: 'Primary Event', configType: ConfigPropType.Dropdown,
+            { propName: 'isMasterEvent', displayName: 'Is Master Event', configType: ConfigPropType.Flag, defaultVal: true },
+            { propName: 'primaryEvent',  displayName: 'Primary Event', configType: ConfigPropType.Custom,
             configItems: [
               { text: 'Downtime', value: 'downtime' },
               { text: 'Production', value: 'production'}
             ],
             defaultVal: 'production' },
             { propName: 'defaultEventHeight', displayName: 'Default Event Height', configType: ConfigPropType.Num, defaultVal: 50 },
-            { propName: 'bkColor', displayName: 'Background color', configType: ConfigPropType.Color, defaultVal: 'white' },
-            { propName: 'lineColor', displayName: 'Line Color', configType: ConfigPropType.Color, defaultVal: 'black' },
+            { propName: 'bkColor', displayName: 'Background', configType: ConfigPropType.Color, defaultVal: 'white' },
+            { propName: 'lineColor', displayName: 'Line Color', configType: ConfigPropType.Color, defaultVal: '#58a3b6' },
+            { propName: 'height', displayName: 'Height Until Scroll', configType: ConfigPropType.Num, defaultVal: '100' },
+            { propName: 'timeControl', displayName: 'Time Control', configType: ConfigPropType.Time },
+            { propName: 'minimumEventPixelWidth', displayName: 'Min Event Width', configType: ConfigPropType.Num, defaultVal: true },
           ]
         }
       ],
-      layoutWidth: 200,
-      layoutHeight: 100
+      layoutWidth: 500,
+      layoutHeight: 400
     },
     {
       name: 'extract-data-symbol',
@@ -66,7 +74,7 @@ export class ExtensionLibrary extends NgLibrary {
           isExpanded: true,
           configProps: [
             { propName: 'bkColor', displayName: 'Background color', configType: ConfigPropType.Color, defaultVal: 'white' },
-            { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' }
+            { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'blue' }
           ]
         }
       ],
@@ -74,4 +82,8 @@ export class ExtensionLibrary extends NgLibrary {
       layoutHeight: 100
     }
   ];
+
+  constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService) {
+    super();
+   }
 }

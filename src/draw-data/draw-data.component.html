@@ -1,10 +1,18 @@
-  <div class="events" [style.background]="lineColor">
-    <div class="primary-event">
-      <div *ngFor="let val of values; index as i" class="event">
-        <div>{{ primaryEvent }}</div>
-        <div [style.flex]='i'> {{val.path}} -  {{i}}</div>
-        <div>{{val.value}}</div>
+  <div class="events" [style.background]="bkColor">
+    <div class="primary-event" >
+      <div *ngFor="let val of values; index as i" class="event" [style.background]="lineColor">
+        <div class="row-1">
+          <div>row 1 col 1</div>
+          <div> row 2 col 2</div>
+        </div>
+        <div class="row-2">
+          <div>row 3 col 1</div>
+          <div>row 2 col 2</div>
+        </div>
+        <div class="row-3">
+          <div>row 3 col 1</div>
+          <div> row 3 col 2</div>
+        </div>
       </div>
     </div>
   </div>
-</div>
