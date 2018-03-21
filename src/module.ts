@@ -1,10 +1,11 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgLibrary, SymbolType, SymbolInputType, ConfigPropType } from './framework';
+import { NgLibrary, SymbolType, SymbolInputType, ConfigPropType, PIWEBAPI_TOKEN } from './framework';
 import { LibModuleNgFactory } from './module.ngfactory';
 
-import { ExampleComponent } from './example/example.component';
+import { PiWebApiService, Request, ElementItemsField } from '@osisoft/piwebapi';
 
+import { ExampleComponent } from './example/example.component';
 import { ExtractDataComponent } from './extract-data/extract-data.component';
 
 @NgModule({
@@ -59,7 +60,14 @@ export class ExtensionLibrary extends NgLibrary {
           configProps: [
             { propName: 'bkColor', displayName: 'Background color', configType: ConfigPropType.Color, defaultVal: 'white' },
             { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' },
-            { propName: 'serverName', displayName: 'Server Name', configType: ConfigPropType.Text, defaultVal: 'PISRV01' }
+            { propName: 'serverName', displayName: 'Server Name', configType: ConfigPropType.Text, defaultVal: 'PISRV01' },
+            { 
+              propName: 'servers', displayName: 'Servers', configType: ConfigPropType.Dropdown, defaultVal: 'PISRV01',
+              configItems: [
+                { text: 'PISRV01', value: 'PISRV01' },
+                { text: 'PISRV02', value: 'PISRV02' }
+              ]
+            }
           ]
         }
       ],
@@ -67,4 +75,8 @@ export class ExtensionLibrary extends NgLibrary {
       layoutHeight: 100
     }
   ];
+
+  constructor() {
+    super();
+  }
 }

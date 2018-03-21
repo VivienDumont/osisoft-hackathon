@@ -81,11 +81,15 @@ export class ExtractDataComponent implements OnChanges {
     this.piWebApiService.element.getAnalyses$(element.WebId)
     .subscribe(
       r=>{
-        element.analysesTemplateEventType = r.Items;
+        element.analysesTemplateEventType = [];
+        element.attributeTemplate = [];
         r.Items.forEach(template => {
           if (template.AnalysisRulePlugInName === 'EventFrame'){
             element.analysesTemplateEventType.push(template);
+          } else {
+            element.attributeTemplate.push(template);
           }
+          
         });
       },
       e=>{
