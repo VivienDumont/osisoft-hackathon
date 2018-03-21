@@ -18,10 +18,12 @@ export class DrawDataComponent implements OnChanges, OnInit {
   @Input() defaultEventHeight: number;
   @Input() bkColor: string;
   @Input() lineColor: string;
-  @Input() height: number;
   @Input() isMasterEvent: boolean;
-  @Input() timeControl
+  @Input() startTimeCustom: string;
+  @Input() endTimeCustom: string;
   @Input() minimumEventPixelWidth: number
+  @Input() showAttrInEventWidth: number;
+  
 
   @Input() data: any;
   @Input() pathPrefix: string;
