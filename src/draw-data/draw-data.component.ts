@@ -3,7 +3,7 @@
  * Copyright © 2017-2018 OSIsoft, LLC. All rights reserved.
  * Use of this source code is governed by the terms in the accompanying LICENSE file.
  */
-import { Component, Input, OnChanges, ElementRef, Inject, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser';
 import { PIWEBAPI_TOKEN } from '../framework';
 import { PiWebApiService } from '@osisoft/piwebapi';
@@ -23,24 +23,32 @@ export class DrawDataComponent implements OnChanges, OnInit {
   @Input() endTimeCustom: string;
   @Input() minimumEventPixelWidth: number
   @Input() showAttrInEventWidth: number;
-  
 
+  // OSI PI input variables
   @Input() data: any;
   @Input() pathPrefix: string;
   // @Input() events: any;
 
+  // global variable controls
   values: any[];
   element: any = {};
   eventTypes: any[];
   startTime: string;
   endTime: string;
+  @ViewChild('eventsDiv') eventsDiv: ElementRef;
+  currentViewWidth: number;
+  oldviewWidth: number;
+  eventHeight: string;
+  shortestEventDuration: number;
 
-  constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, @Inject(DOCUMENT) private document: any) { }
+  // tslint:disable-next-line:max-line-length
+  constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, @Inject(DOCUMENT) private document: any, private _elRef: ElementRef) { }
 
   private GetEventFrames() {
 
-    this.element.WebId = "F1EmwcQX-gVflkWbQKYW5nMT5QcgTsJe8B6BGpVgANOjAbLQUElTUlYwMVxNSU5FUkFMIFBST0NFU1NJTkdcUFJPQ0VTUyBQTEFOVFxHUklORElOR1xMSU5FIDE" //Line1 webid
-
+    // tslint:disable-next-line:comment-format
+    this.element.WebId = 'F1EmwcQX-gVflkWbQKYW5nMT5QcgTsJe8B6BGpVgANOjAbLQUElTUlYwMVxNSU5FUkFMIFBST0NFU1NJTkdcUFJPQ0VTUyBQTEFOVFxHUklORElOR1xMSU5FIDE' //Line1 webid
+    
     const params = {
       startTime: this.startTime,
       endTime: this.endTime
@@ -72,12 +80,14 @@ export class DrawDataComponent implements OnChanges, OnInit {
   public getPiVisionStartAndEndTime() {
     this.startTime = this.document.querySelectorAll('pv-datetime input[type="text"]')[0].value;
     this.endTime = this.document.querySelectorAll('pv-datetime input[type="text"]')[1].value;
-    console.log(this.startTime);
-    console.log(this.endTime);
   }
 
   ngOnInit() {
-    this.GetEventFrames();
+    setInterval(() => {
+      this.getPiVisionStartAndEndTime();
+      this.GetEventFrames();
+      }, 5000);
+    // this.GetEventFrames();
     // this.piWebApiService.element.getAnalyses$(this.element.WebId)
     // .subscribe(
     //   r => {
@@ -92,30 +102,69 @@ export class DrawDataComponent implements OnChanges, OnInit {
     //     console.error(e);
     //   }
     // );
-
-    setInterval(() => {
-      this.getPiVisionStartAndEndTime();
-      this.GetEventFrames();
-      }, 5000);
-
-    // setInterval(function(){ alert("Hello"); }, 3000);
-
-    // this.db.databaseid = 'F1RDwcQX-gVflkWbQKYW5nMT5QSklzpJw7KkqsKfR4zvzt6gUElTUlYwMVxNSU5FUkFMIFBST0NFU1NJTkc'
-    // this.piWebApiService.assetDatabase.getAnalysisTemplates$(this.db.databaseid, null)
-    // .subscribe(
-    //   r => {
-    //     this.db.analysesTemplateEventType = [];
-    //     r.Items.forEach(template => {
-    //       if (template.AnalysisRulePlugInName === 'EventFrame') {
-    //         this.db.analysesTemplateEventType.push(template);
-    //       }
-    //     });
-    //   },
-    //   e => {
-    //     console.error(e);
-    //   }
-    // );
   }
+
+  redrawComponent() {
+    // const minEventDurSeconds = this
+    let startTimeInMilliseconds = new Date(this.startTime).getTime();
+    let endTimeInMilliseconds = new Date(this.endTime).getTime();
+    this.shortestEventDuration = this.getShortestEventDuraion();
+    console.log(`start time milliseconds: ${startTimeInMilliseconds}`);
+    console.log(`end time milliseconds: ${endTimeInMilliseconds}`);
+    console.log(`shortest event duration: ${this.shortestEventDuration}`);
+    // (MinEventDurasioin/SmallestEventDuraion)*this.currentViewWidth > this.minimumEventPixelWidth
+    // if(equation > this.minimumEventPixelWidth)
+    // {
+
+    // }
+  }
+
+  getShortestEventDuraion(): number {
+    let startTimeCompare: number;
+    let endTimeCompare: number;
+    let shortestDuration: number;
+    let loopDuration = 0;
+
+    if (this.values !== undefined) {
+      this.values.forEach(
+        item => {
+          startTimeCompare = new Date(item.StartTime).getTime();
+          endTimeCompare = new Date(item.EndTime).getTime();
+          loopDuration = (endTimeCompare - startTimeCompare);
+
+          // is this the shortest duration so far, or is it the first itteration?
+          if (loopDuration < shortestDuration || loopDuration === 0) {
+            shortestDuration = loopDuration;
+          }
+
+        },
+        e => {
+          console.log(e);
+        }
+      )
+    } else {
+
+    }
+
+    return shortestDuration;
+  }
+
+  // This method is used to check the size of the div
+  ngAfterViewChecked() {
+    this.currentViewWidth = this.eventsDiv.nativeElement.offsetWidth;
+
+    if (this.currentViewWidth !== this.oldviewWidth) {
+      this.oldviewWidth = this.currentViewWidth;
+      console.log(`current width: ${this.currentViewWidth}`);
+      this.redrawComponent();
+    } else {
+      // console.log("width unchanged");
+    }
+  }
+
+  // ngDoCheck() {
+  //   console.log('docheck');
+  // }
 
   ngOnChanges(changes) {
     if (changes.data) {
@@ -124,7 +173,14 @@ export class DrawDataComponent implements OnChanges, OnInit {
 
     if (changes.primaryEvent) {
       console.log('Primary event changed');
+
     }
+
+    if (changes.defaultEventHeight) {
+      this.eventHeight = `${changes.defaultEventHeight}px`;
+      console.log('height Changed');
+    }
+
     this.GetEventFrames();
   }
 
