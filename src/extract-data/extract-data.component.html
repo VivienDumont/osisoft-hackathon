@@ -1,7 +1,41 @@
-<div class="top" [style.background]="bkColor" >
-  <div class="items" [style.color]="fgColor">
-    <pre>
-      {{values|json}}
+
+<div class="top" [style.background]="bkColor" (click)="disableContextMenu()" oncontextmenu="return false;">
+  <div class="items" [style.color]="fgColor" (contextmenu)="onrightClick($event)">
+
+    <div *ngIf="contextmenu">
+        <app-contextmenu [x]="contextmenuX" [y]="contextmenuY" (emitterSelection)="onSelection($event)"></app-contextmenu>
+    </div>
+
+    <div *ngIf="IsConfigPanel">
+      <div *ngIf="panelToShow==='element'">
+        <div class="panel-ele">
+            <div>
+              Elements
+            </div>
+            <div>
+              Event frames templates
+            </div>
+            <div>
+              Selected elements/ef
+            </div>
+        </div>
+      </div>
+      <div *ngIf="panelToShow==='attribute'">
+        <div class="panel-ef">
+          <div>
+            Selected elements/ef
+          </div>
+          <div>
+            Attributes For e/ef
+          </div>
+        </div>
+      </div>
+      <button (click)="ClosePanel()">Close</button>
+    </div>
+
+    <pre *ngIf="!IsConfigPanel">
+      {{ values | json }}
     </pre>
+
   </div>
 </div>

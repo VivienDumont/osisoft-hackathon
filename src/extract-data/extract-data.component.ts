@@ -3,35 +3,53 @@
  * Copyright © 2017-2018 OSIsoft, LLC. All rights reserved.
  * Use of this source code is governed by the terms in the accompanying LICENSE file.
  */
-import { Component, Input, OnChanges, Inject } from '@angular/core';
+import { Component, Input, OnChanges, Inject, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser';
-import { PIWEBAPI_TOKEN } from '../framework';
-import { PiWebApiService, Request, ElementItemsField } from '@osisoft/piwebapi';
+import { PIWEBAPI_TOKEN, ConfigComponent } from '../framework';
+import { PiWebApiService } from '@osisoft/piwebapi';
+
 
 @Component({
   selector: 'extract-data',
   templateUrl: 'extract-data.component.html',
   styleUrls: ['extract-data.component.css']
 })
-export class ExtractDataComponent implements OnChanges {
+export class ExtractDataComponent implements OnChanges, OnDestroy, ConfigComponent {
+  @Input() paramIndex: any;
+  @Input() selectedSymbols: any;
+  @Output() changeLayout: EventEmitter<any>;
+  @Output() changeParam: EventEmitter<any>;
+
   @Input() fgColor: string;
   @Input() bkColor: string;
   @Input() data: any;
   @Input() pathPrefix: string;
   @Input() serverName: string;
+  
   values: any[];
   startTime:string;
   endTime:string;
+  IsConfigPanel: boolean = false;
+
+  id_setinter:any;
+
+  contextmenu = false;
+  contextmenuX = 0;
+  contextmenuY = 0;
+
+  panelToShow: string = '';
+
+  public items = [
+    { name: 'John', otherProperty: 'Foo' },
+    { name: 'Joe', otherProperty: 'Bar' }
+  ];
 
   constructor( @Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, @Inject(DOCUMENT) private document:any) {
-    // Put bare minimum initialization logic here
-    //console.log(this.serverName);
     
-    //this.piWebApiService.eventFrame.get$()
-
-    setInterval(() => {
-      this.startTime = this.document.querySelectorAll('pv-datetime input[type="text"]')[0].value;
-      this.endTime = this.document.querySelectorAll('pv-datetime input[type="text"]')[1].value;
+    this.id_setinter = setInterval(() => {
+      const all_input_datetime = this.document.querySelectorAll('pv-datetime input[type="text"]');
+      this.startTime = all_input_datetime[all_input_datetime.length-2].value;
+      this.endTime = all_input_datetime[all_input_datetime.length-1].value;
       console.log(this.startTime);
       console.log(this.endTime);
       
@@ -41,6 +59,37 @@ export class ExtractDataComponent implements OnChanges {
     );
   }
 
+  ngOnDestroy() {
+    if (this.id_setinter) {
+      clearInterval(this.id_setinter);
+    }
+    console.log('destroy');
+  }
+
+  //activates the menu with the coordinates
+  onrightClick(event){
+    this.contextmenuX=event.clientX
+    this.contextmenuY=event.clientY
+    this.contextmenu=true;
+  }
+  //disables the menu
+  disableContextMenu(){
+    this.contextmenu= false;
+  }
+
+  onSelection(event){
+    console.log(event);
+    this.panelToShow = event;
+    if(event === 'element'){
+      //make panel elemt show
+      this.IsConfigPanel=true;
+    } else if (event === 'attribute'){
+      //make panel attr show
+      this.IsConfigPanel=true;
+    }
+  }
+
+ 
   BuildData(body) {
     body[1].Content.Items.forEach(db => {
       const to_add = db;
@@ -177,6 +226,8 @@ export class ExtractDataComponent implements OnChanges {
     
   }
 
- 
+  ClosePanel(){
+    this.IsConfigPanel=false;
+  }
 
 }
