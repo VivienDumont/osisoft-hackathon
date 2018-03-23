@@ -2,12 +2,15 @@
 <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
   
-  <div class="events" [style.background]="bkColor" #eventsDiv>
+  <div class="events" [style.background]="bkColor" #eventsDiv [ngClass]="currentClasses">
     <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
-    <div class="event-row" >
-      <div *ngFor="let val of values; index as i" class="event card" 
+    <div class="event-row" *ngIf="eventFrames?.length > 0">
+      <div *ngFor="let val of eventFrames;" [class.in-progress]="inProgress" class="event card" 
+        id="{{ val.Id }}"
         [style.background]="lineColor"
-        [style.height]="eventHeight">
+        [style.height]="eventHeight"
+        #val.id
+        >
 
         <div class="row-1">
           <div>{{ val.TemplateName }}</div>
@@ -22,7 +25,7 @@
           <div> r3 c2</div>
         </div>
       </div>
-      <span *ngIf="values?.length === 0">
+      <span *ngIf="eventFrames?.length === 0">
         No event frames in selected timeframe
       </span>
     </div>

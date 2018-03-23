@@ -26,7 +26,6 @@
 
 .event-row{
   display:flex;
-  /* align-items: flex-end; */
 }
 
 .event-row{
@@ -34,7 +33,7 @@
 }
 
 .event-row div{
-  flex:1;
+  /* flex-basis:100px; */
   /* background:rgba(64, 73, 202, 0.781); */
   padding:3px;
   text-align: right;
@@ -52,7 +51,7 @@
 
 .events {
   font-size: 12pt;
-  overflow: auto;
+  /* overflow: auto; */
   padding: 10px;
   margin: 0 5px 0 0;
   width: 100%;
@@ -75,4 +74,12 @@
   transform-origin: left top 0;
   height:100%;
   width:50px;
+}
+
+.scroll-on{
+  overflow-x: auto;
+}
+
+.scroll-off{
+  overflow-x: hidden;
 }
