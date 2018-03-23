@@ -1,0 +1,22 @@
+
+
+div{
+    background: #a0a0a0;
+}
+
+
+.panel-ele{
+    margin-left: 15px;
+}
+
+.panel-at{
+    margin-left: 15px;
+}
+
+.hideshow{
+    cursor: none;
+}
+.hideshow:hover{
+    cursor: pointer;
+    font-weight: bold;
+}

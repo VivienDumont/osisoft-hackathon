@@ -1,5 +1,6 @@
 import { NgModule, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { NgLibrary, SymbolType, SymbolInputType, ConfigPropType, PIWEBAPI_TOKEN } from './framework';
 import { LibModuleNgFactory } from './module.ngfactory';
 
@@ -8,16 +9,13 @@ import { PiWebApiService, Request, ElementItemsField } from '@osisoft/piwebapi';
 import { ExampleComponent } from './example/example.component';
 import { ExtractDataComponent } from './extract-data/extract-data.component';
 import { DrawDataComponent } from './draw-data/draw-data.component';
-import { ContextmenuComponent } from './contextmenu/contextmenu.component';
-
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import { ContextMenuModule } from 'ngx-contextmenu'
+import { ConfigPanelComponent } from './config-panel/config-panel.component'
 
 @NgModule({
-  declarations: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ContextmenuComponent ],
-  imports: [ CommonModule, NgbModule.forRoot(), ContextMenuModule.forRoot() ] ,
-  exports: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ContextmenuComponent ],
-  entryComponents: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ContextmenuComponent ]
+  declarations: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent ],
+  imports: [ CommonModule, FormsModule ] ,
+  exports: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent ],
+  entryComponents: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent ]
 })
 export class LibModule { }
 
@@ -81,6 +79,11 @@ export class ExtensionLibrary extends NgLibrary {
           ]
         }
       ],
+      menuCommands: [
+        { displayName: 'Element/Event Frames', name: 'show-config-element', showInAllModes:true, isDisabled: false, isHidden: false },
+        { displayName: 'Visible Attributes', name: 'show-config-attr', showInAllModes:true, isDisabled: false, isHidden: false }
+      ],
+      configCtors: [ConfigPanelComponent],
       layoutWidth: 200,
       layoutHeight: 100
     }

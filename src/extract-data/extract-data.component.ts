@@ -4,8 +4,9 @@
  * Use of this source code is governed by the terms in the accompanying LICENSE file.
  */
 import { Component, Input, OnChanges, Inject, OnDestroy, EventEmitter, Output } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { DOCUMENT } from '@angular/platform-browser';
-import { PIWEBAPI_TOKEN, ConfigComponent } from '../framework';
+import { PIWEBAPI_TOKEN, ConfigComponent, CONTEXT_MENU_TOKEN, ContextMenuAPI } from '../framework';
 import { PiWebApiService } from '@osisoft/piwebapi';
 
 
@@ -25,6 +26,8 @@ export class ExtractDataComponent implements OnChanges, OnDestroy, ConfigCompone
   @Input() data: any;
   @Input() pathPrefix: string;
   @Input() serverName: string;
+
+  model = 1;
   
   values: any[];
   startTime:string;
@@ -44,19 +47,37 @@ export class ExtractDataComponent implements OnChanges, OnDestroy, ConfigCompone
     { name: 'Joe', otherProperty: 'Bar' }
   ];
 
-  constructor( @Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, @Inject(DOCUMENT) private document:any) {
+  constructor( @Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, @Inject(DOCUMENT) private document:any, @Inject(CONTEXT_MENU_TOKEN) private contextMenu: ContextMenuAPI) {
     
-    this.id_setinter = setInterval(() => {
+    /*this.id_setinter = setInterval(() => {
       const all_input_datetime = this.document.querySelectorAll('pv-datetime input[type="text"]');
       this.startTime = all_input_datetime[all_input_datetime.length-2].value;
       this.endTime = all_input_datetime[all_input_datetime.length-1].value;
       console.log(this.startTime);
       console.log(this.endTime);
       
-      this.GetEventFrame(null);
+      this.GetEventFrame(
+        {
+          WebId: 'F1EmwcQX-gVflkWbQKYW5nMT5QcgTsJe8B6BGpVgANOjAbLQUElTUlYwMVxNSU5FUkFMIFBST0NFU1NJTkdcUFJPQ0VTUyBQTEFOVFxHUklORElOR1xMSU5FIDE'
+        }
+      );
       },
       5000
-    );
+    );*/
+
+
+    contextMenu.onSelect('show-config-element').subscribe(
+      cmd => {
+        this.IsConfigPanel=true;
+        this.panelToShow = 'element';
+      }
+    )
+    contextMenu.onSelect('show-config-attr').subscribe(
+      cmd => {
+        this.IsConfigPanel=true;
+        this.panelToShow = 'attribute';
+      }
+    )
   }
 
   ngOnDestroy() {
@@ -108,7 +129,7 @@ export class ExtractDataComponent implements OnChanges, OnDestroy, ConfigCompone
   }
 
   private GetElement(element){
-    
+
     this.piWebApiService.element.getElements$(element.WebId)
     .subscribe(
       r=>{
@@ -167,7 +188,26 @@ export class ExtractDataComponent implements OnChanges, OnDestroy, ConfigCompone
   }
 
   private GetEventFrame(element){
-    const params = {
+
+    const body ={
+      "0": {
+        "Method": "GET",
+        "Resource": `https://pisrv01.pischool.int/piwebapi/elements/${element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
+      }
+    };
+
+    this.piWebApiService.batch.execute$(body)
+    .subscribe(
+      r => {
+        const n_bd = r.body;
+        this.values = r.body[0].Content.Items;
+      },
+      e => {
+        console.error(e);
+      }
+    )
+
+    /*const params = {
       startTime: this.startTime,
       endTime: this.endTime
     };
@@ -180,7 +220,7 @@ export class ExtractDataComponent implements OnChanges, OnDestroy, ConfigCompone
       e=>{
         console.error(e);
       }
-    );
+    );*/
   }
 
   ngOnChanges(changes) {
