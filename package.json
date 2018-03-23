@@ -35,10 +35,18 @@
     "@angular/platform-browser": "5.2.0",
     "@angular/platform-browser-dynamic": "5.2.0",
     "@angular/router": "5.2.0",
+<<<<<<< HEAD
     "bootstrap": "^4.0.0",
     "core-js": "2.5.3",
     "express": "4.16.2",
     "jquery": "^3.3.1",
+=======
+    "@ng-bootstrap/ng-bootstrap": "^1.0.2",
+    "angular-dual-listbox": "^4.7.0",
+    "core-js": "2.5.3",
+    "express": "4.16.2",
+    "ngx-contextmenu": "^4.1.2",
+>>>>>>> a760b92bf7dfcfc5eec952079af2857d569c0523
     "rxjs": "5.5.6",
     "zone.js": "0.8.20"
   },

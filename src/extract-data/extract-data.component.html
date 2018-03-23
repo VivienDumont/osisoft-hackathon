@@ -1,7 +1,12 @@
-<div class="top" [style.background]="bkColor">
-  <div class="items" [style.color]="fgColor">
-    <div class="container-1">
-      <h1>Extract Data working!!!!!!!!!!</h1>
-    </div>
+<div class="top" [style.background]="bkColor" (click)="disableContextMenu()" oncontextmenu="return false;">
+  <div class="items" [style.color]="fgColor" (contextmenu)="onrightClick($event)">
+
+  
+
+  <div>
+      <pre>{{values|json}}</pre>
+  </div>
+  
+
   </div>
 </div>

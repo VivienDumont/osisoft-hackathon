@@ -25,7 +25,15 @@
   padding: 5px;
 }
 
+.panel-ele{
+  color: black;
+  font-size: 16px;
+}
 
+.panel-ef{
+  color: black;
+  font-size: 16px;
+}
 
 .container-1 div{
   border:1px rgba(64, 73, 202, 0.781) solid;

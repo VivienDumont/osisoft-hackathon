@@ -1,21 +1,21 @@
 import { NgModule, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgLibrary, SymbolType, SymbolInputType, ConfigPropType } from './framework';
+import { FormsModule } from '@angular/forms';
+import { NgLibrary, SymbolType, SymbolInputType, ConfigPropType, PIWEBAPI_TOKEN } from './framework';
 import { LibModuleNgFactory } from './module.ngfactory';
 
+import { PiWebApiService, Request, ElementItemsField } from '@osisoft/piwebapi';
+
 import { ExampleComponent } from './example/example.component';
-
 import { ExtractDataComponent } from './extract-data/extract-data.component';
-import { DrawDataComponent } from './draw-data/draw-data.component'
-
-import { PIWEBAPI_TOKEN } from 'framework';
-import { PiWebApiService } from '@osisoft/piwebapi';
+import { DrawDataComponent } from './draw-data/draw-data.component';
+import { ConfigPanelComponent } from './config-panel/config-panel.component'
 
 @NgModule({
-  declarations: [ExampleComponent, DrawDataComponent, ExtractDataComponent ],
-  imports: [ CommonModule ] ,
-  exports: [ExampleComponent, DrawDataComponent, ExtractDataComponent ],
-  entryComponents: [ExampleComponent, DrawDataComponent, ExtractDataComponent ]
+  declarations: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent ],
+  imports: [ CommonModule, FormsModule ] ,
+  exports: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent ],
+  entryComponents: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent ]
 })
 export class LibModule { }
 
@@ -61,7 +61,7 @@ export class ExtensionLibrary extends NgLibrary {
     },
     {
       name: 'extract-data-symbol',
-      displayName: 'ExtractData Symbol',
+      displayName: 'Extract Data Symbol',
       dataParams: { shape: 'single' },
       thumbnail: '^/assets/images/example.svg',
       compCtor: ExtractDataComponent,
@@ -75,10 +75,16 @@ export class ExtensionLibrary extends NgLibrary {
           isExpanded: true,
           configProps: [
             { propName: 'bkColor', displayName: 'Background color', configType: ConfigPropType.Color, defaultVal: 'white' },
-            { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'blue' }
+            { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' },
+            { propName: 'serverName', displayName: 'Server Name', configType: ConfigPropType.Text, defaultVal: 'PISRV01' }
           ]
         }
       ],
+      menuCommands: [
+        { displayName: 'Element/Event Frames', name: 'show-config-element', showInAllModes:true, isDisabled: false, isHidden: false },
+        { displayName: 'Visible Attributes', name: 'show-config-attr', showInAllModes:true, isDisabled: false, isHidden: false }
+      ],
+      configCtors: [ConfigPanelComponent],
       layoutWidth: 200,
       layoutHeight: 100
     }
