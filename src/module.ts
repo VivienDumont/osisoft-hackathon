@@ -1,15 +1,13 @@
 import { NgModule, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgLibrary, SymbolType, SymbolInputType, ConfigPropType, PIWEBAPI_TOKEN } from './framework';
+import { NgLibrary, SymbolType, SymbolInputType, ConfigPropType } from './framework';
 import { LibModuleNgFactory } from './module.ngfactory';
-
-import { PiWebApiService, Request, ElementItemsField } from '@osisoft/piwebapi';
 
 import { ExampleComponent } from './example/example.component';
 import { ExtractDataComponent } from './extract-data/extract-data.component';
 import { DrawDataComponent } from './draw-data/draw-data.component';
-import { ConfigPanelComponent } from './config-panel/config-panel.component'
+import { ConfigPanelComponent } from './config-panel/config-panel.component';
 
 @NgModule({
   declarations: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent ],
@@ -88,8 +86,4 @@ export class ExtensionLibrary extends NgLibrary {
       layoutHeight: 100
     }
   ];
-
-  constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService) {
-    super();
-   }
 }

@@ -12,7 +12,7 @@
             <div class="panel-ele">
                 <div>
                 Elements :<br/>
-                <select [(ngModel)]="elementcategory" id="elementcategory">
+                <select (change)="SelectElement($event.target.value)">
                     <option value="" disabled selected>>select an element</option>
                     <option *ngFor="let item of elementsTOshow" [value]="item.WebId">{{item.Name}}</option>
                 </select>
@@ -20,9 +20,12 @@
                 <br/><br/>
                 <div>
                 Event frames templates : <br/>
-                <select [(ngModel)]="EFcategory" id="EFcategory">
+                <select (change)="SelectEFType($event.target.value)">
                     <option value="" disabled selected>>select an Event Frame template</option>
-                    <option *ngFor="let item of EFtemplate" [value]="item.Name">{{item.Name}}</option>
+                    <option *ngIf="!elementcategory; else IsElementCategory"></option>
+                    <ng-template #IsElementCategory>
+                        <option *ngFor="let item of elementcategory.analysesTemplateEventType" [value]="item.WebId">{{item.Name}}</option>
+                    </ng-template>
                 </select><br/>
                 <button (click)="Add()">Add</button>
                 </div>
@@ -35,10 +38,10 @@
                         <th>Event </th>
                         <th>Master</th>
                     </thead>
-                    <tr *ngFor="let item of selectedELEF">
+                    <tr *ngFor="let item of selectedELEF" (click)="SelectEFELRow(item)">
                         <td>{{item.element.Name}}</td>
                         <td>{{item.ef.Name}}</td>
-                        <td><input type="checkbox" [(ngModel)]="item.master"/></td>
+                        <td><input type="checkbox" [(ngModel)]="item.master" (change)="NewMaster(item)"/></td>
                     </tr>
                 </table>
                 <div>
