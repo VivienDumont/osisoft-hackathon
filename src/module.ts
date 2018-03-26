@@ -77,11 +77,16 @@ export class ExtensionLibrary extends NgLibrary {
           ]
         }
       ],
-      menuCommands: [
-        { displayName: 'Element/Event Frames', name: 'show-config-element', showInAllModes:true, isDisabled: false, isHidden: false },
-        { displayName: 'Visible Attributes', name: 'show-config-attr', showInAllModes:true, isDisabled: false, isHidden: false }
+      customProps: [
+        {
+          propName: 'elementEfAttr', defaultVal: null
+        }
       ],
-      configCtors: [ConfigPanelComponent],
+      menuCommands: [
+      ],
+      configCtors: [
+        ConfigPanelComponent
+      ],
       layoutWidth: 200,
       layoutHeight: 100
     }

@@ -1,12 +1,9 @@
-<div class="top" [style.background]="bkColor" (click)="disableContextMenu()" oncontextmenu="return false;">
-  <div class="items" [style.color]="fgColor" (contextmenu)="onrightClick($event)">
-
-  
+<div class="top" [style.background]="bkColor" >
+  <div class="items" [style.color]="fgColor">
 
   <div>
-      <pre>{{values|json}}</pre>
+      <span>{{elementEfAttr|json}}</span>
   </div>
-  
 
   </div>
 </div>

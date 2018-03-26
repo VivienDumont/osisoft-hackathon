@@ -6,7 +6,7 @@
 import { Component, Input, OnChanges, Inject, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { DOCUMENT } from '@angular/platform-browser';
-import { PIWEBAPI_TOKEN, ConfigComponent, CONTEXT_MENU_TOKEN, ContextMenuAPI } from '../framework';
+import { PIWEBAPI_TOKEN, CONTEXT_MENU_TOKEN, ContextMenuAPI } from '../framework';
 import { PiWebApiService } from '@osisoft/piwebapi';
 
 
@@ -15,41 +15,25 @@ import { PiWebApiService } from '@osisoft/piwebapi';
   templateUrl: 'extract-data.component.html',
   styleUrls: ['extract-data.component.css']
 })
-export class ExtractDataComponent implements OnChanges, OnDestroy, ConfigComponent {
-  @Input() paramIndex: any;
-  @Input() selectedSymbols: any;
-  @Output() changeLayout: EventEmitter<any>;
-  @Output() changeParam: EventEmitter<any>;
-
+export class ExtractDataComponent implements OnChanges, OnDestroy {
   @Input() fgColor: string;
   @Input() bkColor: string;
   @Input() data: any;
   @Input() pathPrefix: string;
   @Input() serverName: string;
 
-  model = 1;
-  
+  @Input() elementEfAttr: any;
+
   values: any[];
   startTime:string;
   endTime:string;
-  IsConfigPanel: boolean = false;
 
   id_setinter:any;
 
-  contextmenu = false;
-  contextmenuX = 0;
-  contextmenuY = 0;
-
-  panelToShow: string = '';
-
-  public items = [
-    { name: 'John', otherProperty: 'Foo' },
-    { name: 'Joe', otherProperty: 'Bar' }
-  ];
 
   constructor( @Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, @Inject(DOCUMENT) private document:any, @Inject(CONTEXT_MENU_TOKEN) private contextMenu: ContextMenuAPI) {
     
-    /*this.id_setinter = setInterval(() => {
+    this.id_setinter = setInterval(() => {
       const all_input_datetime = this.document.querySelectorAll('pv-datetime input[type="text"]');
       this.startTime = all_input_datetime[all_input_datetime.length-2].value;
       this.endTime = all_input_datetime[all_input_datetime.length-1].value;
@@ -62,22 +46,8 @@ export class ExtractDataComponent implements OnChanges, OnDestroy, ConfigCompone
         }
       );
       },
-      5000
-    );*/
-
-
-    contextMenu.onSelect('show-config-element').subscribe(
-      cmd => {
-        this.IsConfigPanel=true;
-        this.panelToShow = 'element';
-      }
-    )
-    contextMenu.onSelect('show-config-attr').subscribe(
-      cmd => {
-        this.IsConfigPanel=true;
-        this.panelToShow = 'attribute';
-      }
-    )
+      30000
+    );
   }
 
   ngOnDestroy() {
@@ -86,30 +56,6 @@ export class ExtractDataComponent implements OnChanges, OnDestroy, ConfigCompone
     }
     console.log('destroy');
   }
-
-  //activates the menu with the coordinates
-  onrightClick(event){
-    this.contextmenuX=event.clientX
-    this.contextmenuY=event.clientY
-    this.contextmenu=true;
-  }
-  //disables the menu
-  disableContextMenu(){
-    this.contextmenu= false;
-  }
-
-  onSelection(event){
-    console.log(event);
-    this.panelToShow = event;
-    if(event === 'element'){
-      //make panel elemt show
-      this.IsConfigPanel=true;
-    } else if (event === 'attribute'){
-      //make panel attr show
-      this.IsConfigPanel=true;
-    }
-  }
-
  
   BuildData(body) {
     body[1].Content.Items.forEach(db => {
@@ -120,9 +66,9 @@ export class ExtractDataComponent implements OnChanges, OnDestroy, ConfigCompone
     });
 
     this.values.forEach(db => {
-      //db.elements.forEach(element => {
-      //  this.GetElement(element);
-      //});
+      db.elements.forEach(element => {
+        this.GetElement(element);
+      });
       this.AnalysesDatabase(db);
     });
     console.log(this.values);
@@ -206,21 +152,6 @@ export class ExtractDataComponent implements OnChanges, OnDestroy, ConfigCompone
         console.error(e);
       }
     )
-
-    /*const params = {
-      startTime: this.startTime,
-      endTime: this.endTime
-    };
-    this.piWebApiService.element
-    .getEventFrames$("F1EmwcQX-gVflkWbQKYW5nMT5QcgTsJe8B6BGpVgANOjAbLQUElTUlYwMVxNSU5FUkFMIFBST0NFU1NJTkdcUFJPQ0VTUyBQTEFOVFxHUklORElOR1xMSU5FID", params)
-    .subscribe(
-      r=>{
-        this.values = r.Items;
-      },
-      e=>{
-        console.error(e);
-      }
-    );*/
   }
 
   ngOnChanges(changes) {
@@ -264,10 +195,6 @@ export class ExtractDataComponent implements OnChanges, OnDestroy, ConfigCompone
       });
     }
     
-  }
-
-  ClosePanel(){
-    this.IsConfigPanel=false;
   }
 
 }

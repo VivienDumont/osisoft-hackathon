@@ -8,10 +8,11 @@ import { PiWebApiService } from '@osisoft/piwebapi'
   styleUrls: ['config-panel.component.css']
 })
 export class ConfigPanelComponent implements ConfigComponent, OnInit{
-    paramIndex: number;
-    selectedSymbols: any[];
-    changeLayout: EventEmitter<any> = new EventEmitter;
-    changeParam: EventEmitter<any> = new EventEmitter;
+    @Input() paramIndex: number;
+    @Input() selectedSymbols: any[];
+    @Output() changeLayout: EventEmitter<any> = new EventEmitter();
+    @Output() changeParam: EventEmitter<any> = new EventEmitter();
+    @Output() changeSymbol: EventEmitter<any> = new EventEmitter<any>();
 
     elementcategory: any;
     elementsTOshow = [];
@@ -77,16 +78,37 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
             element.attributeTemplate = [];
             r.Items.forEach(template => {
               if (template.AnalysisRulePlugInName === 'EventFrame'){
-                element.analysesTemplateEventType.push(template);
-              } else {
-                element.attributeTemplate.push(template);
-              }
+                element.analysesTemplateEventType.push(element, template);
+              } 
               
             });
           },
           e=>{
             console.error(e);
           }
+        );
+      }
+
+      GetAttributeFromEFTempate(element, template){
+        this.piWebApiService.element.getEventFrames$(element.WebId)
+        .subscribe(
+            r => {
+                const ef = r.Items.find(x => x.TemplateName === template.TemplateName);
+                if(ef){
+                    this.piWebApiService.eventFrame.getAttributes$(ef.WebId)
+                    .subscribe(
+                        r_a => {
+                            template.attributesTemplate = r_a.Items;
+                        },
+                        e => {
+                            console.error(e);
+                        }
+                    );
+                }
+            },
+            e => {
+                console.error(e);
+            }
         );
       }
 
@@ -101,19 +123,19 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
                 "Method": "GET",
                 "Resource": "https://pisrv01.pischool.int/piwebapi/assetservers/{0}/assetdatabases?selectedFields=Items.WebId;Items.Id;Items.Path;Items.Name;Items.Description;Items.Links.Elements",
                 "Parameters": [
-                "$.0.Content.WebId"
+                    "$.0.Content.WebId"
                 ],
                 "ParentIds": [
-                "0"
+                    "0"
                 ]
             },
             "2": {
                 "Method": "GET",
                 "RequestTemplate": {
-                "Resource": "$.1.Content.Items[*].Links.Elements"
+                    "Resource": "$.1.Content.Items[*].Links.Elements"
                 },
                 "ParentIds": [
-                "1"
+                    "1"
                 ]
             }
         };
@@ -133,11 +155,17 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     }
 
     ngOnChanges(changes) {
+        //console.log(this.paramIndex);
+        //console.log(this.selectedSymbols);
         console.log(changes);
         if(changes){
-            if(this.serverName !== changes.selectedSymbols.currentValue[0].props.serverName){
-                this.serverName = changes.selectedSymbols.currentValue[0].props.serverName;
-                this.Get();
+            if(changes.selectedSymbols){
+                if(changes.selectedSymbols.currentValue && changes.selectedSymbols.currentValue.length > 0){
+                    if(this.serverName !== changes.selectedSymbols.currentValue[this.paramIndex].props.serverName){
+                        this.serverName = changes.selectedSymbols.currentValue[this.paramIndex].props.serverName;
+                        this.Get();
+                    }
+                }
             }
         }
     }
@@ -147,11 +175,26 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     }
 
     GoUp(){
-
+        //move to index -1 selectedRow
+        const index_of_row = this.selectedELEF.indexOf(this.selectedelefRow);
+        if(index_of_row > 0){
+            this.selectedELEF = this.MoveIndexOf(this.selectedELEF, index_of_row, index_of_row - 1);
+        }
     }
 
     GoDown(){
+        const flag = true;
 
+        if(flag){
+            //move to index + 1 selectedRow
+            const index_of_row = this.selectedELEF.indexOf(this.selectedelefRow);
+            if(index_of_row < this.selectedELEF.length-1){
+                this.selectedELEF = this.MoveIndexOf(this.selectedELEF, index_of_row, index_of_row + 1);
+            }
+
+        } else {
+            this.SendToComponent();
+        }
     }
 
     Add(){
@@ -167,6 +210,10 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
 
         this.selectedELEF.push(to_add);
 
+        
+        if (!to_add.ef.attributesTemplate){
+            this.GetAttributeFromEFTempate(this.elementcategory, this.EFtemplate);
+        }
 
     }
 
@@ -188,14 +235,44 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     }
     SelectEFELRow(item){
         this.selectedelefRow = item;
+        this.AttributeofselectedELEF = this.selectedelefRow.ef.attributesTemplate;
     }
     NewMaster(item){
-        if(item.master)
-        {
-            this.selectedELEF.forEach(x => {
-                x.master=false;
-            })    
-        }
+        this.selectedELEF.forEach(x => {
+            x.master=false;
+        })
         item.master = true;
+    }
+
+    SendToComponent(){
+        const body = this.selectedELEF;
+        //{ props: { propName: value } , paramIndex: paramIdx }
+        const message = {
+            property: 'props',
+            payload: {
+                props: {
+                    elementEfAttr: body
+                },
+                paramIndex: this.paramIndex
+            }
+        };
+        this.changeSymbol.emit(message);
+    }
+
+    MoveIndexOf(arr, old_index, new_index){
+        while (old_index < 0) {
+            old_index += arr.length;
+        }
+        while (new_index < 0) {
+            new_index += arr.length;
+        }
+        if (new_index >= arr.length) {
+            var k = new_index - arr.length;
+            while ((k--) + 1) {
+                arr.push(undefined);
+            }
+        }
+        arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);  
+        return arr;
     }
 }
