@@ -20,3 +20,24 @@ div{
     cursor: pointer;
     font-weight: bold;
 }
+
+td {
+    border: 1px #DDD solid;
+    padding: 5px;
+    cursor: pointer;
+}
+
+tr{
+    color: black;
+    background-color: #ddd;
+}
+
+tr.selected-row-panelconfig {
+    background-color: blue;
+    color: #FFF;
+}
+
+.button-submit{
+    float: right;
+    margin-right: 25px;
+}

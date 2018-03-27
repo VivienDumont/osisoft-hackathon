@@ -11,62 +11,87 @@
             <div>Element/Event Frames</div>
             <div class="panel-ele">
                 <div>
-                Elements :<br/>
-                <select [(ngModel)]="elementcategory" id="elementcategory">
-                    <option value="" disabled selected>>select an element</option>
-                    <option *ngFor="let item of elementsTOshow" [value]="item.WebId">{{item.Name}}</option>
-                </select>
+                    Elements :<br/>
+                    <select (change)="SelectElement($event.target.value)">
+                        <option value="" disabled selected>>select an element</option>
+                        <option *ngFor="let item of elementsTOshow" [value]="item.WebId">{{item.Name}}</option>
+                    </select>
                 </div>
                 <br/><br/>
                 <div>
-                Event frames templates : <br/>
-                <select [(ngModel)]="EFcategory" id="EFcategory">
-                    <option value="" disabled selected>>select an Event Frame template</option>
-                    <option *ngFor="let item of EFtemplate" [value]="item.Name">{{item.Name}}</option>
-                </select><br/>
-                <button (click)="Add()">Add</button>
+                    Event frames templates : <br/>
+                    <select (change)="SelectEFType($event.target.value)">
+                        <option value="" disabled selected>>select an Event Frame template</option>
+                        <option *ngIf="!elementcategory; else IsElementCategory"></option>
+                        <ng-template #IsElementCategory>
+                            <option *ngFor="let item of elementcategory.analysesTemplateEventType" [value]="item.WebId">{{item.Name}}</option>
+                        </ng-template>
+                    </select><br/>
+                    <button (click)="Add()">Add</button>
                 </div>
                 <br/><br/>
                 <div>
-                Selected elements/ef :<br/>
-                <table>
-                    <thead>
-                        <th>Element </th>
-                        <th>Event </th>
-                        <th>Master</th>
-                    </thead>
-                    <tr *ngFor="let item of selectedELEF">
-                        <td>{{item.element.Name}}</td>
-                        <td>{{item.ef.Name}}</td>
-                        <td><input type="checkbox" [(ngModel)]="item.master"/></td>
-                    </tr>
-                </table>
-                <div>
-                    <button (click)="GoUp()">Up</button>
-                    <button (click)="GoDown()">Down</button>
-                    <button (click)="Delete()">Del</button>
+                    Selected elements/ef :<br/>
+                    <table>
+                        <thead>
+                            <th>Element </th>
+                            <th>Event </th>
+                            <th>Color </th>
+                            <th>Master</th>
+                        </thead>
+                        <tr *ngFor="let item of selectedELEF" (click)="SelectEFELRow(item)" [class.selected-row-panelconfig]="selectedelefRow && selectedelefRow.element.WebId===item.element.WebId && selectedelefRow.ef.WebId===item.ef.WebId">
+                            <td>{{item.element.Name}}</td>
+                            <td>{{item.ef.Name}}</td>
+                            <td>
+                                <!--<input type="text" [(ngModel)]="item.ef.Color" [value]="item.Color"/>-->
+                                <span _ngcontent-c9="" style="display:inline-block"><!----><!----><!----><!----><!----><!----><!----><!----><!----><div _ngcontent-c9="" class="input-group config-color ng-star-inserted"><input _ngcontent-c9="" class="form-control ng-untouched ng-pristine ng-valid" osiautoblur="" type="text"><span _ngcontent-c9="" class="input-group-btn"><button _ngcontent-c9="" class="btn btn-secondary"><span _ngcontent-c9="" class="colorblock" style="margin: -1px 3px; background-color: white;"></span></button></span></div><!----><!----></span>
+                            </td>
+                            <td><input type="checkbox" [(ngModel)]="item.master" (change)="NewMaster(item)"/></td>
+                        </tr>
+                    </table>
+                    <div class="button-submit">
+                        <button (click)="GoUp()">Up</button>
+                        <button (click)="GoDown()">Down</button>
+                        <button (click)="Delete()">Del</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <br/><br/>
-    <div>
-        <div class="panel-at">
-            <div>Attribute Visible</div>
+        <br/><br/>
+        <div>
             <div class="panel-at">
-                <div>
-                    Attributes For e/ef :<br/>
-                    <table>
-                        <thead>
-                            <th>Attibutes </th>
-                            <th>Position</th>
-                        </thead>
-                        <tr *ngFor="let item of AttributeofselectedELEF">
-                            <td>{{item.Name}}</td>
-                            <td><input type="text" [(ngModel)]="item.position"/></td>
-                        </tr>
-                    </table>
+                <div>Attribute Visible</div>
+                <div class="panel-at">
+                    <div>
+                        Attribute Categories: <br/>
+                        <table>
+                            <thead>
+                                <th>Categorie</th>
+                                <th>Select</th>
+                            </thead>
+                            <tr *ngFor="let item of listOfAttributeCategory">
+                                <td>{{item.name}}</td>
+                                <td><input type="checkbox" [(ngModel)]="item.select" /></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        Attributes For e/ef :<br/>
+                        <table>
+                            <thead>
+                                <th>Attibutes </th>
+                                <th>Position</th>
+                            </thead>
+                            <tr *ngFor="let item of AttributeofselectedELEF">
+                                <td>{{item.Name}}</td>
+                                <td><input type="text" [(ngModel)]="item.position" [value]="item.position"/></td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <button class="button-submit" (click)="SubmitConf()">Submit</button>
+                    </div>
                 </div>
+                
             </div>
         </div>
     </div>
