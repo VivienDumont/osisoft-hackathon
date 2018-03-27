@@ -31,6 +31,7 @@ export class DrawDataComponent implements OnChanges, OnInit {
 
   // global variable controls
   eventFrames: any[];
+  eventFrames1: any[];
   element: any = {};
   eventTypes: any[];
   startTime: string;
@@ -83,6 +84,7 @@ export class DrawDataComponent implements OnChanges, OnInit {
       r => {
         const n_bd = r.body;
         this.eventFrames = r.body[0].Content.Items;
+        this.eventFrames1 = r.body[2].Content.Items;
       },
       e => {
         console.error(e);
@@ -96,6 +98,22 @@ export class DrawDataComponent implements OnChanges, OnInit {
     const all_input_datetime = this.document.querySelectorAll('pv-datetime input[type="text"]');
     this.startTime = all_input_datetime[all_input_datetime.length-2].value;
     this.endTime = all_input_datetime[all_input_datetime.length-1].value;
+
+    // tslint:disable-next-line:max-line-length
+    // let dateRegEx;
+    // -----THIS IS FOR RELATIVE DATE CONFIGURATION --- NOT QUITE WORKING YET
+    // new RegExp('([\d\w-.]+?\.(a[cdefgilmnoqrstuwz]|b[abdefghijmnorstvwyz]|c[acdfghiklmnoruvxyz]|d[ejkmnoz]|e[ceghrst]|f[ijkmnor]|g[abdefghilmnpqrstuwy]|h[kmnrtu]|i[delmnoqrst]|j[emop]|k[eghimnprwyz]|l[abcikrstuvy]|m[acdghklmnopqrstuvwxyz]|n[acefgilopruz]|om|p[aefghklmnrstwy]|qa|r[eouw]|s[abcdeghijklmnortuvyz]|t[cdfghjkmnoprtvwz]|u[augkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]|aero|arpa|biz|com|coop|edu|info|int|gov|mil|museum|name|net|org|pro)(\b|\W(?<!&|=)(?!\.\s|\.{3}).*?))(\s|$)')
+
+    // if (!dateRegEx.test(this.startTime)) {
+    //   console.log('start date is relative');
+    //   this.getAbsoluteDateFromRelativeTime(this.startTime);
+    // }
+
+    // if (!dateRegEx.test(this.endTime)) {
+    //   console.log('start date is relative');
+    //   this.getAbsoluteDateFromRelativeTime(this.endTime);
+    // }
+
     // this.startTime = this.document.querySelectorAll('pv-datetime input[type="text"]')[0].value;
     // this.endTime = this.document.querySelectorAll('pv-datetime input[type="text"]')[1].value;
   }
@@ -103,18 +121,14 @@ export class DrawDataComponent implements OnChanges, OnInit {
   redrawComponent() {
     const timeManipulator = 100;
     // const minEventDurSeconds = this
-    try {
-      new Date(this.startTime).getTime();
-    } catch (error) {
-      this.getAbsoluteDateFromRelativeTime(this.startTime)
-    }
+    // if (this.startTime.test) {
+    // var trigger = "2"
 
-    try {
-      new Date(this.endTime).getTime();
-    } catch (error) {
-      this.getAbsoluteDateFromRelativeTime(this.endTime);
-    }
-    // this.getAbsoluteDateFromRelativeTime(this.startTime);
+    // try {
+    //   new Date(this.startTime).getTime();
+    // } catch (error) {
+    //   this.getAbsoluteDateFromRelativeTime(this.startTime)
+    // }
 
     let startTimeInMilliseconds = new Date(this.startTime).getTime() / timeManipulator;
     let endTimeInMilliseconds = new Date(this.endTime).getTime() / timeManipulator;
@@ -208,13 +222,51 @@ export class DrawDataComponent implements OnChanges, OnInit {
 
   getAbsoluteDateFromRelativeTime(dateString: string): string {
     let relDateStringArray: string[] = dateString.split('')
+    let dateObject = new Date();
     console.log(relDateStringArray);
     let startChar = relDateStringArray[0];
     let mathSignChar = relDateStringArray[1];
-    let numberChar = relDateStringArray[2];
-    let rangeChar = relDateStringArray[3];
+    let numberChar: any = relDateStringArray[2];
+    let rangeTypeChar = relDateStringArray[3];
 
-    console.log(startChar + mathSignChar + numberChar + rangeChar);
+    console.log(startChar + mathSignChar + numberChar + rangeTypeChar);
+    // set starting day
+    if (startChar === '*') {
+      dateObject.toDateString();
+    } else if (startChar.toLowerCase() === 't') {
+      // Set the hours to midnight
+      dateObject.setHours(0, 0 , 1);
+
+    } else if (startChar.toLowerCase() === 'y')  {
+      dateObject.setHours(0, 0 , 1);
+      let day = dateObject.getDay();
+
+      // set the day one day ago
+      dateObject.setDate(day - 1)
+    } else {
+      console.log('incorrect date string');
+    }
+
+    // set the range type and number
+    // if (rangeTypeChar === 'h') {
+    //   dateObject.setDate()
+      
+    // } else if (rangeTypeChar === 'm') {
+      
+    // } else if (rangeTypeChar === ) {
+      
+    // } else if (rangeTypeChar) {
+      
+    // }
+
+
+    // if (day >= numberChar) {
+        
+    // }
+    // day = (mathSignChar.trim() === '-') ? day - numberChar : day + numberChar
+    // if (mathSignChar === '-') {
+    //   day
+    // }
     // new Date(this.startTime).set setHours() ()
     return dateString;
   }

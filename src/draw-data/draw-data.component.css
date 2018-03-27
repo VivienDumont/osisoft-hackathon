@@ -57,7 +57,7 @@
 
 .event{
   /* display:table; */
-  border-radius: 10px;
+  border-radius: 3px;
   overflow: hidden;
   height: 100px;
   padding:3px;
@@ -68,10 +68,20 @@
   display: flex;
 }
 
+.row-1 div, .row-2 div, .row-3 div{
+  flex-basis: 100%;
+}
+
 .info{
   transform: rotate(90deg);
   height:100%;
   width:50px;
+  margin: 0 5px 0 5px;
+
+  /* Event css */
+  border-radius: 3px;
+  padding:3px;
+  background: grey;
 }
 
 .scroll-on{
