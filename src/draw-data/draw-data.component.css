@@ -26,17 +26,13 @@
 
 .event-row{
   display:flex;
-}
-
-.event-row{
-  flex-wrap:nowrap;
+  max-height: 100px;
+  /* flex-wrap:nowrap; */
 }
 
 .event-row div{
   /* flex-basis:100px; */
   /* background:rgba(64, 73, 202, 0.781); */
-  padding:3px;
-  text-align: right;
   /* flex-basis: 150px; */
 }
 
@@ -62,7 +58,10 @@
 .event{
   /* display:table; */
   border-radius: 10px;
-  /* height: 50%; */
+  overflow: hidden;
+  height: 100px;
+  padding:3px;
+  text-align: right;
 }            
 
 .row-1, .row-2, .row-3{
@@ -71,7 +70,6 @@
 
 .info{
   transform: rotate(90deg);
-  transform-origin: left top 0;
   height:100%;
   width:50px;
 }
@@ -82,4 +80,9 @@
 
 .scroll-off{
   overflow-x: hidden;
+}
+
+.view{
+  width: 100%;
+  height: 100%;
 }

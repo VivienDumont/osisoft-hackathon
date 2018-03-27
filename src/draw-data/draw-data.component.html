@@ -2,31 +2,35 @@
 <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
   
-  <div class="events" [style.background]="bkColor" #eventsDiv [ngClass]="currentClasses">
-    <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
-    <div class="event-row" *ngIf="eventFrames?.length > 0">
-      <div *ngFor="let val of eventFrames;" [class.in-progress]="inProgress" class="event card" 
-        id="{{ val.Id }}"
-        [style.background]="lineColor"
-        [style.height]="eventHeight"
-        #val.id
-        >
-
-        <div class="row-1">
-          <div>{{ val.TemplateName }}</div>
-          <div> r1 c2</div>
+  <div class="view" #view [ngClass]="scrollState">
+    <!-- <div class="events" [style.background]="bkColor" #eventsDiv [style.width]="minControlWidth" [ngStyle]="widthControl"  > -->
+    <div class="events" [style.background]="bkColor" #eventsDiv [ngStyle]="widthControl" >
+      
+      <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
+      <div class="event-row" *ngIf="eventFrames?.length > 0">
+        <div class="info">Element</div>
+        <div class="info">EventType</div>
+        <div *ngFor="let val of eventFrames;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
+          id="{{ val.Id }}"
+          [style.background]="lineColor"
+          [style.height]="eventHeight">
+  
+          <div class="row-1">
+            <div>{{ val.TemplateName }}</div>
+            <div> {{ val.duration }}</div>
+          </div>
+          <div class="row-2">
+            <div></div>
+            <div></div>
+          </div>
+          <div class="row-3">
+            <div></div>
+            <div></div>
+          </div>
         </div>
-        <div class="row-2">
-          <div>r2 c1</div>
-          <div>r2 c2</div>
-        </div>
-        <div class="row-3">
-          <div>r3 c1</div>
-          <div> r3 c2</div>
-        </div>
+        <span *ngIf="eventFrames?.length === 0">
+          No event frames in selected timeframe
+        </span>
       </div>
-      <span *ngIf="eventFrames?.length === 0">
-        No event frames in selected timeframe
-      </span>
     </div>
   </div>

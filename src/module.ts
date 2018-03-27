@@ -52,12 +52,12 @@ export class ExtensionLibrary extends NgLibrary {
             { propName: 'startTimeCustom', displayName: 'Start Time', configType: ConfigPropType.Time },
             { propName: 'endTimeCustom', displayName: 'End Time', configType: ConfigPropType.Time },
             { propName: 'minimumEventPixelWidth', displayName: 'Min Event Width', configType: ConfigPropType.Num, defaultVal: 25 },
-            { propName: 'showAttrInEventWidth', displayName: 'Event Width To Show Attr', configType: ConfigPropType.Num, defaultVal: true }
+            { propName: 'showAttrInEventWidth', displayName: 'Event Width To Show Attr', configType: ConfigPropType.Num, defaultVal: 20 }
           ]
         }
       ],
-      layoutWidth: 900,
-      layoutHeight: 800
+      layoutWidth: 700,
+      layoutHeight: 600
     },
     {
       name: 'extract-data-symbol',

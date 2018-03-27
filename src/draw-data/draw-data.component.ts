@@ -36,14 +36,16 @@ export class DrawDataComponent implements OnChanges, OnInit {
   startTime: string;
   endTime: string;
   @ViewChild('eventsDiv') eventsDiv: ElementRef;
+  @ViewChild('view')      viewDiv: ElementRef;
   currentViewWidth: number;
   oldviewWidth: number;
   eventHeight: string;
   shortestEventDuration: number;
+  minControlWidth: any;
 
   inProgress = true;
-  currentClasses = {};
-  currentStyles = {};
+  scrollState = {};
+  widthControl = {};
   completed = true;
   scrollOn: boolean;
 
@@ -51,17 +53,31 @@ export class DrawDataComponent implements OnChanges, OnInit {
   constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, @Inject(DOCUMENT) private document: any, private _elRef: ElementRef, private renderer: Renderer2) { }
 
   private GetEventFrames() {
-
     // tslint:disable-next-line:comment-format
     // tslint:disable-next-line:max-line-length
     this.element.WebId = 'F1EmwcQX-gVflkWbQKYW5nMT5QcgTsJe8B6BGpVgANOjAbLQUElTUlYwMVxNSU5FUkFMIFBST0NFU1NJTkdcUFJPQ0VTUyBQTEFOVFxHUklORElOR1xMSU5FIDE' // Line1 webid
+    // tslint:disable-next-line:max-line-length
+    this.element.WebId2 = 'F1EmwcQX-gVflkWbQKYW5nMT5QfATsJe8B6BGpVgANOjAbLQUElTUlYwMVxNSU5FUkFMIFBST0NFU1NJTkdcUFJPQ0VTUyBQTEFOVFxHUklORElOR1xMSU5FIDI' // line2 webid
 
     const body = {
       '0': {
         'Method': 'GET',
         'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${this.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
-      }
+      },
+      '1': {
+        'Method': 'GET',
+        'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${this.element.WebId}`
+      },
+      '2': {
+        'Method': 'GET',
+        'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${this.element.WebId2}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
+      },
+      '3': {
+        'Method': 'GET',
+        'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${this.element.WebId2}`
+      },
     };
+
     this.piWebApiService.batch.execute$(body)
     .subscribe(
       r => {
@@ -73,61 +89,85 @@ export class DrawDataComponent implements OnChanges, OnInit {
       }
     )
 
-    // const params = {
-    //   startTime: this.startTime,
-    //   endTime: this.endTime
-    // };
-    // this.piWebApiService.element
-    // .getEventFrames$(this.element.WebId, params)
-    // .subscribe(
-    //   r => {
-    //     this.values = r.Items;
-    //   },
-    //   e => {
-    //     console.error(e);
-    //   }
-    // );
-
+    this.redrawComponent();
   }
 
   public getPiVisionStartAndEndTime() {
-    this.startTime = this.document.querySelectorAll('pv-datetime input[type="text"]')[0].value;
-    this.endTime = this.document.querySelectorAll('pv-datetime input[type="text"]')[1].value;
+    const all_input_datetime = this.document.querySelectorAll('pv-datetime input[type="text"]');
+    this.startTime = all_input_datetime[all_input_datetime.length-2].value;
+    this.endTime = all_input_datetime[all_input_datetime.length-1].value;
+    // this.startTime = this.document.querySelectorAll('pv-datetime input[type="text"]')[0].value;
+    // this.endTime = this.document.querySelectorAll('pv-datetime input[type="text"]')[1].value;
   }
 
   redrawComponent() {
+    const timeManipulator = 100;
     // const minEventDurSeconds = this
-    let startTimeInMilliseconds = new Date(this.startTime).getTime();
-    let endTimeInMilliseconds = new Date(this.endTime).getTime();
+    try {
+      new Date(this.startTime).getTime();
+    } catch (error) {
+      this.getAbsoluteDateFromRelativeTime(this.startTime)
+    }
+
+    try {
+      new Date(this.endTime).getTime();
+    } catch (error) {
+      this.getAbsoluteDateFromRelativeTime(this.endTime);
+    }
+    // this.getAbsoluteDateFromRelativeTime(this.startTime);
+
+    let startTimeInMilliseconds = new Date(this.startTime).getTime() / timeManipulator;
+    let endTimeInMilliseconds = new Date(this.endTime).getTime() / timeManipulator;
     let durationInMilliseconds = (endTimeInMilliseconds - startTimeInMilliseconds);
-    this.shortestEventDuration = this.getShortestEventDuraion();
-    console.log(`shortest event duration: ${this.shortestEventDuration}`);
+    this.shortestEventDuration = this.getShortestEventDuraion() / timeManipulator;
 
-    // We are able to fit all of the events within the symbol view
+    console.log('calulation result: ' + ((this.shortestEventDuration / durationInMilliseconds) * this.currentViewWidth))
+    // We are able to fit all of the events within the symbol view without going below the smallest pixel size allowed
     if ( ((this.shortestEventDuration / durationInMilliseconds) * this.currentViewWidth) > this.minimumEventPixelWidth) {
-      this.switchScrollState(false);
-      for (const iterator1 of this.eventsDiv.nativeElement.children) {
-        for (const iterator2 of iterator1.children) {
-          console.log(`the iterator`)
-          console.log(iterator2);
-          // this.document.querySelectorAll('event id[""]')[0].id
-          // @ViewChild()
-        }
+      this.minControlWidth = 'inherit';
 
+      this.widthControl = {
+        'width': 'inherit'
       }
+
+      this.switchScrollState(false);
+      console.log('no need for scroll bar');
+      this.eventFrames.forEach(item => {
+        const start = new Date(item.StartTime).getTime();
+        const end = new Date(item.EndTime).getTime();
+        // tslint:disable-next-line:max-line-length
+        item.duration = ( ((end) - (start)) );
+        // tslint:disable-next-line:max-line-length
+        item.width = ((( (end - start) ) / durationInMilliseconds) * this.currentViewWidth);
+        },
+        e => {
+          console.log(e);
+        }
+      )
       return
-    } else { // Unable to fit all of the events within the symbol view.
-             // turn scroll on, reset the width of the symbol and call this function again
-             const updatedWidth = ( durationInMilliseconds * (this.minimumEventPixelWidth / this.shortestEventDuration) )
-             console.log(`updateing flex-basis to ${updatedWidth}`)
-             this.switchScrollState(true);
-             // update the width of our event div
-            //  this.renderer.setStyle(
-            //    this.eventsDiv.nativeElement,
-            //    'width',
-            //    `${updatedWidth.toString()}px`
-            //  )
-      // this.eventsDiv.nativeElement.style.width = ( durationInMilliseconds * (this.minimumEventPixelWidth / this.shortestEventDuration) )
+    } else { // Unable to fit all of the events within the symbol view withouth going below minimum pixel width
+      // turn scroll on, reset the width of the symbol and resize the events based on the controls new width
+      const updatedWidth = ( durationInMilliseconds * (this.minimumEventPixelWidth / this.shortestEventDuration) )
+      // this.minControlWidth = `${updatedWidth}px`;
+      this.widthControl = {
+        'width': `${updatedWidth}px`
+      }
+
+      console.log(`screen size too small to display properly`);
+      this.switchScrollState(true);
+
+      this.eventFrames.forEach(item => {
+          const start = new Date(item.StartTime).getTime();
+          const end = new Date(item.EndTime).getTime();
+          // tslint:disable-next-line:max-line-length
+          item.duration = ( start - end );
+          // tslint:disable-next-line:max-line-length
+          item.width = (( ((end - start)) / durationInMilliseconds) * updatedWidth);
+        },
+        e => {
+          console.log(e);
+        }
+      )
     }
   }
 
@@ -166,17 +206,30 @@ export class DrawDataComponent implements OnChanges, OnInit {
     return shortestDuration;
   }
 
+  getAbsoluteDateFromRelativeTime(dateString: string): string {
+    let relDateStringArray: string[] = dateString.split('')
+    console.log(relDateStringArray);
+    let startChar = relDateStringArray[0];
+    let mathSignChar = relDateStringArray[1];
+    let numberChar = relDateStringArray[2];
+    let rangeChar = relDateStringArray[3];
+
+    console.log(startChar + mathSignChar + numberChar + rangeChar);
+    // new Date(this.startTime).set setHours() ()
+    return dateString;
+  }
+
     // this method is for NgClass. we can use this when we want to change the class of a component based on if it is in progress or not.
   switchScrollState(scroll: boolean) {
-    this.currentClasses = {
+    this.scrollState = {
       'scroll-on' : scroll,
       'scroll-off' : !scroll
     }
   }
 
   setCurrentStyles() {
-    this.currentStyles = {
-      'font-weight': this.isMasterEvent ? 'normal' : 'bold'
+    this.widthControl = {
+      'width': this.isMasterEvent ? 'normal' : 'bold'
     }
   }
 
@@ -190,19 +243,17 @@ export class DrawDataComponent implements OnChanges, OnInit {
 
   // This method is used to check the size of the div
   ngAfterViewChecked() {
-    this.currentViewWidth = this.eventsDiv.nativeElement.offsetWidth;
+    // this.currentViewWidth = this.eventsDiv.nativeElement.offsetWidth;
+    this.currentViewWidth = this.viewDiv.nativeElement.offsetWidth;
     if (this.currentViewWidth !== this.oldviewWidth) {
       this.oldviewWidth = this.currentViewWidth;
-      console.log(`current width: ${this.currentViewWidth}`);
+      console.log(`redrawing component`);
       this.redrawComponent();
-    } else {
-      // console.log("width unchanged");
+    }
+    else{
+      console.log('no change in screen size');
     }
   }
-
-  // ngDoCheck() {
-  //   console.log('docheck');
-  // }
 
   ngOnChanges(changes) {
     if (changes.data) {
@@ -210,16 +261,14 @@ export class DrawDataComponent implements OnChanges, OnInit {
     }
 
     if (changes.primaryEvent) {
-      console.log('Primary event changed');
 
     }
 
     if (changes.defaultEventHeight) {
-      this.eventHeight = `${changes.defaultEventHeight}px`;
-      console.log('height Changed');
+      this.eventHeight = `${changes.defaultEventHeight}`;
     }
 
-    // this.GetEventFrames();
+    this.GetEventFrames();
   }
 
 }
