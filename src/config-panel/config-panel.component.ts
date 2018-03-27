@@ -26,8 +26,11 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     
     serverName: string = '';
     values = [];
+    listOfAttributeCategory:any = [];
 
-    constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService) { }
+    constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService) {
+        
+     }
 
     BuildData(body) {
         this.values = [];
@@ -42,11 +45,7 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
           db.elements.forEach(element => {
             this.GetElement(element);
           });
-          //this.AnalysesDatabase(db);
         });
-
-        
-        console.log(this.values);
       }
 
       private GetElement(element){
@@ -78,7 +77,7 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
             element.attributeTemplate = [];
             r.Items.forEach(template => {
               if (template.AnalysisRulePlugInName === 'EventFrame'){
-                element.analysesTemplateEventType.push(element, template);
+                element.analysesTemplateEventType.push(template);
               } 
               
             });
@@ -93,12 +92,22 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
         this.piWebApiService.element.getEventFrames$(element.WebId)
         .subscribe(
             r => {
-                const ef = r.Items.find(x => x.TemplateName === template.TemplateName);
+                const ef = r.Items.find(x => x.TemplateName === template.TemplateName || x.TemplateName.indexOf(template.TemplateName)+1 || template.TemplateName.indexOf(x.TemplateName)+1);
                 if(ef){
                     this.piWebApiService.eventFrame.getAttributes$(ef.WebId)
                     .subscribe(
                         r_a => {
                             template.attributesTemplate = r_a.Items;
+                            const lst_cat_attr = [];
+                            r_a.Items.forEach(attr => {
+                                attr.CategoryNames.forEach(cat_attr => {
+                                    const found = lst_cat_attr.find(x => x === cat_attr);
+                                    if(!found){
+                                        lst_cat_attr.push({name: cat_attr, select: false});
+                                    }
+                                });
+                            });
+                            template.attributesTemplateCategories = lst_cat_attr;
                         },
                         e => {
                             console.error(e);
@@ -141,12 +150,14 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
         };
     
         this.piWebApiService.batch.execute$(body)
-        .subscribe(r => {
-            this.BuildData(r.body);
-        },
-        e => {
-        console.error(e);
-        });
+        .subscribe(
+            r => {
+                this.BuildData(r.body);
+            },
+            e => {
+                console.error(e);
+            }
+        );
     }
 
     ngOnInit(){
@@ -155,6 +166,7 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     }
 
     ngOnChanges(changes) {
+        console.log('config panel');
         //console.log(this.paramIndex);
         //console.log(this.selectedSymbols);
         console.log(changes);
@@ -164,6 +176,9 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
                     if(this.serverName !== changes.selectedSymbols.currentValue[this.paramIndex].props.serverName){
                         this.serverName = changes.selectedSymbols.currentValue[this.paramIndex].props.serverName;
                         this.Get();
+                    }
+                    if(changes.selectedSymbols.currentValue[this.paramIndex].props.elementEfAttr){
+                        this.selectedELEF = changes.selectedSymbols.currentValue[this.paramIndex].props.elementEfAttr;
                     }
                 }
             }
@@ -183,17 +198,10 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     }
 
     GoDown(){
-        const flag = true;
-
-        if(flag){
-            //move to index + 1 selectedRow
-            const index_of_row = this.selectedELEF.indexOf(this.selectedelefRow);
-            if(index_of_row < this.selectedELEF.length-1){
-                this.selectedELEF = this.MoveIndexOf(this.selectedELEF, index_of_row, index_of_row + 1);
-            }
-
-        } else {
-            this.SendToComponent();
+        //move to index + 1 selectedRow
+        const index_of_row = this.selectedELEF.indexOf(this.selectedelefRow);
+        if(index_of_row < this.selectedELEF.length-1){
+            this.selectedELEF = this.MoveIndexOf(this.selectedELEF, index_of_row, index_of_row + 1);
         }
     }
 
@@ -201,11 +209,17 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
         const to_add = {
             element: this.elementcategory,
             ef: this.EFtemplate,
-            master: false
+            master: false,
+            Color: '#000000'
         }
         
         if(this.selectedELEF.length == 0){
             to_add.master = true;
+        }
+
+        const found = this.selectedELEF.find(x => x.element.WebId === this.elementcategory.WebId && x.ef.WebId === this.EFtemplate.WebId);
+        if (found){
+            return;
         }
 
         this.selectedELEF.push(to_add);
@@ -222,12 +236,13 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
         if(this.selectedelefRow.master){
             if(this.selectedELEF.length>0){
                 this.selectedELEF[0].master=true;
-            }
+            } 
         }
     }
 
     SelectElement(item){
         this.elementcategory = this.elementsTOshow.find(x => x.WebId === item);
+        this.EFtemplate = this.elementcategory.analysesTemplateEventType[0];
     }
 
     SelectEFType(item){
@@ -235,6 +250,12 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     }
     SelectEFELRow(item){
         this.selectedelefRow = item;
+        
+        this.listOfAttributeCategory = item.ef.attributesTemplateCategories;
+
+        //const lstToDisplay = this.selectedelefRow.ef.attributesTemplate.filter();
+
+
         this.AttributeofselectedELEF = this.selectedelefRow.ef.attributesTemplate;
     }
     NewMaster(item){
@@ -242,6 +263,10 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
             x.master=false;
         })
         item.master = true;
+    }
+
+    SubmitConf(){
+        this.SendToComponent();
     }
 
     SendToComponent(){
