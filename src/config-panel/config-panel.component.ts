@@ -52,7 +52,7 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
 
         this.piWebApiService.element.getElements$(element.WebId)
         .subscribe(
-          r=>{
+          r =>{
             element.elements = r.Items;
             element.elements.forEach(e => {
               if(e.HasChildren){

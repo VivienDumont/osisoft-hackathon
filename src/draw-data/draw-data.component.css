@@ -1,22 +1,22 @@
 
 /* Extra small devices (phones, 600px and down) */
-@media only screen and (max-width: 600px) {...} 
+/* @media only screen and (max-width: 600px) {...}  */
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
-@media only screen and (min-width: 600px) {...} 
+/* @media only screen and (min-width: 600px) {...}  */
 
 /* Medium devices (landscape tablets, 768px and up) */
-@media only screen and (min-width: 768px) {...} 
+/* @media only screen and (min-width: 768px) {...}  */
 
 /* Large devices (laptops/desktops, 992px and up) */
-@media only screen and (min-width: 992px) {...} 
+/* @media only screen and (min-width: 992px) {...}  */
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
-@media only screen and (min-width: 1200px) {...}
+/* @media only screen and (min-width: 1200px) {...} */
 
 
 @media only screen and (min-width:768px){
-  .primary-event{
+  .event-row{
     /* color: #58a3b6 */
     /* align-items: flex-start;
     display:flex; */
@@ -24,14 +24,16 @@
   }
 }
 
-.primary-event{
+.event-row{
   display:flex;
-  align-items: flex-start;
-  display:inline-flex;
+  max-height: 100px;
+  /* flex-wrap:nowrap; */
 }
 
-.primary-event{
-  flex-wrap:nowrap;
+.event-row div{
+  /* flex-basis:100px; */
+  /* background:rgba(64, 73, 202, 0.781); */
+  /* flex-basis: 150px; */
 }
 
 /* :host {
@@ -44,25 +46,53 @@
 } */
 
 .events {
-  font-size: 16pt;
-  overflow: auto;
+  font-size: 12pt;
+  /* overflow: auto; */
   padding: 10px;
-  margin: 0 3px 0 0;
+  margin: 0 5px 0 0;
   width: 100%;
   height: 100%;
+  background: url(../assets/images/polka-dots.png)
 }
 
 .event{
-  border-radius: 10px;
+  /* display:table; */
+  border-radius: 3px;
+  overflow: hidden;
+  height: 100px;
+  padding:3px;
+  text-align: right;
 }            
 
-.primary-event div{
-  flex:1;
-  /* background:rgba(64, 73, 202, 0.781); */
-  padding:3px;
-  width: 100%;
+.row-1, .row-2, .row-3{
+  display: flex;
 }
 
-.row-1, .row-2, .row-3{
-  display: inline-flex;
+.row-1 div, .row-2 div, .row-3 div{
+  flex-basis: 100%;
+}
+
+.info{
+  transform: rotate(90deg);
+  height:100%;
+  width:50px;
+  margin: 0 5px 0 5px;
+
+  /* Event css */
+  border-radius: 3px;
+  padding:3px;
+  background: grey;
+}
+
+.scroll-on{
+  overflow-x: auto;
+}
+
+.scroll-off{
+  overflow-x: hidden;
+}
+
+.view{
+  width: 100%;
+  height: 100%;
 }
