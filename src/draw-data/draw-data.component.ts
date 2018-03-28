@@ -90,7 +90,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
             this.element_ef[i] = {
               elementName: this.elementEfAttr[i].element.Name,
               eventTypeName: this.elementEfAttr[i].ef.Name,
-              eventframes: items
+              eventframes: items,
+              Color: this.elementEfAttr[i].Color
           };
           i++;
           req = r.body[i];
