@@ -7,31 +7,35 @@
     <div class="events" [style.background]="bkColor" #eventsDiv [ngStyle]="widthControl" >
       
       <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
-      <div class="event-row" *ngIf="eventFrames?.length > 0">
-        <div class="info">Grinding - line 1</div>
-        <div class="info">Daily Production</div>
-        <div *ngFor="let val of eventFrames;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
-          id="{{ val.Id }}"
-          [style.background]="lineColor"
-          [style.height]="eventHeight">
-  
-          <div class="row-1">
-            <div>{{ val.TemplateName }}</div>
-            <div> {{ val.duration }}</div>
-          </div>
-          <div class="row-2">
-            <div></div>
-            <div></div>
-          </div>
-          <div class="row-3">
-            <div></div>
-            <div></div>
-          </div>
-        </div>
-        <span *ngIf="eventFrames?.length === 0">
-          No event frames in selected timeframe
-        </span>
+      <div *ngFor="let item of element_ef">
+          <div class="event-row" *ngIf="item.eventframes?.length > 0">
+              <div class="info">{{item.elementName}}</div>
+              <div class="info">{{item.eventTypeName}}</div>
+              <div *ngFor="let val of item.eventframes;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
+                id="{{ val.Id }}"
+                [style.background]="lineColor"
+                [style.height]="eventHeight">
+        
+                <div class="row-1">
+                  <div></div>
+                  <div>{{ val.duration }}</div>
+                </div>
+                <div class="row-2">
+                  <div></div>
+                  <div></div>
+                </div>
+                <div class="row-3">
+                  <div></div>
+                  <div></div>
+                </div>
+              </div>
+              <span *ngIf="eventFrames?.length === 0">
+                No event frames in selected timeframe
+              </span>
+            </div>
+        <br/>
       </div>
+      
 
       <!-- <div class="event-row" *ngIf="eventFrames?.length > 0">
           <div class="info">Grinding - line 2</div>

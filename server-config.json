@@ -1,6 +1,6 @@
 {
   "hostname": "localhost",
-  "port": 3001,
+  "port": 3002,
   "ssl": {
     "key": "./ssl/localhost.key",
     "cert": "./ssl/localhost.crt"
