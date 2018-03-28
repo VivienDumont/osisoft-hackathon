@@ -10,7 +10,7 @@
       <div class="event-row" *ngIf="eventFrames?.length > 0">
         <div class="info">Grinding - line 1</div>
         <div class="info">Daily Production</div>
-        <div *ngFor="let val of eventFrames;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
+        <div *ngFor="let val of eventFrames;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth"  
           id="{{ val.Id }}"
           [style.background]="lineColor"
           [style.height]="eventHeight">
@@ -28,35 +28,12 @@
             <div></div>
           </div>
         </div>
-        <span *ngIf="eventFrames?.length === 0">
+        <div id="attribute-lists" class="card attr-lists">
+            <!-- <a [routerLink]="/" fragment="education" target="_blank" onclick="onClick" >Link To Attributes</a> -->
+        </div>
+      </div>
+      <span *ngIf="eventFrames?.length === 0">
           No event frames in selected timeframe
         </span>
-      </div>
-
-      <!-- <div class="event-row" *ngIf="eventFrames?.length > 0">
-          <div class="info">Grinding - line 2</div>
-          <div class="info">Daily Production</div>
-          <div *ngFor="let val of eventFrames1;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
-            id="{{ val.Id }}"
-            [style.background]="lineColor"
-            [style.height]="eventHeight">
-    
-            <div class="row-1">
-              <div>{{ val.TemplateName }}</div>
-              <div> {{ val.duration }}</div>
-            </div>
-            <div class="row-2">
-              <div></div>
-              <div></div>
-            </div>
-            <div class="row-3">
-              <div></div>
-              <div></div>
-            </div>
-          </div>
-          <span *ngIf="eventFrames?.length === 0">
-            No event frames in selected timeframe
-          </span>
-        </div> -->
     </div>
   </div>

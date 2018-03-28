@@ -4,6 +4,7 @@
  * Use of this source code is governed by the terms in the accompanying LICENSE file.
  */
 import { Component, Input, OnChanges, ElementRef, Inject, OnInit, ViewChild, Renderer2 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { DOCUMENT } from '@angular/platform-browser';
 import { PIWEBAPI_TOKEN } from '../framework';
 import { PiWebApiService } from '@osisoft/piwebapi';
@@ -13,6 +14,7 @@ import { PiWebApiService } from '@osisoft/piwebapi';
   templateUrl: 'draw-data.component.html',
   styleUrls: ['draw-data.component.css']
 })
+
 export class DrawDataComponent implements OnChanges, OnInit {
   @Input() primaryEvent: string;
   @Input() defaultEventHeight: number;
@@ -120,15 +122,6 @@ export class DrawDataComponent implements OnChanges, OnInit {
 
   redrawComponent() {
     const timeManipulator = 100;
-    // const minEventDurSeconds = this
-    // if (this.startTime.test) {
-    // var trigger = "2"
-
-    // try {
-    //   new Date(this.startTime).getTime();
-    // } catch (error) {
-    //   this.getAbsoluteDateFromRelativeTime(this.startTime)
-    // }
 
     let startTimeInMilliseconds = new Date(this.startTime).getTime() / timeManipulator;
     let endTimeInMilliseconds = new Date(this.endTime).getTime() / timeManipulator;
@@ -174,7 +167,7 @@ export class DrawDataComponent implements OnChanges, OnInit {
           const start = new Date(item.StartTime).getTime();
           const end = new Date(item.EndTime).getTime();
           // tslint:disable-next-line:max-line-length
-          item.duration = ( start - end );
+          item.duration = ( end - start );
           // tslint:disable-next-line:max-line-length
           item.width = (( ((end - start)) / durationInMilliseconds) * updatedWidth);
         },
@@ -246,29 +239,11 @@ export class DrawDataComponent implements OnChanges, OnInit {
     } else {
       console.log('incorrect date string');
     }
-
-    // set the range type and number
-    // if (rangeTypeChar === 'h') {
-    //   dateObject.setDate()
-      
-    // } else if (rangeTypeChar === 'm') {
-      
-    // } else if (rangeTypeChar === ) {
-      
-    // } else if (rangeTypeChar) {
-      
-    // }
-
-
-    // if (day >= numberChar) {
-        
-    // }
-    // day = (mathSignChar.trim() === '-') ? day - numberChar : day + numberChar
-    // if (mathSignChar === '-') {
-    //   day
-    // }
-    // new Date(this.startTime).set setHours() ()
     return dateString;
+  }
+
+  onClick() {
+    // this._router.navigate(['/display', {queryParams: {'id': this.num}}])
   }
 
     // this method is for NgClass. we can use this when we want to change the class of a component based on if it is in progress or not.
