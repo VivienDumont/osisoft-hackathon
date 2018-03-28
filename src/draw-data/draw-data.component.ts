@@ -3,7 +3,7 @@
  * Copyright © 2017-2018 OSIsoft, LLC. All rights reserved.
  * Use of this source code is governed by the terms in the accompanying LICENSE file.
  */
-import { Component, Input, OnChanges, ElementRef, Inject, OnInit, ViewChild, Renderer2 } from '@angular/core';
+import { Component, Input, OnChanges, ElementRef, Inject, OnInit, ViewChild, Renderer2, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DOCUMENT } from '@angular/platform-browser';
 import { PIWEBAPI_TOKEN } from '../framework';
@@ -14,8 +14,7 @@ import { PiWebApiService } from '@osisoft/piwebapi';
   templateUrl: 'draw-data.component.html',
   styleUrls: ['draw-data.component.css']
 })
-
-export class DrawDataComponent implements OnChanges, OnInit {
+export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   @Input() primaryEvent: string;
   @Input() defaultEventHeight: number;
   @Input() bkColor: string;
@@ -25,6 +24,8 @@ export class DrawDataComponent implements OnChanges, OnInit {
   @Input() endTimeCustom: string;
   @Input() minimumEventPixelWidth: number
   @Input() showAttrInEventWidth: number;
+
+  @Input() elementEfAttr: any;
 
   // OSI PI input variables
   @Input() data: any;
@@ -36,6 +37,8 @@ export class DrawDataComponent implements OnChanges, OnInit {
   eventFrames1: any[];
   element: any = {};
   eventTypes: any[];
+  element_ef: any = [];
+
   startTime: string;
   endTime: string;
   @ViewChild('eventsDiv') eventsDiv: ElementRef;
@@ -51,49 +54,57 @@ export class DrawDataComponent implements OnChanges, OnInit {
   widthControl = {};
   completed = true;
   scrollOn: boolean;
+  stop_search: boolean = false;
+
+  setInt: any;
 
   // tslint:disable-next-line:max-line-length
   constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, @Inject(DOCUMENT) private document: any, private _elRef: ElementRef, private renderer: Renderer2) { }
 
   private GetEventFrames() {
+    if(this.stop_search){
+      return;
+    }
     // tslint:disable-next-line:comment-format
     // tslint:disable-next-line:max-line-length
-    this.element.WebId = 'F1EmwcQX-gVflkWbQKYW5nMT5QcgTsJe8B6BGpVgANOjAbLQUElTUlYwMVxNSU5FUkFMIFBST0NFU1NJTkdcUFJPQ0VTUyBQTEFOVFxHUklORElOR1xMSU5FIDE' // Line1 webid
-    // tslint:disable-next-line:max-line-length
-    this.element.WebId2 = 'F1EmwcQX-gVflkWbQKYW5nMT5QfATsJe8B6BGpVgANOjAbLQUElTUlYwMVxNSU5FUkFMIFBST0NFU1NJTkdcUFJPQ0VTUyBQTEFOVFxHUklORElOR1xMSU5FIDI' // line2 webid
+    
+    const body = {};
 
-    const body = {
-      '0': {
+    let index=0;
+    this.elementEfAttr.forEach(element => {
+      body[""+index]={
         'Method': 'GET',
-        'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${this.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
-      },
-      '1': {
-        'Method': 'GET',
-        'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${this.element.WebId}`
-      },
-      '2': {
-        'Method': 'GET',
-        'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${this.element.WebId2}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
-      },
-      '3': {
-        'Method': 'GET',
-        'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${this.element.WebId2}`
-      },
-    };
+        'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
+      }
+      index++;
+    });
 
     this.piWebApiService.batch.execute$(body)
     .subscribe(
       r => {
-        const n_bd = r.body;
-        this.eventFrames = r.body[0].Content.Items;
-        this.eventFrames1 = r.body[2].Content.Items;
+        this.element_ef = [];
+        let i = 0;
+        let req = r.body[i];
+        while(req){
+          const items = req.Content.Items;
+            this.element_ef[i] = {
+              elementName: this.elementEfAttr[i].element.Name,
+              eventTypeName: this.elementEfAttr[i].ef.Name,
+              eventframes: items
+          };
+          i++;
+          req = r.body[i];
+        }
+        this.redrawComponent();
+        //this.eventFrames = r.body[0].Content.Items;
+        //this.eventFrames1 = r.body[2].Content.Items;
       },
       e => {
         console.error(e);
       }
     )
 
-    this.redrawComponent();
+    
   }
 
   public getPiVisionStartAndEndTime() {
@@ -101,6 +112,10 @@ export class DrawDataComponent implements OnChanges, OnInit {
     this.startTime = all_input_datetime[all_input_datetime.length-2].value;
     this.endTime = all_input_datetime[all_input_datetime.length-1].value;
 
+    const st = new Date(this.startTime);
+    const en = new Date(this.endTime);
+
+    this.stop_search = en < st;
     // tslint:disable-next-line:max-line-length
     // let dateRegEx;
     // -----THIS IS FOR RELATIVE DATE CONFIGURATION --- NOT QUITE WORKING YET
@@ -126,6 +141,7 @@ export class DrawDataComponent implements OnChanges, OnInit {
     let startTimeInMilliseconds = new Date(this.startTime).getTime() / timeManipulator;
     let endTimeInMilliseconds = new Date(this.endTime).getTime() / timeManipulator;
     let durationInMilliseconds = (endTimeInMilliseconds - startTimeInMilliseconds);
+
     this.shortestEventDuration = this.getShortestEventDuraion() / timeManipulator;
 
     console.log('calulation result: ' + ((this.shortestEventDuration / durationInMilliseconds) * this.currentViewWidth))
@@ -139,18 +155,21 @@ export class DrawDataComponent implements OnChanges, OnInit {
 
       this.switchScrollState(false);
       console.log('no need for scroll bar');
-      this.eventFrames.forEach(item => {
-        const start = new Date(item.StartTime).getTime();
-        const end = new Date(item.EndTime).getTime();
-        // tslint:disable-next-line:max-line-length
-        item.duration = ( ((end) - (start)) );
-        // tslint:disable-next-line:max-line-length
-        item.width = ((( (end - start) ) / durationInMilliseconds) * this.currentViewWidth);
-        },
-        e => {
-          console.log(e);
-        }
-      )
+      this.element_ef.forEach(element => {
+        element.eventframes.forEach(item => {
+          const start = new Date(item.StartTime).getTime();
+          const end = new Date(item.EndTime).getTime();
+          // tslint:disable-next-line:max-line-length
+          item.duration = ( ((end) - (start)) );
+          // tslint:disable-next-line:max-line-length
+          item.width = ((( (end - start) ) / durationInMilliseconds) * this.currentViewWidth);
+          },
+          e => {
+            console.log(e);
+          }
+        )
+      });
+
       return
     } else { // Unable to fit all of the events within the symbol view withouth going below minimum pixel width
       // turn scroll on, reset the width of the symbol and resize the events based on the controls new width
@@ -163,18 +182,20 @@ export class DrawDataComponent implements OnChanges, OnInit {
       console.log(`screen size too small to display properly`);
       this.switchScrollState(true);
 
-      this.eventFrames.forEach(item => {
-          const start = new Date(item.StartTime).getTime();
-          const end = new Date(item.EndTime).getTime();
-          // tslint:disable-next-line:max-line-length
-          item.duration = ( end - start );
-          // tslint:disable-next-line:max-line-length
-          item.width = (( ((end - start)) / durationInMilliseconds) * updatedWidth);
-        },
-        e => {
-          console.log(e);
-        }
-      )
+      this.element_ef.forEach(element => {
+        element.eventframes.forEach(item => {
+            const start = new Date(item.StartTime).getTime();
+            const end = new Date(item.EndTime).getTime();
+            // tslint:disable-next-line:max-line-length
+            item.duration = ( end - start );
+            // tslint:disable-next-line:max-line-length
+            item.width = (( ((end - start)) / durationInMilliseconds) * updatedWidth);
+          },
+          e => {
+            console.log(e);
+          }
+        ) 
+      });
     }
   }
 
@@ -184,32 +205,36 @@ export class DrawDataComponent implements OnChanges, OnInit {
     let shortestDuration = 0;
     let loopDuration = 0;
 
-    if (this.eventFrames !== undefined) {
-      this.eventFrames.forEach(
-        eventFrame => {
-          startTimeCompare = new Date(eventFrame.StartTime).getTime();
-          endTimeCompare = new Date(eventFrame.EndTime).getTime();
-
-          if (loopDuration === 0) {
-            loopDuration = (endTimeCompare - startTimeCompare);
-            shortestDuration = loopDuration
-          } else {
-            loopDuration = (endTimeCompare - startTimeCompare)
+    this.element_ef.forEach(element => {
+      if (element.eventframes !== undefined) {
+        element.eventframes.forEach(
+          eventFrame => {
+            startTimeCompare = new Date(eventFrame.StartTime).getTime();
+            endTimeCompare = new Date(eventFrame.EndTime).getTime();
+  
+            if (loopDuration === 0) {
+              loopDuration = (endTimeCompare - startTimeCompare);
+              shortestDuration = loopDuration
+            } else {
+              loopDuration = (endTimeCompare - startTimeCompare)
+            }
+  
+            // is this the shortest duration so far, or is it the first itteration?
+            if (loopDuration < shortestDuration) {
+              shortestDuration = loopDuration;
+            }
+  
+          },
+          e => {
+            console.log(e);
           }
+        )
+      } else {
+        console.log(`no event frames to show`);
+      }
+    });
 
-          // is this the shortest duration so far, or is it the first itteration?
-          if (loopDuration < shortestDuration) {
-            shortestDuration = loopDuration;
-          }
-
-        },
-        e => {
-          console.log(e);
-        }
-      )
-    } else {
-      console.log(`no event frames to show`);
-    }
+    
     return shortestDuration;
   }
 
@@ -262,10 +287,14 @@ export class DrawDataComponent implements OnChanges, OnInit {
 
   // -------------------ANGUALR EVENTS--------------
   ngOnInit() {
-    setInterval(() => {
+    this.setInt = setInterval(() => {
       this.getPiVisionStartAndEndTime();
       this.GetEventFrames();
-      }, 5000);
+      }, 30000);
+  }
+
+  ngOnDestroy(){
+    clearInterval(this.setInt);
   }
 
   // This method is used to check the size of the div

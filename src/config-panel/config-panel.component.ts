@@ -14,6 +14,8 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     @Output() changeParam: EventEmitter<any> = new EventEmitter();
     @Output() changeSymbol: EventEmitter<any> = new EventEmitter<any>();
 
+    lstColor = [];
+
     elementcategory: any;
     elementsTOshow = [];
     EFcategory:any;
@@ -29,8 +31,23 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     listOfAttributeCategory:any = [];
 
     constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService) {
-        
-     }
+        this.lstColor.push('#b20000');
+        this.lstColor.push('#002171');
+        this.lstColor.push('#ffffff');
+        this.lstColor.push('#401212');
+        this.lstColor.push('#000000');
+        this.lstColor.push('#21142b');
+        this.lstColor.push('#1b685b');
+        this.lstColor.push('#965264');
+        this.lstColor.push('#136572');
+        this.lstColor.push('#bdcedd');
+        this.lstColor.push('#f89f86');
+    }
+
+    getColorByBgColor(bgColor) {
+        if (!bgColor) { return ''; }
+        return (parseInt(bgColor.replace('#', ''), 16) > 0xffffff / 2) ? '#000' : '#fff';
+    }
 
     BuildData(body) {
         this.values = [];
@@ -210,7 +227,7 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
             element: this.elementcategory,
             ef: this.EFtemplate,
             master: false,
-            Color: '#000000'
+            Color: '#b20000'
         }
         
         if(this.selectedELEF.length == 0){

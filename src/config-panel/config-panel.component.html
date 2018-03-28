@@ -43,8 +43,13 @@
                             <td>{{item.element.Name}}</td>
                             <td>{{item.ef.Name}}</td>
                             <td>
-                                <!--<input type="text" [(ngModel)]="item.ef.Color" [value]="item.Color"/>-->
-                                <span _ngcontent-c9="" style="display:inline-block"><!----><!----><!----><!----><!----><!----><!----><!----><!----><div _ngcontent-c9="" class="input-group config-color ng-star-inserted"><input _ngcontent-c9="" class="form-control ng-untouched ng-pristine ng-valid" osiautoblur="" type="text"><span _ngcontent-c9="" class="input-group-btn"><button _ngcontent-c9="" class="btn btn-secondary"><span _ngcontent-c9="" class="colorblock" style="margin: -1px 3px; background-color: white;"></span></button></span></div><!----><!----></span>
+                                <select [(ngModel)]="item.Color" [style.background-color]="item.Color">
+                                    <option *ngFor="let itemColor of lstColor" 
+                                            [style.background-color]="itemColor" 
+                                            [style.color]="getColorByBgColor(itemColor)" 
+                                            [selected]="itemColor === item.Color"
+                                            [value]="itemColor">{{itemColor}}</option>
+                                </select>
                             </td>
                             <td><input type="checkbox" [(ngModel)]="item.master" (change)="NewMaster(item)"/></td>
                         </tr>
@@ -91,7 +96,6 @@
                         <button class="button-submit" (click)="SubmitConf()">Submit</button>
                     </div>
                 </div>
-                
             </div>
         </div>
     </div>

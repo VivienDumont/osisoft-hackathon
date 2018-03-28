@@ -1,5 +1,3 @@
-<!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
-<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
   
   <div class="view" #view [ngClass]="scrollState">
@@ -7,33 +5,60 @@
     <div class="events" [style.background]="bkColor" #eventsDiv [ngStyle]="widthControl" >
       
       <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
-      <div class="event-row" *ngIf="eventFrames?.length > 0">
-        <div class="info">Grinding - line 1</div>
-        <div class="info">Daily Production</div>
-        <div *ngFor="let val of eventFrames;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth"  
-          id="{{ val.Id }}"
-          [style.background]="lineColor"
-          [style.height]="eventHeight">
-  
-          <div class="row-1">
-            <div>{{ val.TemplateName }}</div>
-            <div> {{ val.duration }}</div>
-          </div>
-          <div class="row-2">
-            <div></div>
-            <div></div>
-          </div>
-          <div class="row-3">
-            <div></div>
-            <div></div>
-          </div>
-        </div>
-        <div id="attribute-lists" class="card attr-lists">
-            <!-- <a [routerLink]="/" fragment="education" target="_blank" onclick="onClick" >Link To Attributes</a> -->
-        </div>
+      <div *ngFor="let item of element_ef">
+          <div class="event-row" *ngIf="item.eventframes?.length > 0">
+              <div class="info">{{item.elementName}}</div>
+              <div class="info">{{item.eventTypeName}}</div>
+              <div *ngFor="let val of item.eventframes;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
+                id="{{ val.Id }}"
+                [style.background]="lineColor"
+                [style.height]="eventHeight">
+        
+                <div class="row-1">
+                  <div></div>
+                  <div>{{ val.duration }}</div>
+                </div>
+                <div class="row-2">
+                  <div></div>
+                  <div></div>
+                </div>
+                <div class="row-3">
+                  <div></div>
+                  <div></div>
+                </div>
+              </div>
+              <span *ngIf="eventFrames?.length === 0">
+                No event frames in selected timeframe
+              </span>
+            </div>
+        <br/>
       </div>
-      <span *ngIf="eventFrames?.length === 0">
-          No event frames in selected timeframe
-        </span>
+      
+
+      <!-- <div class="event-row" *ngIf="eventFrames?.length > 0">
+          <div class="info">Grinding - line 2</div>
+          <div class="info">Daily Production</div>
+          <div *ngFor="let val of eventFrames1;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
+            id="{{ val.Id }}"
+            [style.background]="lineColor"
+            [style.height]="eventHeight">
+    
+            <div class="row-1">
+              <div>{{ val.TemplateName }}</div>
+              <div> {{ val.duration }}</div>
+            </div>
+            <div class="row-2">
+              <div></div>
+              <div></div>
+            </div>
+            <div class="row-3">
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+          <span *ngIf="eventFrames?.length === 0">
+            No event frames in selected timeframe
+          </span>
+        </div> -->
     </div>
   </div>
