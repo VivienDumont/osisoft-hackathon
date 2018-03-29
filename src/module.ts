@@ -58,9 +58,6 @@ export class ExtensionLibrary extends NgLibrary {
             { propName: 'startTimeCustom', displayName: 'Start Time', configType: ConfigPropType.Time },
             { propName: 'endTimeCustom', displayName: 'End Time', configType: ConfigPropType.Time },
             { propName: 'minimumEventPixelWidth', displayName: 'Min Event Width', configType: ConfigPropType.Num, defaultVal: 25 },
-<<<<<<< HEAD
-            { propName: 'showAttrInEventWidth', displayName: 'Event Width To Show Attr', configType: ConfigPropType.Num, defaultVal: 20 },
-=======
             { propName: 'showAttrInEventWidth', displayName: 'Event Width To Show Attr', configType: ConfigPropType.Num, defaultVal: 20 }
           ]
         },
@@ -93,7 +90,6 @@ export class ExtensionLibrary extends NgLibrary {
           configProps: [
             { propName: 'bkColor', displayName: 'Background color', configType: ConfigPropType.Color, defaultVal: 'white' },
             { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' },
->>>>>>> bd8257eb77b1ac46fb0fccb88522de64ad585178
             { propName: 'serverName', displayName: 'Server Name', configType: ConfigPropType.Text, defaultVal: 'PISRV01' }
           ]
         }
@@ -106,45 +102,6 @@ export class ExtensionLibrary extends NgLibrary {
       configCtors: [
         ConfigPanelComponent
       ],
-<<<<<<< HEAD
-      layoutWidth: 700,
-      layoutHeight: 600
-     },
-    // {
-    //   name: 'extract-data-symbol',
-    //   displayName: 'Extract Data Symbol',
-    //   dataParams: { shape: 'single' },
-    //   thumbnail: '^/assets/images/example.svg',
-    //   compCtor: ExtractDataComponent,
-    //   inputs: [
-    //     SymbolInputType.Data,
-    //     SymbolInputType.PathPrefix
-    //   ],
-    //   generalConfig: [
-    //     {
-    //       name: 'Extract Data Options',
-    //       isExpanded: true,
-    //       configProps: [
-    //         { propName: 'bkColor', displayName: 'Background color', configType: ConfigPropType.Color, defaultVal: 'white' },
-    //         { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' },
-    //         { propName: 'serverName', displayName: 'Server Name', configType: ConfigPropType.Text, defaultVal: 'PISRV01' }
-    //       ]
-    //     }
-    //   ],
-    //   customProps: [
-    //     {
-    //       propName: 'elementEfAttr', defaultVal: null
-    //     }
-    //   ],
-    //   menuCommands: [
-    //   ],
-    //   configCtors: [
-    //     ConfigPanelComponent
-    //   ],
-    //   layoutWidth: 200,
-    //   layoutHeight: 100
-    // }
-=======
       layoutWidth: 200,
       layoutHeight: 100
     },
@@ -172,6 +129,5 @@ export class ExtensionLibrary extends NgLibrary {
       layoutWidth: 200,
       layoutHeight: 100
     }
->>>>>>> bd8257eb77b1ac46fb0fccb88522de64ad585178
   ];
 }
