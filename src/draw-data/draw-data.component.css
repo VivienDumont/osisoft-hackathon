@@ -73,10 +73,15 @@
 }
 
 .info{
-  transform: rotate(90deg);
-  height:100%;
+  /* transform: rotate(90deg); */
+  /* height:100%;
   width:50px;
-  margin: 0 5px 0 5px;
+  margin: 0 5px 0 5px; */
+
+
+  width: 16px;
+  font-size: 16px;
+  word-wrap: break-word;
 
   /* Event css */
   border-radius: 3px;
