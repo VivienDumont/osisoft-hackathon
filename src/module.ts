@@ -32,6 +32,9 @@ export class ExtensionLibrary extends NgLibrary {
         SymbolInputType.Data,
         SymbolInputType.PathPrefix,
       ],
+      autoEventBindings:[
+        
+      ],
       generalConfig: [
         {
           name: 'DrawData Options',
@@ -56,9 +59,7 @@ export class ExtensionLibrary extends NgLibrary {
         }
       ],
       customProps: [
-        {
-          propName: 'elementEfAttr', defaultVal: null
-        }
+        { propName: 'elementEfAttr', defaultVal: null }
       ],
       menuCommands: [
       ],

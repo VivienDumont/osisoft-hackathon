@@ -13,8 +13,9 @@
           <div class="info">{{item.eventTypeName}}</div>
           <div *ngFor="let val of item.eventframes;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
             id="{{ val.Id }}"
-            [style.background]="item.Color"
-            [style.height]="eventHeight">
+            [style.background]="(IsBlank(val))? '#fff' : item.Color"
+            [style.height]="eventHeight"
+            [style.color]="getColorByBgColor(item.Color)">
     
             <div class="row-1">
               <div></div>

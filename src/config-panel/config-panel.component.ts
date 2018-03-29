@@ -183,10 +183,10 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     }
 
     ngOnChanges(changes) {
-        console.log('config panel');
+        //console.log('config panel');
         //console.log(this.paramIndex);
         //console.log(this.selectedSymbols);
-        console.log(changes);
+        //console.log(changes);
         if(changes){
             if(changes.selectedSymbols){
                 if(changes.selectedSymbols.currentValue && changes.selectedSymbols.currentValue.length > 0){
@@ -249,7 +249,7 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     }
 
     Delete(){
-        this.selectedELEF = this.selectedELEF.filter(obj => obj.element.WebId !== this.selectedelefRow.element.WebId || obj.ef.WebId !== this.selectedelefRow.ef.WebId)
+        this.selectedELEF = this.selectedELEF.filter(obj => obj.element.WebId !== this.selectedelefRow.element.WebId || obj.ef.WebId !== this.selectedelefRow.ef.WebId);
         if(this.selectedelefRow.master){
             if(this.selectedELEF.length>0){
                 this.selectedELEF[0].master=true;
@@ -287,7 +287,42 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     }
 
     SendToComponent(){
-        const body = this.selectedELEF;
+        const body = [];
+
+        this.selectedELEF.forEach(row => {
+            let to_add = {
+                element: {
+                    Name: row.element.Name,
+                    WebId: row.element.WebId
+                },
+                ef:{
+                    Name: row.ef.TemplateName,
+                    attributesTemplate: [],
+                    attributesTemplateCategories: []
+                },
+                Color: row.Color,
+                master: row.master
+            };
+
+            if(row.ef.attributesTemplate){
+                row.ef.attributesTemplate.forEach(attr => {
+                    let add_attr = {
+                        Name: attr.Name,
+                        position: attr.position
+                    };
+
+                    to_add.ef.attributesTemplate.push(add_attr);
+                });
+            }
+
+            if(row.ef.attributesTemplateCategories){
+                row.ef.attributesTemplateCategories.forEach(attr_cat => {
+                    to_add.ef.attributesTemplateCategories.push(attr_cat);
+                });
+            }
+            body.push(to_add);
+        });
+
         //{ props: { propName: value } , paramIndex: paramIdx }
         const message = {
             property: 'props',
