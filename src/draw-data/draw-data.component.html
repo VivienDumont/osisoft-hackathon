@@ -4,8 +4,10 @@
     <!-- <div class="events" [style.background]="bkColor" #eventsDiv [style.width]="minControlWidth" [ngStyle]="widthControl"  > -->
     <div class="events" [style.background]="bkColor" #eventsDiv [ngStyle]="widthControl" >
       <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
-      <div *ngFor="let item of element_ef">
-        <div class="info"> {{item.elementName}} / {{item.eventTypeName}} <i (onclick)="openHamMenu" class="fa fa-bars fa-lg"></i> </div>
+      <div *ngFor="let item of element_ef; let i = index">
+        <div *ngIf='i === 0' class="info first" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} <i (onclick)="openHamMenu" class="fa fa-bars fa-lg btn btn-info"></i> </div>
+        <div *ngIf='i > 0' class="info" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} <i (onclick)="openHamMenu" class="fa fa-bars fa-lg btn btn-info"></i> </div>
+
         <div class="event-row" *ngIf="item.eventframes?.length > 0">
           <div *ngFor="let val of item.eventframes;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
             id="{{ val.Id }}"

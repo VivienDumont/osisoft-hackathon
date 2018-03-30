@@ -365,7 +365,6 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     this.currentViewWidth = this.viewDiv.nativeElement.offsetWidth;
     if (this.currentViewWidth !== this.oldviewWidth) {
       this.oldviewWidth = this.currentViewWidth;
-      console.log(`redrawing component`);
       this.redrawComponent();
     } else {
       console.log('no change in screen size');
