@@ -281,6 +281,9 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
         })
         item.master = true;
     }
+    PositionAttribute(item){
+        
+    }
 
     SubmitConf(){
         this.SendToComponent();

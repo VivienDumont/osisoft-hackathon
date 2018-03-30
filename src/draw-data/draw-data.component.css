@@ -71,6 +71,17 @@
 
 .row-1 div, .row-2 div, .row-3 div{
   flex-basis: 100%;
+  font-size: 10px;
+}
+
+.row-0{
+  display: flex;
+}
+
+.row-0 div{
+  flex-basis: 100%;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .info{
