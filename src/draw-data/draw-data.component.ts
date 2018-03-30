@@ -141,24 +141,6 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
                 if(found.position > 0){
                   eventframe["slot"+found.position] = a.Name + ' : ' + r_a.Value;
                 }
-                // if(found.position == 1){
-                //   eventframe.slot1 = a.Name + ' : ' + r_a.Value;
-                // }
-                // if(found.position == 2){
-                //   eventframe.slot2 = a.Name + ' : ' + r_a.Value;
-                // }
-                // if(found.position == 3){
-                //   eventframe.slot3 = a.Name + ' : ' + r_a.Value;
-                // }
-                // if(found.position == 4){
-                //   eventframe.slot4 = a.Name + ' : ' + r_a.Value;
-                // }
-                // if(found.position == 5){
-                //   eventframe.slot5 = a.Name + ' : ' + r_a.Value;
-                // }
-                // if(found.position == 6){
-                //   eventframe.slot6 = a.Name + ' : ' + r_a.Value;
-                // }
               },
               e_a =>{
                 console.error(e_a);
