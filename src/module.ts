@@ -39,6 +39,9 @@ export class ExtensionLibrary extends NgLibrary {
         SymbolInputType.Data,
         SymbolInputType.PathPrefix,
       ],
+      autoEventBindings:[
+        
+      ],
       generalConfig: [
         {
           name: 'DrawData Options',
@@ -57,15 +60,44 @@ export class ExtensionLibrary extends NgLibrary {
             { propName: 'startTimeCustom', displayName: 'Start Time', configType: ConfigPropType.Time },
             { propName: 'endTimeCustom', displayName: 'End Time', configType: ConfigPropType.Time },
             { propName: 'minimumEventPixelWidth', displayName: 'Min Event Width', configType: ConfigPropType.Num, defaultVal: 25 },
-            { propName: 'showAttrInEventWidth', displayName: 'Event Width To Show Attr', configType: ConfigPropType.Num, defaultVal: 20 },
-            { propName: 'serverName', displayName: 'Server Name', configType: ConfigPropType.Text, defaultVal: 'PISRV01' }
+            { propName: 'showAttrInEventWidth', displayName: 'Event Width To Show Attr', configType: ConfigPropType.Num, defaultVal: 20 }
           ]
-        }
+        },
+      ],
+      configCtors: [
+        ConfigPanelComponent
       ],
       customProps: [
         {
           propName: 'elementEfAttr', defaultVal: null
         }
+      ],
+      layoutWidth: 700,
+      layoutHeight: 600
+    },
+    {
+      name: 'extract-data-symbol',
+      displayName: 'Extract Data Symbol',
+      dataParams: { shape: 'single' },
+      thumbnail: '^/assets/images/example.svg',
+      compCtor: ExtractDataComponent,
+      inputs: [
+        SymbolInputType.Data,
+        SymbolInputType.PathPrefix
+      ],
+      generalConfig: [
+        {
+          name: 'Extract Data Options',
+          isExpanded: true,
+          configProps: [
+            { propName: 'bkColor', displayName: 'Background color', configType: ConfigPropType.Color, defaultVal: 'white' },
+            { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' },
+            { propName: 'serverName', displayName: 'Server Name', configType: ConfigPropType.Text, defaultVal: 'PISRV01' }
+          ]
+        }
+      ],
+      customProps: [
+        { propName: 'elementEfAttr', defaultVal: null }
       ],
       menuCommands: [
       ],
@@ -99,42 +131,5 @@ export class ExtensionLibrary extends NgLibrary {
       layoutWidth: 200,
       layoutHeight: 100
     }
-    //   layoutWidth: 700,
-    //   layoutHeight: 600
-    //  }
-    // {
-    //   name: 'extract-data-symbol',
-    //   displayName: 'Extract Data Symbol',
-    //   dataParams: { shape: 'single' },
-    //   thumbnail: '^/assets/images/example.svg',
-    //   compCtor: ExtractDataComponent,
-    //   inputs: [
-    //     SymbolInputType.Data,
-    //     SymbolInputType.PathPrefix
-    //   ],
-    //   generalConfig: [
-    //     {
-    //       name: 'Extract Data Options',
-    //       isExpanded: true,
-    //       configProps: [
-    //         { propName: 'bkColor', displayName: 'Background color', configType: ConfigPropType.Color, defaultVal: 'white' },
-    //         { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' },
-    //         { propName: 'serverName', displayName: 'Server Name', configType: ConfigPropType.Text, defaultVal: 'PISRV01' }
-    //       ]
-    //     }
-    //   ],
-    //   customProps: [
-    //     {
-    //       propName: 'elementEfAttr', defaultVal: null
-    //     }
-    //   ],
-    //   menuCommands: [
-    //   ],
-    //   configCtors: [
-    //     ConfigPanelComponent
-    //   ],
-    //   layoutWidth: 200,
-    //   layoutHeight: 100
-    // }
   ];
 }
