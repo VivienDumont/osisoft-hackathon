@@ -239,8 +239,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       this.switchScrollState(true);
 
       this.element_ef.forEach(element => {
-        if (element.eventframes) {
-
+        if(element.eventframes){
+          
           element.eventframes.forEach(item => {
               const start = new Date(item.StartTime).getTime();
               const end = new Date(item.EndTime).getTime();
