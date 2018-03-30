@@ -9,6 +9,7 @@ import { DOCUMENT } from '@angular/platform-browser';
 import { PIWEBAPI_TOKEN } from '../framework';
 import { PiWebApiService } from '@osisoft/piwebapi';
 
+
 @Component({
   selector: 'draw-data',
   templateUrl: 'draw-data.component.html',
@@ -60,12 +61,24 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
   // tslint:disable-next-line:max-line-length
   constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService,
-              @Inject(DOCUMENT) private document: any, 
-              private _elRef: ElementRef, 
-              private renderer: Renderer2, 
-              private changeDetector: ChangeDetectorRef) { 
-    
+              @Inject(DOCUMENT) private document: any,
+              private _elRef: ElementRef,
+              private renderer: Renderer2,
+              private changeDetector: ChangeDetectorRef) {
+
   }
+
+  // openHamMenu(): void {
+  //   let dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+  //     width: '250px',
+  //     data: { name: this.name, animal: this.animal }
+  //   });
+
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     console.log('The dialog was closed');
+  //     this.animal = result;
+  //   });
+  // }
 
   private GetEventFrames() {
     if (this.stop_search) {
@@ -74,8 +87,6 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     if (!this.elementEfAttr){
       return;
     }
-    // tslint:disable-next-line:comment-format
-    // tslint:disable-next-line:max-line-length
 
     const body = {};
 

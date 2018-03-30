@@ -1,12 +1,13 @@
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<link href="/node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css" rel="stylesheet">
   
   <div class="view" #view [ngClass]="scrollState">
     <!-- <div class="events" [style.background]="bkColor" #eventsDiv [style.width]="minControlWidth" [ngStyle]="widthControl"  > -->
     <div class="events" [style.background]="bkColor" #eventsDiv [ngStyle]="widthControl" >
       <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
       <div *ngFor="let item of element_ef; let i = index">
-        <div *ngIf='i === 0' class="info first" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} <i (onclick)="openHamMenu" class="fa fa-bars fa-lg btn btn-info"></i> </div>
-        <div *ngIf='i > 0' class="info" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} <i (onclick)="openHamMenu" class="fa fa-bars fa-lg btn btn-info"></i> </div>
+        <div *ngIf='i === 0' class="info first" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} <span style="float:right; margin-right:10px;"> <i (onclick)="openHamMenu" class="fa fa-bars fa-lg btn btn-info"></i></span> </div>
+        <div *ngIf='i > 0' class="info" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} <span style="float:right; margin-right:10px;"><i (onclick)="openHamMenu" class="fa fa-bars fa-lg btn btn-info"></i></span> </div>
 
         <div class="event-row" *ngIf="item.eventframes?.length > 0">
           <div *ngFor="let val of item.eventframes;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
