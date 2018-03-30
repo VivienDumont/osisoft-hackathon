@@ -13,11 +13,13 @@ import { DrawDataComponent } from './draw-data/draw-data.component';
 import { ConfigPanelComponent } from './config-panel/config-panel.component';
 import { DataGridComponent } from './data-grid/data-grid.component';
 
+// const routes: Router = [];
+
 @NgModule({
   declarations: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent ],
   imports: [ CommonModule, FormsModule, RouterModule ],
-  exports: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent, ],
-  entryComponents: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent,  ]
+  exports: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent , DataGridComponent ],
+  entryComponents: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent  ]
 })
 
 export class LibModule { }
@@ -129,5 +131,42 @@ export class ExtensionLibrary extends NgLibrary {
       layoutWidth: 200,
       layoutHeight: 100
     }
+    //   layoutWidth: 700,
+    //   layoutHeight: 600
+    //  }
+    // {
+    //   name: 'extract-data-symbol',
+    //   displayName: 'Extract Data Symbol',
+    //   dataParams: { shape: 'single' },
+    //   thumbnail: '^/assets/images/example.svg',
+    //   compCtor: ExtractDataComponent,
+    //   inputs: [
+    //     SymbolInputType.Data,
+    //     SymbolInputType.PathPrefix
+    //   ],
+    //   generalConfig: [
+    //     {
+    //       name: 'Extract Data Options',
+    //       isExpanded: true,
+    //       configProps: [
+    //         { propName: 'bkColor', displayName: 'Background color', configType: ConfigPropType.Color, defaultVal: 'white' },
+    //         { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' },
+    //         { propName: 'serverName', displayName: 'Server Name', configType: ConfigPropType.Text, defaultVal: 'PISRV01' }
+    //       ]
+    //     }
+    //   ],
+    //   customProps: [
+    //     {
+    //       propName: 'elementEfAttr', defaultVal: null
+    //     }
+    //   ],
+    //   menuCommands: [
+    //   ],
+    //   configCtors: [
+    //     ConfigPanelComponent
+    //   ],
+    //   layoutWidth: 200,
+    //   layoutHeight: 100
+    // }
   ];
 }

@@ -3,7 +3,11 @@
  * Copyright © 2017-2018 OSIsoft, LLC. All rights reserved.
  * Use of this source code is governed by the terms in the accompanying LICENSE file.
  */
+<<<<<<< HEAD
 import { Component, Input, OnChanges, ElementRef, Inject, OnInit, ViewChild, Renderer2, OnDestroy, ChangeDetectorRef } from '@angular/core';
+=======
+import { Component, Input, OnChanges, ElementRef, Inject, OnInit, ViewChild, Renderer2, OnDestroy } from '@angular/core';
+>>>>>>> fd1069c73764efda30cfda178fe5608584bd7654
 import { RouterLink } from '@angular/router';
 import { DOCUMENT } from '@angular/platform-browser';
 import { PIWEBAPI_TOKEN } from '../framework';
@@ -79,14 +83,17 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     
     const body = {};
 
-    let index=0;
-    this.elementEfAttr.forEach(element => {
-      body[""+index]={
-        'Method': 'GET',
-        'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}&searchMode=Inclusive`
-      }
-      index++;
-    });
+    let index = 0;
+    if (this.elementEfAttr !== undefined) {
+      this.elementEfAttr.forEach(element => {
+        body[""+index]={
+          'Method': 'GET',
+          'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
+        }
+        index++;
+      });
+    }
+
 
     this.piWebApiService.batch.execute$(body)
     .subscribe(
@@ -326,7 +333,9 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     return dateString;
   }
 
-  onClick() {
+  openGridDisplay(Id: string) {
+    // tslint:disable-next-line:max-line-length
+    window.open('display?id=F1EmwcQX-gVflkWbQKYW5nMT5QTaXLeZcy6BGpYQANOjr-FgUElTUlYwMVxQSSBWSVNJT05cUEkgVklTSU9OXERPQ1VNRU5UU1xHUklE&' + Id, '_blank');
     // this._router.navigate(['/display', {queryParams: {'id': this.num}}])
   }
 
