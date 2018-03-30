@@ -3,11 +3,7 @@
  * Copyright © 2017-2018 OSIsoft, LLC. All rights reserved.
  * Use of this source code is governed by the terms in the accompanying LICENSE file.
  */
-<<<<<<< HEAD
 import { Component, Input, OnChanges, ElementRef, Inject, OnInit, ViewChild, Renderer2, OnDestroy, ChangeDetectorRef } from '@angular/core';
-=======
-import { Component, Input, OnChanges, ElementRef, Inject, OnInit, ViewChild, Renderer2, OnDestroy } from '@angular/core';
->>>>>>> fd1069c73764efda30cfda178fe5608584bd7654
 import { RouterLink } from '@angular/router';
 import { DOCUMENT } from '@angular/platform-browser';
 import { PIWEBAPI_TOKEN } from '../framework';
