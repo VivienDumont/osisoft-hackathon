@@ -70,14 +70,17 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     
     const body = {};
 
-    let index=0;
-    this.elementEfAttr.forEach(element => {
-      body[""+index]={
-        'Method': 'GET',
-        'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
-      }
-      index++;
-    });
+    let index = 0;
+    if (this.elementEfAttr !== undefined) {
+      this.elementEfAttr.forEach(element => {
+        body[""+index]={
+          'Method': 'GET',
+          'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
+        }
+        index++;
+      });
+    }
+
 
     this.piWebApiService.batch.execute$(body)
     .subscribe(
@@ -184,7 +187,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       this.switchScrollState(true);
 
       this.element_ef.forEach(element => {
-        element.eventframes.forEach(item => {
+          element.eventframes.forEach(item => {
             const start = new Date(item.StartTime).getTime();
             const end = new Date(item.EndTime).getTime();
             // tslint:disable-next-line:max-line-length
@@ -195,7 +198,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
           e => {
             console.log(e);
           }
-        ) 
+        )
       });
     }
   }
@@ -268,7 +271,9 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     return dateString;
   }
 
-  onClick() {
+  openGridDisplay(Id: string) {
+    // tslint:disable-next-line:max-line-length
+    window.open('display?id=F1EmwcQX-gVflkWbQKYW5nMT5QTaXLeZcy6BGpYQANOjr-FgUElTUlYwMVxQSSBWSVNJT05cUEkgVklTSU9OXERPQ1VNRU5UU1xHUklE&' + Id, '_blank');
     // this._router.navigate(['/display', {queryParams: {'id': this.num}}])
   }
 

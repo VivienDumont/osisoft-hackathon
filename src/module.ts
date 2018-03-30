@@ -13,11 +13,13 @@ import { DrawDataComponent } from './draw-data/draw-data.component';
 import { ConfigPanelComponent } from './config-panel/config-panel.component';
 import { DataGridComponent } from './data-grid/data-grid.component';
 
+// const routes: Router = [];
+
 @NgModule({
   declarations: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent ],
   imports: [ CommonModule, FormsModule, RouterModule ],
-  exports: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent, ],
-  entryComponents: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent,  ]
+  exports: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent , DataGridComponent ],
+  entryComponents: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent  ]
 })
 
 export class LibModule { }
