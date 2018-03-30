@@ -118,7 +118,7 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
                             const lst_cat_attr = [];
                             r_a.Items.forEach(attr => {
                                 attr.CategoryNames.forEach(cat_attr => {
-                                    const found = lst_cat_attr.find(x => x === cat_attr);
+                                    const found = lst_cat_attr.find(x => x.name.indexOf(cat_attr)+1);
                                     if(!found){
                                         lst_cat_attr.push({name: cat_attr, select: false});
                                     }
@@ -296,7 +296,8 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
                     WebId: row.element.WebId
                 },
                 ef:{
-                    Name: row.ef.TemplateName,
+                    WebId: row.ef.WebId,
+                    Name: row.ef.Name,
                     attributesTemplate: [],
                     attributesTemplateCategories: []
                 },
@@ -351,5 +352,9 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
         }
         arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);  
         return arr;
+    }
+
+    CheckPositionOfAttribute(attr){
+        //const 
     }
 }

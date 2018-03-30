@@ -17,15 +17,15 @@
             [style.height]="eventHeight"
             [style.color]="getColorByBgColor(item.Color)">
     
-            <div class="row-1">
+            <div class="row-1" *ngIf="!IsBlank(val)">
               <div></div>
               <div>{{ val.duration }}</div>
             </div>
-            <div class="row-2">
+            <div class="row-2" *ngIf="!IsBlank(val)">
               <div></div>
               <div></div>
             </div>
-            <div class="row-3">
+            <div class="row-3" *ngIf="!IsBlank(val)">
               <div></div>
               <div></div>
             </div>

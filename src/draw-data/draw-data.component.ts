@@ -64,8 +64,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
               private _elRef: ElementRef, 
               private renderer: Renderer2, 
               private changeDetector: ChangeDetectorRef) { 
-
-              }
+    
+  }
 
   private GetEventFrames() {
     if(this.stop_search){
@@ -83,7 +83,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     this.elementEfAttr.forEach(element => {
       body[""+index]={
         'Method': 'GET',
-        'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
+        'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}&searchMode=Inclusive`
       }
       index++;
     });
@@ -95,22 +95,23 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
         let i = 0;
         let req = r.body[i];
         while(req){
-          const items = req.Content.Items.filter(x => x.TemplateName === this.elementEfAttr[i].ef.Name 
-                                              || x.TemplateName.indexOf(this.elementEfAttr[i].ef.Name)+1
-                                              || this.elementEfAttr[i].ef.Name.indexOf(x.TemplateName)+1);
-          this.AddBlankEvent(items);
-          this.element_ef[i] = {
-            elementName: this.elementEfAttr[i].element.Name,
-            eventTypeName: this.elementEfAttr[i].ef.Name,
-            eventframes: items,
-            Color: this.elementEfAttr[i].Color
-          };
+          if(req.Content.Items){
+            const items = req.Content.Items.filter(x => x.TemplateName === this.elementEfAttr[i].ef.Name 
+                                                || x.TemplateName.indexOf(this.elementEfAttr[i].ef.Name)+1
+                                                || this.elementEfAttr[i].ef.Name.indexOf(x.TemplateName)+1);
+            this.AddBlankEvent(items);
+            this.element_ef[i] = {
+              elementName: this.elementEfAttr[i].element.Name,
+              eventTypeName: this.elementEfAttr[i].ef.Name,
+              eventframes: items,
+              Color: this.elementEfAttr[i].Color
+            };
+          }
+          
           i++;
           req = r.body[i];
         }
         this.redrawComponent();
-        //this.eventFrames = r.body[0].Content.Items;
-        //this.eventFrames1 = r.body[2].Content.Items;
       },
       e => {
         console.error(e);
@@ -122,7 +123,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     const start = new Date(this.startTime);
     const end = new Date(this.endTime);
 
-    if(eventframes.length>0){
+    if(eventframes.length > 0){
       let temp_start = start;
       let temp_end = new Date(eventframes[0].StartTime);
       for (let index = 0; index < eventframes.length; index++) {
@@ -140,17 +141,22 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
           next_ef = true;
         }
         temp_start = new Date(ef.EndTime);
-        if(next_ef){
-          temp_end = new Date( (eventframes[index])? eventframes[index].StartTime: end )
-        } else {
-          temp_end = new Date( (eventframes[index+1])? eventframes[index+1].StartTime: end )
-        }
+        // if(next_ef){
+        //   temp_end = new Date( (eventframes[index])? eventframes[index].StartTime: end )
+        // } else {
+        temp_end = new Date( (eventframes[index+1])? eventframes[index+1].StartTime: end )
+        //}
       }
+      eventframes.push({
+        StartTime: temp_start.toString(),
+        EndTime: temp_end.toString(),
+        isBlank: true
+      });
     }
   }
 
   IsBlank(ef){
-    if(ef.isBlank){
+    if (ef.isBlank) {
       return ef.isBlank;
     }
     return false;
@@ -161,10 +167,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     this.startTime = all_input_datetime[all_input_datetime.length-2].value;
     this.endTime = all_input_datetime[all_input_datetime.length-1].value;
 
-    const st = new Date(this.startTime);
-    const en = new Date(this.endTime);
-
-    this.stop_search = en < st;
+    this.stop_search = new Date(this.endTime) < new Date(this.startTime);
     // tslint:disable-next-line:max-line-length
     // let dateRegEx;
     // -----THIS IS FOR RELATIVE DATE CONFIGURATION --- NOT QUITE WORKING YET
@@ -344,6 +347,10 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   // -------------------ANGUALR EVENTS--------------
   ngOnInit() {
     this.ReSetInterval();
+    // this.viewDiv.nativeElement.onscroll = function(e){
+    //   console.log('is scrolling');
+    //   console.log(e);
+    // }
   }
 
   ngOnDestroy(){
@@ -380,8 +387,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     }
 
     if(changes.elementEfAttr){
-      console.log('element ef attr');
       if(changes.elementEfAttr.currentValue){
+        console.log('element ef attr');
         this.elementEfAttr = changes.elementEfAttr.currentValue;
         this.ReSetInterval();
       }
