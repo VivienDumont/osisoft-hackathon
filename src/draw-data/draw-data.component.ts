@@ -56,6 +56,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   completed = true;
   scrollOn: boolean;
   stop_search: boolean = false;
+  showMenu = {};
 
   setInt: any;
 
@@ -68,17 +69,15 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
   }
 
-  // openHamMenu(): void {
-  //   let dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
-  //     width: '250px',
-  //     data: { name: this.name, animal: this.animal }
-  //   });
+  openHamMenu(): void {
+    console.log('Opening dropdown');
+    this.showMenu = !this.showMenu
 
-  //   dialogRef.afterClosed().subscribe(result => {
-  //     console.log('The dialog was closed');
-  //     this.animal = result;
-  //   });
-  // }
+    this.showMenu = {
+      'show-menu' : this.showMenu,
+      'hide-menu' : !this.showMenu
+    }
+  }
 
   private GetEventFrames() {
     if (this.stop_search) {
