@@ -102,24 +102,27 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     .subscribe(
       r => {
         this.element_ef = [];
-        let i = 0;
-        let req = r.body[i];
-        while (req) {
-          if (req.Content.Items) {
-            const items = req.Content.Items.filter(x => x.TemplateName === this.elementEfAttr[i].ef.Name 
-                                                || x.TemplateName.indexOf(this.elementEfAttr[i].ef.Name) + 1
-                                                || this.elementEfAttr[i].ef.Name.indexOf(x.TemplateName) + 1);
+        let index = 0;
+        let req = r.body[index];
+        while(req){
+          if(req.Content.Items){
+            const items = req.Content.Items.filter(x => x.TemplateName === this.elementEfAttr[index].ef.Name 
+                                                || x.TemplateName.indexOf(this.elementEfAttr[index].ef.Name)+1
+                                                || this.elementEfAttr[index].ef.Name.indexOf(x.TemplateName)+1);
+            items.forEach(i => {
+              this.GetAttributeAndValue(i,index);
+            });
             this.AddBlankEvent(items);
-            this.element_ef[i] = {
-              elementName: this.elementEfAttr[i].element.Name,
-              eventTypeName: this.elementEfAttr[i].ef.Name,
+            this.element_ef[index] = {
+              elementName: this.elementEfAttr[index].element.Name,
+              eventTypeName: this.elementEfAttr[index].ef.Name,
               eventframes: items,
-              Color: this.elementEfAttr[i].Color
+              Color: this.elementEfAttr[index].Color
             };
           }
           
-          i++;
-          req = r.body[i];
+          index++;
+          req = r.body[index];
         }
         this.redrawComponent();
       },
@@ -129,7 +132,38 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     );
   }
 
-  public AddBlankEvent(eventframes) {
+  GetAttributeAndValue(eventframe, index){
+    this.piWebApiService.eventFrame.getAttributes$(eventframe.WebId)
+    .subscribe(
+      r => {
+        let lst_toAdd = [];
+        const lst_attr = r.Items;
+        const lst_of_attr_conf = this.elementEfAttr[index].ef.attributesTemplate;        
+        lst_attr.forEach(a => {
+          const found = lst_of_attr_conf.find(x => x.Name === a.Name && x.position);
+          if(found){
+            this.piWebApiService.stream.getValue$(a.WebId)
+            .subscribe(
+              r_a => {
+                if(found.position > 0){
+                  eventframe["slot"+found.position] = a.Name + ' : ' + r_a.Value;
+                }
+              },
+              e_a =>{
+                console.error(e_a);
+              }
+            );
+          }
+          
+        });
+      },
+      e => {
+        console.error(e);
+      }
+    );
+  }
+
+  public AddBlankEvent(eventframes){
     const start = new Date(this.startTime);
     const end = new Date(this.endTime);
 

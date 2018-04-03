@@ -34,19 +34,23 @@
             id="{{ val.Id }}"
             [style.background]="(IsBlank(val))? '#fff' : item.Color"
             [style.height]="eventHeight"
-            [style.color]="getColorByBgColor(item.Color)">
-    
-            <div class="row-1" *ngIf="!IsBlank(val)">
-              <div></div>
+            [style.color]="getColorByBgColor(item.Color)" [title]="!IsBlank(val)? val.StartTime + ' => ' + val.EndTime : ''">
+
+            <div class="row-0" *ngIf="!IsBlank(val) && val.width > 50">
+              <div>{{ val.StartTime }}</div>
+              <div>{{ val.EndTime }}</div>
+            </div>
+            <div class="row-1" *ngIf="!IsBlank(val) && val.width > 50">
               <div>{{ val.slot1 }}</div>
+              <div>{{ val.slot2 }}</div>
             </div>
-            <div class="row-2" *ngIf="!IsBlank(val)">
-              <div></div>
-              <div></div>
+            <div class="row-2" *ngIf="!IsBlank(val) && val.width > 50">
+              <div>{{ val.slot3 }}</div>
+              <div>{{ val.slot4 }}</div>
             </div>
-            <div class="row-3" *ngIf="!IsBlank(val)">
-              <div></div>
-              <div></div>
+            <div class="row-3" *ngIf="!IsBlank(val) && val.width > 50">
+              <div>{{ val.slot5 }}</div>
+              <div>{{ val.slot6 }}</div>
             </div>
           </div>
           <span *ngIf="eventFrames?.length === 0">
