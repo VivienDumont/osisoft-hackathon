@@ -57,6 +57,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   completed = true;
   scrollOn: boolean;
   stop_search: boolean = false;
+  isByTime: boolean = false;
+  
 
   setInt: any;
 
@@ -83,6 +85,97 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     window.open('display?id=F1EmwcQX-gVflkWbQKYW5nMT5Qvs6AcM0t6BGpYAANOjr-FgUElTUlYwMVxQSSBWSVNJT05cUEkgVklTSU9OXERPQ1VNRU5UU1xWRFVNT05UL1RFU1Qx&el_id=' + Id, '_blank');
     this.element_ef[index].showMenu = !this.element_ef[index].showMenu;
   }
+
+  // GoBefore(){
+  //   if(this.isByTime){
+  //     this.starttime = this.eventFrames[0].StartTime + '-24h';
+  //     this.endtime = this.eventFrames[0].StartTime;
+  //     this.lst_attribute = [];
+  //   } else {
+  //     this.starttime = this.eventFrames[0].StartTime;
+  //   }
+  //   //clearInterval(this.intervalNum);
+  //   this.GetEventFrames();
+
+  //   // this.intervalNum = setInterval(() => {
+  //   //   this.GetEventFrames();
+  //   // }, 10000);
+  // }
+
+  // GoAfter(){
+  //   if(this.eventFrames[this.eventFrames.length-1].EndTime !== '-'){
+  //     if(this.isByTime){
+  //       this.lst_attribute = [];
+  //     } else {
+
+  //     }
+
+  //     this.starttime = this.eventFrames[this.eventFrames.length-1].EndTime;
+  //     this.endtime = this.eventFrames[this.eventFrames.length-1].EndTime + '+24h';
+  //     //clearInterval(this.intervalNum);
+  //     this.GetEventFrames('ForwardFromStartTime');
+
+  //     // this.intervalNum = setInterval(() => {
+  //     //   this.GetEventFrames('ForwardFromStartTime');
+  //     // }, 10000);
+  //   }
+  // }
+
+  // private GetEventFramesMaster(searchMode: string = 'BackwardFromStartTime') {
+  //   this.element_ef
+  //   if(this.element_ef.length)
+  //   {
+
+  //   }
+
+  //   let url = '';
+  //   let masterWebId = this.elementEfAttr.find(x => x.master).element.webId;
+  //   let eftype = this.elementEfAttr.find(x => x.master).ef.Name;
+  //   if(this.isByTime) {
+  //     url = `https://pisrv01.pischool.int/piwebapi/elements/${masterWebid}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}&searchMode=Inclusive`;
+  //   } else {
+  //     url = `https://pisrv01.pischool.int/piwebapi/elements/${masterWebid}/eventframes?starttime=${this.starttime}&searchMode=${searchMode}`;
+  //   }
+
+  //   const body = {
+  //     "0":{
+  //       "Method": "GET",
+  //       "Resource": url
+  //     }
+  //   };
+
+  //   this.piWebApiService.batch.execute$(body)
+  //   .subscribe(
+  //     r => {
+  //       if(r.body[0].Content.Items.length == 0){
+  //         return;
+  //       }
+        
+  //       this.eventFrames = r.body[0].Content.Items.filter(x => x.TemplateName === eftype || x.TemplateName.indexOf(this.eftype)+1 || this.eftype.indexOf(x.TemplateName)+1);
+        
+  //       if(!this.isByTime){
+  //         this.eventFrames = this.eventFrames.slice(0,3);
+  //       }
+        
+  //       if(searchMode === 'BackwardFromStartTime'){
+  //         this.eventFrames = this.eventFrames.reverse();
+  //       }
+
+  //       // this.lst_range = [];
+  //       // this.eventFrames.forEach((ef, index) => {
+  //       //   const toadd = {
+  //       //     StartTime: ef.StartTime.replace('T', ' ').replace('Z', ''),
+  //       //     EndTime: (ef.EndTime.indexOf('9999')+1)? '-' : ef.EndTime.replace('T', ' ').replace('Z', '')
+  //       //   }
+  //       //   this.lst_range.push(toadd);
+  //       //   this.GetAttributes(ef, index);
+  //       // });
+  //     },
+  //     e => {
+  //       console.error(e);
+  //     }
+  //   );
+  // }
 
   private GetEventFrames() {
     if (this.stop_search) {

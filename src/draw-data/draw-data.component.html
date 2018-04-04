@@ -11,7 +11,16 @@
     <div class="events" [style.background]="bkColor" #eventsDiv [ngStyle]="widthControl" >
       <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
       <nav class="header-nav" [style.width.px]="currentViewWidth">
-        I am the navigation
+        <!-- <button (click)="GoBefore()">&lArr;</button>
+          Move by 3 events
+          <span>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="isByTime" [value]="isByTime">
+              <span class="slider round" ></span>
+            </label>
+          </span>
+          Move by Time (24h)
+          <button (click)="GoAfter()">&rArr;</button> -->
         <span class="header-adjust"> <i  class="fa fa-clock-o fa-lg btn btn-success" (click)="toggleNavMenu()"></i></span>
 
         <div id="myDropdown" class="dropdown-content" [style.visibility]="(showTimeMenu) ? 'visible' : 'hidden'">
