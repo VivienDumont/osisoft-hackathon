@@ -56,7 +56,6 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   completed = true;
   scrollOn: boolean;
   stop_search: boolean = false;
-  showMenu = {};
 
   setInt: any;
 
@@ -69,14 +68,14 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
   }
 
-  openHamMenu(): void {
-    console.log('Opening dropdown');
-    this.showMenu = !this.showMenu
+  toggleCategoryMenu(index: number): void {
+    this.element_ef[index].showMenu = !this.element_ef[index].showMenu;
+  }
 
-    this.showMenu = {
-      'show-menu' : this.showMenu,
-      'hide-menu' : !this.showMenu
-    }
+  openGridDisplay(Id: string, index: number): void {
+    // tslint:disable-next-line:max-line-length
+    window.open('display?id=F1EmwcQX-gVflkWbQKYW5nMT5Qvs6AcM0t6BGpYAANOjr-FgUElTUlYwMVxQSSBWSVNJT05cUEkgVklTSU9OXERPQ1VNRU5UU1xWRFVNT05UL1RFU1Qx&el_id=' + Id, '_blank');
+    this.element_ef[index].showMenu = !this.element_ef[index].showMenu;
   }
 
   private GetEventFrames() {
@@ -116,9 +115,12 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
             this.element_ef[index] = {
               elementName: this.elementEfAttr[index].element.Name,
               eventTypeName: this.elementEfAttr[index].ef.Name,
+              efWebId: this.elementEfAttr[index].ef.WebId,
               eventframes: items,
-              Color: this.elementEfAttr[index].Color
+              Color: this.elementEfAttr[index].Color,
+              attributesTemplateCategories: this.elementEfAttr[index].ef.attributesTemplateCategories
             };
+            
           }
           
           index++;
@@ -140,21 +142,23 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
         const lst_attr = r.Items;
         const lst_of_attr_conf = this.elementEfAttr[index].ef.attributesTemplate;        
         lst_attr.forEach(a => {
-          const found = lst_of_attr_conf.find(x => x.Name === a.Name && x.position);
-          if(found){
-            this.piWebApiService.stream.getValue$(a.WebId)
-            .subscribe(
-              r_a => {
-                if(found.position > 0){
-                  eventframe["slot"+found.position] = a.Name + ' : ' + r_a.Value;
+          if (lst_of_attr_conf.length > 0) {
+            const found = lst_of_attr_conf.find(x => x.Name === a.Name && x.position);
+            if(found){
+              this.piWebApiService.stream.getValue$(a.WebId)
+              .subscribe(
+                r_a => {
+                  if(found.position > 0){
+                    eventframe["slot"+found.position] = a.Name + ' : ' + r_a.Value;
+                  }
+                },
+                e_a =>{
+                  console.error(e_a);
                 }
-              },
-              e_a =>{
-                console.error(e_a);
-              }
-            );
+              );
+            }
           }
-          
+
         });
       },
       e => {
@@ -162,6 +166,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       }
     );
   }
+
+  //
 
   public AddBlankEvent(eventframes){
     const start = new Date(this.startTime);
@@ -370,11 +376,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     return dateString;
   }
 
-  openGridDisplay(Id: string) {
-    // tslint:disable-next-line:max-line-length
-    window.open('display?id=F1EmwcQX-gVflkWbQKYW5nMT5QTaXLeZcy6BGpYQANOjr-FgUElTUlYwMVxQSSBWSVNJT05cUEkgVklTSU9OXERPQ1VNRU5UU1xHUklE&' + Id, '_blank');
-    // this._router.navigate(['/display', {queryParams: {'id': this.num}}])
-  }
+  
 
     // this method is for NgClass. we can use this when we want to change the class of a component based on if it is in progress or not.
   switchScrollState(scroll: boolean) {

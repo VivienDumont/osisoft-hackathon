@@ -12,20 +12,22 @@
       <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
       <div *ngFor="let item of element_ef; let i = index">
         <div *ngIf='i === 0' class="info first" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} 
-          <span style="float:right; margin-right:10px;"> <i  class="fa fa-bars fa-lg btn btn-info" (click)="openHamMenu()"></i></span>
-          <div id="myDropdown" class="dropdown-content" [ngClass]="showMenu">
-              <a href="#home">Home</a>
-              <a href="#about">About</a>
-              <a href="#contact">Contact</a>
+          <span style="float:right; margin-right:10px;"> <i  class="fa fa-bars fa-lg btn btn-info" (click)="toggleCategoryMenu(i)"></i></span>
+          <div id="myDropdown" class="dropdown-content" [style.visibility]="(item?.showMenu) ? 'visible' : 'hidden'">
+              <li *ngIf="item.attributesTemplateCategories.length > 0">
+                <a *ngFor="let category of item.attributesTemplateCategories" (click)="openGridDisplay(item.efWebId, i)">{{category.name}}</a>
+              </li>
+              <li *ngIf="item.attributesTemplateCategories.length < 0">No Category Data</li>
             </div>
          </div>
          
         <div *ngIf='i > 0' class="info" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} 
-          <span style="float:right; margin-right:10px;"> <i class="fa fa-bars fa-lg btn btn-info" (click)="openHamMenu()"></i> </span> 
-          <div id="myDropdown" class="dropdown-content" [ngClass]="showMenu">
-              <a href="#home">Home</a>
-              <a href="#about">About</a>
-              <a href="#contact">Contact</a>
+          <span style="float:right; margin-right:10px;"> <i class="fa fa-bars fa-lg btn btn-info" (click)="toggleCategoryMenu(i)"></i> </span> 
+          <div id="myDropdown" class="dropdown-content" [style.visibility]="(item?.showMenu) ? 'visible' : 'hidden'">
+              <li *ngIf="item.attributesTemplateCategories.length > 0">
+                <a *ngFor="let category of item.attributesTemplateCategories" (click)="openGridDisplay(item.efWebId, i)">{{ category.name }}</a>
+              </li>
+              <li *ngIf="item.attributesTemplateCategories.length < 0">No Category Data</li>
             </div>
         </div>
 

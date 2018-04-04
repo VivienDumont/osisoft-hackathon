@@ -33,7 +33,7 @@ export class ExtensionLibrary extends NgLibrary {
       name: 'draw-data-symbol',
       displayName: 'DrawData Symbol',
       dataParams: { shape: 'single' },
-      thumbnail: '^/assets/images/example.svg',
+      thumbnail: '^/assets/images/Symasol.png',
       compCtor: DrawDataComponent,
       inputs: [
         SymbolInputType.Data,
