@@ -7,6 +7,7 @@ import { RouterModule, Routes, Router } from '@angular/router';
 import { NgLibrary, SymbolType, SymbolInputType, ConfigPropType } from './framework';
 import { LibModuleNgFactory } from './module.ngfactory';
 
+
 import { ExampleComponent } from './example/example.component';
 import { ExtractDataComponent } from './extract-data/extract-data.component';
 import { DrawDataComponent } from './draw-data/draw-data.component';
@@ -17,9 +18,9 @@ import { DataGridComponent } from './data-grid/data-grid.component';
 
 @NgModule({
   declarations: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent ],
-  imports: [ CommonModule, FormsModule, RouterModule ],
+  imports: [ CommonModule, FormsModule, RouterModule.forRoot([]) ],
   exports: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent , DataGridComponent ],
-  entryComponents: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent  ]
+  entryComponents: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent ]
 })
 
 export class LibModule { }
@@ -123,8 +124,7 @@ export class ExtensionLibrary extends NgLibrary {
           isExpanded: true,
           configProps: [
             { propName: 'bkColor', displayName: 'Background color', configType: ConfigPropType.Color, defaultVal: 'white' },
-            { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' },
-            { propName: 'serverName', displayName: 'Server Name', configType: ConfigPropType.Text, defaultVal: 'PISRV01' }
+            { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' }
           ]
         }
       ],

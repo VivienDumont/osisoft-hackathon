@@ -1,6 +1,32 @@
-<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/17.2.4/css/dx.spa.css" />
-<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/17.2.4/css/dx.common.css" />
-
 <div>
-    This is the grid symbol
+    <table class="fixed">
+      <tr>
+        <td>{{element_ef}}</td>
+        <td [attr.colspan]="eventFrames.length">
+          <button (click)="GoBefore()">&lArr;</button>
+          Move by 3 events
+          <span>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="isByTime" [value]="isByTime" (change)="ToggleBetweemByEventByTime()">
+              <span class="slider round" ></span>
+            </label>
+          </span>
+          Move by Time (24h)
+          <button (click)="GoAfter()">&rArr;</button>
+        </td> 
+      </tr>
+      <tr>
+        <td>Event</td>
+        <td *ngFor="let event of eventFrames">{{event.Id}}</td>
+      </tr>
+      <tr>
+        <td>Range</td>
+        <td *ngFor="let time of lst_range">{{time.StartTime.slice(0, -3)}} => {{time.EndTime.slice(0, -3)}}</td>
+      </tr>
+      <tr *ngFor="let attr of lst_attribute">
+        <td>{{attr.Name}}</td>
+        <td *ngFor="let val of attr.Values">{{val}}</td>
+      </tr>
+
+    </table>
 </div>
