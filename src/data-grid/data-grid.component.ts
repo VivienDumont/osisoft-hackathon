@@ -7,6 +7,8 @@ import { Component, Input, OnChanges, OnInit, OnDestroy, Inject } from '@angular
 import { PiWebApiService } from '@osisoft/piwebapi';
 import { DOCUMENT } from '@angular/platform-browser';
 import { PIWEBAPI_TOKEN } from '../framework';
+import { Location } from '@angular/common';
+import { Router, NavigationEnd } from '@angular/router';
 // import { DxDataGridModule, DxDataGridComponent } from 'devextreme-angular';
 
 
@@ -27,14 +29,16 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   element_ef: string = 'Element/EventType';
   starttime: string;
   endtime: string;
+  isByTime: boolean = false;
+  diffTime = 8; //in hour
 
   intervalNum: any;
 
-  webidElement = 'F1EmwcQX-gVflkWbQKYW5nMT5QcgTsJe8B6BGpVgANOjAbLQUElTUlYwMVxNSU5FUkFMIFBST0NFU1NJTkdcUFJPQ0VTUyBQTEFOVFxHUklORElOR1xMSU5FIDE';
-  webidEF = 'F1FmwcQX-gVflkWbQKYW5nMT5QPwGrAxw36BGpYQANOjr-FgUElTUlYwMVxNSU5FUkFMIFBST0NFU1NJTkdcRVZFTlRGUkFNRVNbT1NJREVNT19QUk9DRVNTIFNMT1dET1dOIExJTkUgMSAyMDE4LTA0LTAzIDA0OjUwXQ';
-  ef_type = 'Process Slowdown';
+  webidElement = '';
+  webidEF = '';
+  eftype = '';
 
-  constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, @Inject(DOCUMENT) private document: any){
+  constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, @Inject(DOCUMENT) private document: any, private location: Location ){
 
   }
 
@@ -45,35 +49,115 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    const url = decodeURIComponent(this.location.path());
+    const lst_param = url.split('?')[1].split('&');
+
+    lst_param.forEach(param => {
+      const key = param.split('=')[0];
+      const value = param.split('=')[1];
+      if(key === 'webidEF'){
+        this.webidEF = value;
+      }
+    });
+    this.GetEventFramesInit();
+
     this.intervalNum = setInterval(() => {
-      const all_input_datetime = this.document.querySelectorAll('pv-datetime input[type="text"]');
-      this.starttime = all_input_datetime[all_input_datetime.length-2].value;
-      this.endtime = all_input_datetime[all_input_datetime.length-1].value;
       this.GetEventFrames();
-    }, 10000)
+    }, 10000);
   }
 
   ngOnDestroy() {
-    //clearInterval(this.intervalNum);
+    clearInterval(this.intervalNum);
   }
 
-  GetEventFrames() {
+  GetEventFrames(searchMode: string = 'BackwardFromStartTime'){
+
+    let url = '';
+    if(this.isByTime){
+      url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}${this.diffTime}h-24h&endtime=${this.diffTime}&searchMode=Inclusive`;
+    } else {
+      url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&searchMode=${searchMode}`;
+    }
+
     const body = {
       "0":{
-        "Method":"GET",
-        "Resource": `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`
+        "Method": "GET",
+        "Resource": url
       }
     };
+
     this.piWebApiService.batch.execute$(body)
     .subscribe(
       r => {
-        this.eventFrames = r.body[0].Content.Items.filter(x => x.TemplateName === this.ef_type || x.TemplateName.indexOf(this.ef_type)+1 || this.ef_type.indexOf(x.TemplateName)+1);
+        if(r.body[0].Content.Items.length == 0){
+          return;
+        }
+        this.eventFrames = r.body[0].Content.Items.filter(x => x.TemplateName === this.eftype || x.TemplateName.indexOf(this.eftype)+1 || this.eftype.indexOf(x.TemplateName)+1);
+        this.eventFrames = this.eventFrames.slice(0,3);
+        if(searchMode === 'BackwardFromStartTime'){
+          this.eventFrames = this.eventFrames.reverse();
+        }
         this.lst_range = [];
         this.eventFrames.forEach((ef, index) => {
           const toadd = {
             StartTime: ef.StartTime.replace('T', ' ').replace('Z', ''),
             EndTime: (ef.EndTime.indexOf('9999')+1)? '-' : ef.EndTime.replace('T', ' ').replace('Z', '')
           }
+          this.lst_range.push(toadd);
+          this.GetAttributes(ef, index);
+        });
+      },
+      e => {
+        console.error(e);
+      }
+    );
+  }
+
+  GetEventFramesInit() {
+    const body = {
+      "0":{
+        "Method": "GET",
+        "Resource": "https://pisrv01.pischool.int/piwebapi/eventframes/"+this.webidEF
+      },
+      "1":{
+        "Method": "GET",
+        "Resource": "https://pisrv01.pischool.int/piwebapi/elements/{0}",
+        "Parameters": [
+          "$.0.Content.RefElementWebIds[0]"
+        ],
+        "ParentIds": [
+          "0"
+        ]
+      },
+      "2":{
+        "Method":"GET",
+        "Resource": "https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime={1}-3d&endtime={1}&searchMode=Inclusive",
+        "Parameters": [
+          "$.1.Content.WebId",
+          "$.0.Content.StartTime"
+        ],
+        "ParentIds": [
+          "0",
+          "1"
+        ]
+      }
+    };
+    this.piWebApiService.batch.execute$(body)
+    .subscribe(
+      r => {
+        this.eftype = r.body[0].Content.TemplateName;
+        this.starttime = r.body[0].Content.EndTime;
+        
+        this.webidElement = r.body[1].Content.WebId;
+        this.element_ef = r.body[1].Content.Name + ' | ' + this.eftype;
+        this.eventFrames = r.body[2].Content.Items.filter(x => x.TemplateName === this.eftype || x.TemplateName.indexOf(this.eftype)+1 || this.eftype.indexOf(x.TemplateName)+1);
+        this.eventFrames = this.eventFrames.slice(Math.max(this.eventFrames.length - 3, 1));
+        this.lst_range = [];
+        this.eventFrames.forEach((ef, index) => {
+          const toadd = {
+            StartTime: ef.StartTime.replace('T', ' ').replace('Z', ''),
+            EndTime: (ef.EndTime.indexOf('9999')+1)? '-' : ef.EndTime.replace('T', ' ').replace('Z', '')
+          };
           this.lst_range.push(toadd);
           this.GetAttributes(ef, index);
         });
@@ -126,6 +210,32 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
         console.error(e);
       }
     );
+  }
+
+  ToggleBetweemByEventByTime(){
+    console.log('ToggleBetweemByEventByTime ' + this.isByTime);
+  }
+
+  GoBefore(){
+    this.starttime = this.eventFrames[0].StartTime;
+    clearInterval(this.intervalNum);
+    this.GetEventFrames();
+
+    this.intervalNum = setInterval(() => {
+      this.GetEventFrames();
+    }, 10000);
+  }
+
+  GoAfter(){
+    if(this.eventFrames[this.eventFrames.length-1].EndTime !== '-'){
+      this.starttime = this.eventFrames[this.eventFrames.length-1].EndTime;
+      clearInterval(this.intervalNum);
+      this.GetEventFrames('ForwardFromStartTime');
+
+      this.intervalNum = setInterval(() => {
+        this.GetEventFrames('ForwardFromStartTime');
+      }, 10000);
+    }
   }
 
 }
