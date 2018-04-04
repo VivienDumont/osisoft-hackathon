@@ -61,9 +61,9 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     });
     this.GetEventFramesInit();
 
-    this.intervalNum = setInterval(() => {
-      this.GetEventFrames();
-    }, 10000);
+    // this.intervalNum = setInterval(() => {
+    //   this.GetEventFrames();
+    // }, 10000);
   }
 
   ngOnDestroy() {
@@ -74,7 +74,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
     let url = '';
     if(this.isByTime){
-      url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}${this.diffTime}h-24h&endtime=${this.diffTime}&searchMode=Inclusive`;
+      url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}&searchMode=Inclusive`;
     } else {
       url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&searchMode=${searchMode}`;
     }
@@ -92,11 +92,17 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
         if(r.body[0].Content.Items.length == 0){
           return;
         }
+        
         this.eventFrames = r.body[0].Content.Items.filter(x => x.TemplateName === this.eftype || x.TemplateName.indexOf(this.eftype)+1 || this.eftype.indexOf(x.TemplateName)+1);
-        this.eventFrames = this.eventFrames.slice(0,3);
+        
+        if(!this.isByTime){
+          this.eventFrames = this.eventFrames.slice(0,3);
+        }
+        
         if(searchMode === 'BackwardFromStartTime'){
           this.eventFrames = this.eventFrames.reverse();
         }
+
         this.lst_range = [];
         this.eventFrames.forEach((ef, index) => {
           const toadd = {
@@ -217,24 +223,37 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   GoBefore(){
-    this.starttime = this.eventFrames[0].StartTime;
-    clearInterval(this.intervalNum);
+    if(this.isByTime){
+      this.starttime = this.eventFrames[0].StartTime + '-24h';
+      this.endtime = this.eventFrames[0].StartTime;
+      this.lst_attribute = [];
+    } else {
+      this.starttime = this.eventFrames[0].StartTime;
+    }
+    //clearInterval(this.intervalNum);
     this.GetEventFrames();
 
-    this.intervalNum = setInterval(() => {
-      this.GetEventFrames();
-    }, 10000);
+    // this.intervalNum = setInterval(() => {
+    //   this.GetEventFrames();
+    // }, 10000);
   }
 
   GoAfter(){
     if(this.eventFrames[this.eventFrames.length-1].EndTime !== '-'){
+      if(this.isByTime){
+        this.lst_attribute = [];
+      } else {
+
+      }
+
       this.starttime = this.eventFrames[this.eventFrames.length-1].EndTime;
-      clearInterval(this.intervalNum);
+      this.endtime = this.eventFrames[this.eventFrames.length-1].EndTime + '+24h';
+      //clearInterval(this.intervalNum);
       this.GetEventFrames('ForwardFromStartTime');
 
-      this.intervalNum = setInterval(() => {
-        this.GetEventFrames('ForwardFromStartTime');
-      }, 10000);
+      // this.intervalNum = setInterval(() => {
+      //   this.GetEventFrames('ForwardFromStartTime');
+      // }, 10000);
     }
   }
 
