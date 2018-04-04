@@ -49,6 +49,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   eventHeight: string;
   shortestEventDuration: number;
   minControlWidth: any;
+  showTimeMenu: boolean = false;
 
   inProgress = true;
   scrollState = {};
@@ -66,6 +67,11 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
               private renderer: Renderer2,
               private changeDetector: ChangeDetectorRef) {
 
+  }
+
+  toggleNavMenu() {
+    this.showTimeMenu = !this.showTimeMenu;
+    console.log('opening nav menu');
   }
 
   toggleCategoryMenu(index: number): void {

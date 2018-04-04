@@ -10,25 +10,46 @@
     <!-- <div class="events" [style.background]="bkColor" #eventsDiv [style.width]="minControlWidth" [ngStyle]="widthControl"  > -->
     <div class="events" [style.background]="bkColor" #eventsDiv [ngStyle]="widthControl" >
       <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
+      <nav class="header-nav" [style.width.px]="currentViewWidth">
+        I am the navigation
+        <span class="header-adjust"> <i  class="fa fa-clock-o fa-lg btn btn-success" (click)="toggleNavMenu()"></i></span>
+
+        <div id="myDropdown" class="dropdown-content" [style.visibility]="(showTimeMenu) ? 'visible' : 'hidden'">
+            <li>
+              go forward
+              <!-- <a (click)="openGridDisplay(item.efWebId, i)"></a> -->
+            </li>
+            <li>
+              go backward
+            </li>
+        </div>
+
+      </nav>
+
       <div *ngFor="let item of element_ef; let i = index">
+
         <div *ngIf='i === 0' class="info first" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} 
-          <span style="float:right; margin-right:10px;"> <i  class="fa fa-bars fa-lg btn btn-info" (click)="toggleCategoryMenu(i)"></i></span>
+          
+          <span class="header-adjust"> <i  class="fa fa-bars fa-lg btn btn-info" (click)="toggleCategoryMenu(i)"></i></span>
           <div id="myDropdown" class="dropdown-content" [style.visibility]="(item?.showMenu) ? 'visible' : 'hidden'">
               <li *ngIf="item.attributesTemplateCategories.length > 0">
                 <a *ngFor="let category of item.attributesTemplateCategories" (click)="openGridDisplay(item.efWebId, i)">{{category.name}}</a>
               </li>
               <li *ngIf="item.attributesTemplateCategories.length < 0">No Category Data</li>
-            </div>
-         </div>
+          </div>
+
+        </div>
          
         <div *ngIf='i > 0' class="info" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} 
-          <span style="float:right; margin-right:10px;"> <i class="fa fa-bars fa-lg btn btn-info" (click)="toggleCategoryMenu(i)"></i> </span> 
+
+          <span class="header-adjust"> <i class="fa fa-bars fa-lg btn btn-info" (click)="toggleCategoryMenu(i)"></i> </span> 
           <div id="myDropdown" class="dropdown-content" [style.visibility]="(item?.showMenu) ? 'visible' : 'hidden'">
               <li *ngIf="item.attributesTemplateCategories.length > 0">
                 <a *ngFor="let category of item.attributesTemplateCategories" (click)="openGridDisplay(item.efWebId, i)">{{ category.name }}</a>
               </li>
               <li *ngIf="item.attributesTemplateCategories.length < 0">No Category Data</li>
-            </div>
+          </div>
+
         </div>
 
         <div class="event-row" *ngIf="item.eventframes?.length > 0">
