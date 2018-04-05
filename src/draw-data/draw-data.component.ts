@@ -9,6 +9,11 @@ import { DOCUMENT } from '@angular/platform-browser';
 import { PIWEBAPI_TOKEN } from '../framework';
 import { PiWebApiService } from '@osisoft/piwebapi';
 
+enum NavigationState{
+  ByTime,
+  By3Event,
+  ByLast
+}
 
 @Component({
   selector: 'draw-data',
@@ -62,7 +67,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   scrollOn: boolean;
   stop_search: boolean = false;
   isByTime: boolean = false;
-  
+
+  isStarActivate: boolean = true; 
 
   setInt: any;
 
@@ -127,6 +133,10 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       //   this.GetEventFrames('ForwardFromStartTime');
       // }, 10000);
     }
+  }
+
+  ActivateStar(){
+    this.isStarActivate = !this.isStarActivate;
   }
 
   private GetEventFramesMaster(searchMode: string = 'BackwardFromStartTime') {
