@@ -21,17 +21,6 @@
           </span>
           Move by Time (24h)
           <button (click)="GoAfter()">&rArr;</button>
-        <!-- <span class="header-adjust"> <i  class="fa fa-clock-o fa-lg btn btn-success" (click)="toggleNavMenu()"></i></span> -->
-
-        <!-- <div id="myDropdown" class="dropdown-content" [style.visibility]="(showTimeMenu) ? 'visible' : 'hidden'">
-            <li>
-              go forward
-               <a (click)="openGridDisplay(item.efWebId, i)"></a> 
-            </li>
-            <li>
-              go backward
-            </li>
-        </div> -->
 
       </nav>
 
@@ -66,7 +55,8 @@
             id="{{ val.Id }}"
             [style.background]="(IsBlank(val))? '#fff' : item.Color"
             [style.height]="eventHeight"
-            [style.color]="getColorByBgColor(item.Color)" [title]="!IsBlank(val)? val.StartTime + ' => ' + val.EndTime : ''">
+            [style.color]="getColorByBgColor(item.Color)">
+            <!--<span *ngIf="!IsBlank(val)" class="tooltiptext">{{ val.StartTime + ' => ' + val.EndTime}}</span> -->
 
             <div class="row-0" *ngIf="!IsBlank(val) && val.width > 50">
               <div>{{ val.StartTime }}</div>

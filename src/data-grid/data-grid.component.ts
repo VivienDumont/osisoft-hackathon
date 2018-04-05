@@ -8,8 +8,6 @@ import { PiWebApiService } from '@osisoft/piwebapi';
 import { DOCUMENT } from '@angular/platform-browser';
 import { PIWEBAPI_TOKEN } from '../framework';
 import { Location } from '@angular/common';
-import { Router, NavigationEnd } from '@angular/router';
-// import { DxDataGridModule, DxDataGridComponent } from 'devextreme-angular';
 
 
 @Component({
@@ -38,7 +36,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   webidEF = '';
   eftype = '';
 
-  constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, @Inject(DOCUMENT) private document: any, private location: Location ){
+  constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, private location: Location ){
 
   }
 
@@ -74,7 +72,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
     let url = '';
     if(this.isByTime){
-      url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}&searchMode=Inclusive`;
+      url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`;
     } else {
       url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&searchMode=${searchMode}`;
     }
@@ -137,7 +135,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
       },
       "2":{
         "Method":"GET",
-        "Resource": "https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime={1}-3d&endtime={1}&searchMode=Inclusive",
+        "Resource": "https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime={1}-3d&endtime={1}",
         "Parameters": [
           "$.1.Content.WebId",
           "$.0.Content.StartTime"
@@ -156,13 +154,16 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
         
         this.webidElement = r.body[1].Content.WebId;
         this.element_ef = r.body[1].Content.Name + ' | ' + this.eftype;
+
         this.eventFrames = r.body[2].Content.Items.filter(x => x.TemplateName === this.eftype || x.TemplateName.indexOf(this.eftype)+1 || this.eftype.indexOf(x.TemplateName)+1);
+
         this.eventFrames = this.eventFrames.slice(Math.max(this.eventFrames.length - 3, 1));
         this.lst_range = [];
+
         this.eventFrames.forEach((ef, index) => {
           const toadd = {
             StartTime: ef.StartTime.replace('T', ' ').replace('Z', ''),
-            EndTime: (ef.EndTime.indexOf('9999')+1)? '-' : ef.EndTime.replace('T', ' ').replace('Z', '')
+            EndTime: (ef.EndTime.indexOf('9999') + 1)? '-' : ef.EndTime.replace('T', ' ').replace('Z', '')
           };
           this.lst_range.push(toadd);
           this.GetAttributes(ef, index);

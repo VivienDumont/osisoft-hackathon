@@ -146,7 +146,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     }
 
     if(this.isByTime) {
-      url = `https://pisrv01.pischool.int/piwebapi/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&endtime=${this.endTimeMaster}&searchMode=Inclusive`;
+      url = `https://pisrv01.pischool.int/piwebapi/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&endtime=${this.endTimeMaster}`;
     } else {
       url = `https://pisrv01.pischool.int/piwebapi/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&searchMode=${searchMode}`;
     }
@@ -192,7 +192,6 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
           }
         }
         
-
         this.AddBlankEvent(items_master);
 
         this.element_ef[0] = {
@@ -224,7 +223,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       if(index > 0){
         body[""+index] = {
           'Method': 'GET',
-          'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}&searchMode=Inclusive`
+          'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
         }
       }
     });
