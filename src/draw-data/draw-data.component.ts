@@ -42,6 +42,10 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
   startTime: string;
   endTime: string;
+
+  startTimeMaster: string;
+  endTimeMaster: string;
+
   @ViewChild('eventsDiv') eventsDiv: ElementRef;
   @ViewChild('view')      viewDiv: ElementRef;
   currentViewWidth: number;
@@ -86,131 +90,162 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     this.element_ef[index].showMenu = !this.element_ef[index].showMenu;
   }
 
-  // GoBefore(){
-  //   if(this.isByTime){
-  //     this.starttime = this.eventFrames[0].StartTime + '-24h';
-  //     this.endtime = this.eventFrames[0].StartTime;
-  //     this.lst_attribute = [];
-  //   } else {
-  //     this.starttime = this.eventFrames[0].StartTime;
-  //   }
-  //   //clearInterval(this.intervalNum);
-  //   this.GetEventFrames();
+  GoBefore(){
+    if(this.isByTime){
+      const date_m24 = new Date(this.element_ef[0].eventframes[0].StartTime);
+      date_m24.setHours(date_m24.getHours() -24);
+      this.startTimeMaster = date_m24.toISOString();
+      this.endTimeMaster = this.element_ef[0].eventframes[0].StartTime;
+    } else {
+      this.startTimeMaster = this.element_ef[0].eventframes.find(ef => !ef.isBlank).StartTime;
+    }
+    //clearInterval(this.intervalNum);
 
-  //   // this.intervalNum = setInterval(() => {
-  //   //   this.GetEventFrames();
-  //   // }, 10000);
-  // }
+    //make the call to method of the loop
+    this.GetEventFramesMaster();
+    //this.GetEventFrames();
 
-  // GoAfter(){
-  //   if(this.eventFrames[this.eventFrames.length-1].EndTime !== '-'){
-  //     if(this.isByTime){
-  //       this.lst_attribute = [];
-  //     } else {
+    // this.intervalNum = setInterval(() => {
+    //   this.GetEventFrames();
+    // }, 10000);
+  }
 
-  //     }
+  GoAfter(){
+    if(this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime !== '-'){
+      
+      this.startTimeMaster = this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime;
+      const date_p24 = new Date(this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime);
+      date_p24.setHours(date_p24.getHours() + 24);
+      this.endTimeMaster = date_p24.toISOString();
+      //clearInterval(this.intervalNum);
 
-  //     this.starttime = this.eventFrames[this.eventFrames.length-1].EndTime;
-  //     this.endtime = this.eventFrames[this.eventFrames.length-1].EndTime + '+24h';
-  //     //clearInterval(this.intervalNum);
-  //     this.GetEventFrames('ForwardFromStartTime');
+      //make the call to method of the loop
+      this.GetEventFramesMaster('ForwardFromStartTime');
+      // this.GetEventFrames('ForwardFromStartTime');
 
-  //     // this.intervalNum = setInterval(() => {
-  //     //   this.GetEventFrames('ForwardFromStartTime');
-  //     // }, 10000);
-  //   }
-  // }
+      // this.intervalNum = setInterval(() => {
+      //   this.GetEventFrames('ForwardFromStartTime');
+      // }, 10000);
+    }
+  }
 
-  // private GetEventFramesMaster(searchMode: string = 'BackwardFromStartTime') {
-  //   this.element_ef
-  //   if(this.element_ef.length)
-  //   {
+  private GetEventFramesMaster(searchMode: string = 'BackwardFromStartTime') {
+    
+    let url = '';
+    let master_row = this.elementEfAttr[0];
+    let masterWebId = master_row.element.WebId;
+    let eftype = master_row.ef.Name;
 
-  //   }
+    if(!this.startTimeMaster){
+      let now = new Date();
+      now.setHours(now.getHours() - 8);
+      this.startTimeMaster = now.toUTCString();
+    }
+    if(!this.endTimeMaster){
+      this.endTimeMaster = new Date().toUTCString();
+    }
 
-  //   let url = '';
-  //   let masterWebId = this.elementEfAttr.find(x => x.master).element.webId;
-  //   let eftype = this.elementEfAttr.find(x => x.master).ef.Name;
-  //   if(this.isByTime) {
-  //     url = `https://pisrv01.pischool.int/piwebapi/elements/${masterWebid}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}&searchMode=Inclusive`;
-  //   } else {
-  //     url = `https://pisrv01.pischool.int/piwebapi/elements/${masterWebid}/eventframes?starttime=${this.starttime}&searchMode=${searchMode}`;
-  //   }
+    if(this.isByTime) {
+      url = `https://pisrv01.pischool.int/piwebapi/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&endtime=${this.endTimeMaster}&searchMode=Inclusive`;
+    } else {
+      url = `https://pisrv01.pischool.int/piwebapi/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&searchMode=${searchMode}`;
+    }
 
-  //   const body = {
-  //     "0":{
-  //       "Method": "GET",
-  //       "Resource": url
-  //     }
-  //   };
+    const body = {
+      "0":{
+        "Method": "GET",
+        "Resource": url
+      }
+    };
 
-  //   this.piWebApiService.batch.execute$(body)
-  //   .subscribe(
-  //     r => {
-  //       if(r.body[0].Content.Items.length == 0){
-  //         return;
-  //       }
+    this.piWebApiService.batch.execute$(body)
+    .subscribe(
+      r => {
+        if(r.body[0].Content.Items.length == 0){
+          return;
+        }
         
-  //       this.eventFrames = r.body[0].Content.Items.filter(x => x.TemplateName === eftype || x.TemplateName.indexOf(this.eftype)+1 || this.eftype.indexOf(x.TemplateName)+1);
+        let items_master = r.body[0].Content.Items.filter(x => x.TemplateName === eftype || x.TemplateName.indexOf(eftype)+1 || eftype.indexOf(x.TemplateName)+1);
         
-  //       if(!this.isByTime){
-  //         this.eventFrames = this.eventFrames.slice(0,3);
-  //       }
+        if(!this.isByTime){
+          items_master = items_master.slice(0,3);
+        }
         
-  //       if(searchMode === 'BackwardFromStartTime'){
-  //         this.eventFrames = this.eventFrames.reverse();
-  //       }
+        if(searchMode === 'BackwardFromStartTime'){
+          items_master = items_master.reverse();
+        }
 
-  //       // this.lst_range = [];
-  //       // this.eventFrames.forEach((ef, index) => {
-  //       //   const toadd = {
-  //       //     StartTime: ef.StartTime.replace('T', ' ').replace('Z', ''),
-  //       //     EndTime: (ef.EndTime.indexOf('9999')+1)? '-' : ef.EndTime.replace('T', ' ').replace('Z', '')
-  //       //   }
-  //       //   this.lst_range.push(toadd);
-  //       //   this.GetAttributes(ef, index);
-  //       // });
-  //     },
-  //     e => {
-  //       console.error(e);
-  //     }
-  //   );
-  // }
+        this.element_ef = [];
+        
+        items_master.forEach(i => {
+          this.GetAttributeAndValue(i, 0);
+        });
+
+        if(this.isByTime){
+          this.startTime = this.startTimeMaster;
+          this.endTime = this.endTimeMaster;
+        } else {
+          this.startTime = items_master[0].StartTime;
+          this.endTime = items_master[items_master.length-1].EndTime;
+          if(this.endTime.indexOf('9999')+1){
+            this.endTime = new Date().toString();
+          }
+        }
+        
+
+        this.AddBlankEvent(items_master);
+
+        this.element_ef[0] = {
+          elementName: this.elementEfAttr[0].element.Name,
+          eventTypeName: this.elementEfAttr[0].ef.Name,
+          efWebId: this.elementEfAttr[0].ef.WebId,
+          eventframes: items_master,
+          Color: this.elementEfAttr[0].Color,
+          attributesTemplateCategories: this.elementEfAttr[0].ef.attributesTemplateCategories
+        };
+
+
+        this.GetEventFrames();
+      },
+      e => {
+        console.error(e);
+      }
+    );
+  }
 
   private GetEventFrames() {
-    if (this.stop_search) {
-      return;
-    }
-    if (!this.elementEfAttr){
+    if (this.stop_search || !this.elementEfAttr) {
       return;
     }
 
     const body = {};
 
-    let index =0;
-    this.elementEfAttr.forEach(element => {
-      body[""+index] = {
-        'Method': 'GET',
-        'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}&searchMode=Inclusive`
+    this.elementEfAttr.forEach((element, index) => {
+      if(index > 0){
+        body[""+index] = {
+          'Method': 'GET',
+          'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}&searchMode=Inclusive`
+        }
       }
-      index++;
     });
 
     this.piWebApiService.batch.execute$(body)
     .subscribe(
       r => {
-        this.element_ef = [];
-        let index = 0;
+        //this.element_ef = [];
+        let index = 1;
         let req = r.body[index];
         while(req){
           if(req.Content.Items){
             const items = req.Content.Items.filter(x => x.TemplateName === this.elementEfAttr[index].ef.Name 
                                                 || x.TemplateName.indexOf(this.elementEfAttr[index].ef.Name)+1
                                                 || this.elementEfAttr[index].ef.Name.indexOf(x.TemplateName)+1);
+
             items.forEach(i => {
-              this.GetAttributeAndValue(i,index);
+              this.GetAttributeAndValue(i, index);
             });
             this.AddBlankEvent(items);
+
             this.element_ef[index] = {
               elementName: this.elementEfAttr[index].element.Name,
               eventTypeName: this.elementEfAttr[index].ef.Name,
@@ -239,7 +274,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       r => {
         let lst_toAdd = [];
         const lst_attr = r.Items;
-        const lst_of_attr_conf = this.elementEfAttr[index].ef.attributesTemplate;        
+        const lst_of_attr_conf = this.elementEfAttr[index].ef.attributesTemplate;  
+
         lst_attr.forEach(a => {
           if (lst_of_attr_conf.length > 0) {
             const found = lst_of_attr_conf.find(x => x.Name === a.Name && x.position);
@@ -255,7 +291,9 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
                   console.error(e_a);
                 }
               );
+
             }
+
           }
 
         });
@@ -275,9 +313,11 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     if (eventframes.length > 0) {
       let temp_start = start;
       let temp_end = new Date(eventframes[0].StartTime);
+
       for (let index = 0; index < eventframes.length; index++) {
         const ef = eventframes[index];
         let next_ef = false;
+
         if (temp_start < new Date(ef.StartTime)) {
           const blankEF = {
             StartTime: temp_start.toString(),
@@ -289,18 +329,17 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
           index++;
           next_ef = true;
         }
+
         temp_start = new Date(ef.EndTime);
-        // if(next_ef){
-        //   temp_end = new Date( (eventframes[index])? eventframes[index].StartTime: end )
-        // } else {
         temp_end = new Date( (eventframes[index + 1]) ? eventframes[index + 1].StartTime : end )
-        //}
       }
-      eventframes.push({
-        StartTime: temp_start.toString(),
-        EndTime: temp_end.toString(),
+
+    } else {
+      eventframes[0] = {
+        StartTime: start.toString(),
+        EndTime: end.toString(),
         isBlank: true
-      });
+      };
     }
   }
 
@@ -331,9 +370,6 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     //   console.log('start date is relative');
     //   this.getAbsoluteDateFromRelativeTime(this.endTime);
     // }
-
-    // this.startTime = this.document.querySelectorAll('pv-datetime input[type="text"]')[0].value;
-    // this.endTime = this.document.querySelectorAll('pv-datetime input[type="text"]')[1].value;
   }
 
   redrawComponent() {
@@ -543,14 +579,15 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   ReSetInterval() {
-    this.getPiVisionStartAndEndTime();
-    this.GetEventFrames();
-    this.changeDetector.detectChanges();
-    this.setInt = setInterval(() => {
-      this.getPiVisionStartAndEndTime();
-      this.GetEventFrames();
-      this.changeDetector.detectChanges();
-      }, 30000);
+    this.GetEventFramesMaster();
+    // this.getPiVisionStartAndEndTime();
+    // this.GetEventFrames();
+    // this.changeDetector.detectChanges();
+    // this.setInt = setInterval(() => {
+    //   this.getPiVisionStartAndEndTime();
+    //   this.GetEventFrames();
+    //   this.changeDetector.detectChanges();
+    //   }, 30000);
   }
 
   getColorByBgColor(bgColor) {
