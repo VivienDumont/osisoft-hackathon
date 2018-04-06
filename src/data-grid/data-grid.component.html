@@ -3,11 +3,15 @@
       <tr>
         <td>{{element_ef}}</td>
         <td [attr.colspan]="eventFrames.length">
+          <span (click)="ActivateStar()" class="origin-star">
+            <span *ngIf="isStarActivate">&#9733;</span>
+            <span *ngIf="!isStarActivate">&#9734;</span>
+          </span>
           <button (click)="GoBefore()">&lArr;</button>
           Move by 3 events
           <span>
             <label class="switch">
-              <input type="checkbox" [(ngModel)]="isByTime" [value]="isByTime" (change)="ToggleBetweemByEventByTime()">
+              <input type="checkbox" [(ngModel)]="isByTime" [value]="isByTime">
               <span class="slider round" ></span>
             </label>
           </span>
@@ -21,11 +25,20 @@
       </tr>
       <tr>
         <td>Range</td>
-        <td *ngFor="let time of lst_range">{{time.StartTime.slice(0, -3)}} => {{time.EndTime.slice(0, -3)}}</td>
+        <td *ngFor="let time of lst_range">{{time.StartTime}} => {{time.EndTime}}</td>
       </tr>
       <tr *ngFor="let attr of lst_attribute">
         <td>{{attr.Name}}</td>
-        <td *ngFor="let val of attr.Values">{{val}}</td>
+        <td *ngFor="let val of attr.Values; trackBy: trackByFn">
+          <span *ngIf="!attr.HasToBeHide">
+            <span *ngIf="attr.IsManualDataEntry">
+              <input type="text" [(ngModel)]="val.Value" [value]="val.Value"/>
+            </span>
+            <span *ngIf="!attr.IsManualDataEntry">
+              {{val.Value}}
+            </span>
+          </span>
+        </td>
       </tr>
 
     </table>

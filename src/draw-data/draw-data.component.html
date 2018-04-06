@@ -11,6 +11,10 @@
     <div class="events" [style.background]="bkColor" #eventsDiv [ngStyle]="widthControl" >
       <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
       <nav class="header-nav" [style.width.px]="currentViewWidth">
+        <span (click)="ActivateStar()" class="origin-star">
+          <span *ngIf="isStarActivate">&#9733;</span>
+          <span *ngIf="!isStarActivate">&#9734;</span>
+        </span>
         <button (click)="GoBefore()">&lArr;</button>
           Move by 3 events
           <span>
@@ -21,17 +25,6 @@
           </span>
           Move by Time (24h)
           <button (click)="GoAfter()">&rArr;</button>
-        <!-- <span class="header-adjust"> <i  class="fa fa-clock-o fa-lg btn btn-success" (click)="toggleNavMenu()"></i></span> -->
-
-        <!-- <div id="myDropdown" class="dropdown-content" [style.visibility]="(showTimeMenu) ? 'visible' : 'hidden'">
-            <li>
-              go forward
-               <a (click)="openGridDisplay(item.efWebId, i)"></a> 
-            </li>
-            <li>
-              go backward
-            </li>
-        </div> -->
 
       </nav>
 
@@ -67,7 +60,7 @@
             id="{{ val.Id }}"
             [style.background]="(IsBlank(val))? '#fff' : item.Color"
             [style.height]="eventHeight"
-            [style.color]="getColorByBgColor(item.Color)" [title]="!IsBlank(val)? val.durationString : ''"
+            [style.color]="getColorByBgColor(item.Color)" [title]="!IsBlank(val)? 'val.Name, val.durationString, val.StartTime => val.EndTime' : ''"
             [style.border-color]="(val.bordercolor) ? val.bordercolor : 'transparent'"
             [style.border-style]="(val.bordercolor) ? 'inset' : 'hidden'"
             [style.border-width.px]="3">
