@@ -54,34 +54,31 @@
 
         </div>
 
-        <div class="event-row" *ngIf="item.eventframes?.length > 0">
+        <!-- START EVENT ROW DRAWING -->
+        <div class="event-row" [style.min-height.px]="eventHeight" *ngIf="item.eventframes?.length > 0">
           <div *ngFor="let val of item.eventframes;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
             id="{{ val.Id }}"
             [style.background]="(IsBlank(val))? '#fff' : item.Color"
             [style.height]="eventHeight"
-            [style.color]="getColorByBgColor(item.Color)">
-            <!--<span *ngIf="!IsBlank(val)" class="tooltiptext">{{ val.StartTime + ' => ' + val.EndTime}}</span> -->
+            [style.color]="getColorByBgColor(item.Color)" [title]="!IsBlank(val)? 'val.Name, val.durationString, val.StartTime => val.EndTime' : ''"
+            [style.border-color]="(val.bordercolor) ? val.bordercolor : 'transparent'"
+            [style.border-style]="(val.bordercolor) ? 'inset' : 'hidden'"
+            [style.border-width.px]="3">
 
-            <div class="row-0" *ngIf="!IsBlank(val) && val.width > 50">
-              <div>{{ val.StartTime }}</div>
-              <div>{{ val.EndTime }}</div>
+            <div class="row-0" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
+              <div>Duration: {{ val.durationString }}</div>
+              <div>bordercolor: {{ val.bordercolor }}</div>
             </div>
-            <div class="row-1" *ngIf="!IsBlank(val) && val.width > 50">
+            <div class="row-1" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
               <div>{{ val.slot1 }}</div>
+            </div>
+            <div class="row-2" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
               <div>{{ val.slot2 }}</div>
             </div>
-            <div class="row-2" *ngIf="!IsBlank(val) && val.width > 50">
-              <div>{{ val.slot3 }}</div>
-              <div>{{ val.slot4 }}</div>
-            </div>
-            <div class="row-3" *ngIf="!IsBlank(val) && val.width > 50">
-              <div>{{ val.slot5 }}</div>
-              <div>{{ val.slot6 }}</div>
-            </div>
           </div>
-          <span *ngIf="eventFrames?.length === 0">
-            No event frames in selected timeframe
-          </span>
+        </div>
+        <div class="event-row alert alert-info" [style.min-height.px]="eventHeight" *ngIf="item.eventframes?.length === 0">
+            <strong> Notice!</strong>  &nbsp; No {{item.elementName}} / {{item.eventTypeName}} in selected time range.
         </div>
         <br/>
       </div>
