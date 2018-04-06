@@ -280,6 +280,11 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
             x.master=false;
         })
         item.master = true;
+
+        const index_of_item = this.selectedELEF.indexOf(item);
+        if(index_of_item < this.selectedELEF.length-1){
+            this.selectedELEF = this.MoveIndexOf(this.selectedELEF, index_of_item, 0);
+        }
     }
     PositionAttribute(item){
         

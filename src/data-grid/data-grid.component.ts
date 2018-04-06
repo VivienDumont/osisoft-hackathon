@@ -242,8 +242,6 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     if(this.eventFrames[this.eventFrames.length-1].EndTime !== '-'){
       if(this.isByTime){
         this.lst_attribute = [];
-      } else {
-
       }
 
       this.starttime = this.eventFrames[this.eventFrames.length-1].EndTime;
