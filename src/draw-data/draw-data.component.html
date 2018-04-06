@@ -67,10 +67,14 @@
             id="{{ val.Id }}"
             [style.background]="(IsBlank(val))? '#fff' : item.Color"
             [style.height]="eventHeight"
-            [style.color]="getColorByBgColor(item.Color)" [title]="!IsBlank(val)? val.durationString : ''">
+            [style.color]="getColorByBgColor(item.Color)" [title]="!IsBlank(val)? val.durationString : ''"
+            [style.border-color]="(val.bordercolor) ? val.bordercolor : 'transparent'"
+            [style.border-style]="(val.bordercolor) ? 'inset' : 'hidden'"
+            [style.border-width.px]="3">
 
             <div class="row-0" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
               <div>Duration: {{ val.durationString }}</div>
+              <div>bordercolor: {{ val.bordercolor }}</div>
             </div>
             <div class="row-1" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
               <div>{{ val.slot1 }}</div>

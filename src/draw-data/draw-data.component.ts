@@ -75,11 +75,6 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
   }
 
-  toggleNavMenu() {
-    this.showTimeMenu = !this.showTimeMenu;
-    console.log('opening nav menu');
-  }
-
   toggleCategoryMenu(index: number): void {
     // tslint:disable-next-line:max-line-length
     this.element_ef[index].showMenu = (this.element_ef[index].showMenu) ? !this.element_ef[index].showMenu : true;
@@ -89,8 +84,15 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
   openGridDisplay(Id: string, index: number): void {
     // tslint:disable-next-line:max-line-length
-    window.open('display?id=F1EmwcQX-gVflkWbQKYW5nMT5Qvs6AcM0t6BGpYAANOjr-FgUElTUlYwMVxQSSBWSVNJT05cUEkgVklTSU9OXERPQ1VNRU5UU1xWRFVNT05UL1RFU1Qx&el_id=' + Id, '_blank');
-    this.element_ef[index].showMenu = (this.element_ef[index].showMenu) ? !this.element_ef[index].showMenu : this.element_ef[index].showMenu = true;
+    let url: string = 'display?id=F1EmwcQX-gVflkWbQKYW5nMT5Qvs6AcM0t6BGpYAANOjr-FgUElTUlYwMVxQSSBWSVNJT05cUEkgVklTSU9OXERPQ1VNRU5UU1xWRFVNT05UL1RFU1Qx';
+    url += `&webidEF=${this.getMostRecentEventByElementId(index)}`;
+    url += `&navigationState=${(this.isByTime) ? 'time' : '3events'}`;
+    // if (this.isByTime) {
+    //   url += `&startTime=${this.startTimeMaster}`;
+    //   url += `&endTime=${this.endTimeMaster}`;
+    // }
+    window.open(url, '_blank');
+    this.element_ef[index].showMenu = (this.element_ef[index].showMenu) ? !this.element_ef[index].showMenu : true;
   }
 
   GoBefore(){
@@ -297,6 +299,16 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
             }
 
           }
+          if (a.Name.indexOf('EventFrameColor') + 1) {
+            this.piWebApiService.stream.getValue$(a.WebId)
+            .subscribe(
+              subs => {
+                if (subs.Value) {
+                  eventframe.bordercolor = subs.Name.toLowerCase();
+                }
+              }
+            )
+          }
 
         });
       },
@@ -307,6 +319,15 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   //
+  public getMostRecentEventByElementId(index: number): string {
+    let lastEvent =  this.element_ef[index].eventframes[this.element_ef[index].eventframes.length-1];
+    if (lastEvent.isBlank) {
+      lastEvent =  this.element_ef[index].eventframes[this.element_ef[index].eventframes.length-2];
+    }
+    const webid = lastEvent.WebId;
+
+    return webid;
+  }
 
   public AddBlankEvent(eventframes){
     const start = new Date(this.startTime);
@@ -352,12 +373,12 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     return false;
   }
 
-  public getPiVisionStartAndEndTime() {
-    const all_input_datetime = this.document.querySelectorAll('pv-datetime input[type="text"]');
-    this.startTime = all_input_datetime[all_input_datetime.length - 2].value;
-    this.endTime = all_input_datetime[all_input_datetime.length - 1].value;
+  // public getPiVisionStartAndEndTime() {
+  //   const all_input_datetime = this.document.querySelectorAll('pv-datetime input[type="text"]');
+  //   this.startTime = all_input_datetime[all_input_datetime.length - 2].value;
+  //   this.endTime = all_input_datetime[all_input_datetime.length - 1].value;
 
-    this.stop_search = new Date(this.endTime) < new Date(this.startTime);
+  //   this.stop_search = new Date(this.endTime) < new Date(this.startTime);
     // tslint:disable-next-line:max-line-length
     // let dateRegEx;
     // -----THIS IS FOR RELATIVE DATE CONFIGURATION --- NOT QUITE WORKING YET
@@ -372,10 +393,10 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     //   console.log('start date is relative');
     //   this.getAbsoluteDateFromRelativeTime(this.endTime);
     // }
-  }
+  // }
 
   redrawComponent() {
-    const timeManipulator = 10;
+    const timeManipulator = 100;
 
     let startTimeInMilliseconds = new Date(this.startTime).getTime() / timeManipulator;
     let endTimeInMilliseconds = new Date(this.endTime).getTime() / timeManipulator;
@@ -396,12 +417,12 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       // console.log('no need for scroll bar');
       this.element_ef.forEach(element => {
         if (element.eventframes) {
-          let inProgressTime = '9999-12-31';
+          let inProgressTime = '9999';
           
           
           element.eventframes.forEach(item => {
             const start = new Date(item.StartTime).getTime();
-            const end = new Date(item.EndTime).getTime();
+            const end = new Date(item.EndTime).getTime(); //check if in progress before date object
             // tslint:disable-next-line:max-line-length
             if (item.EndTime.toString().indexOf(inProgressTime) > 0) {
               item.durationString = 'In Progress';
@@ -441,11 +462,11 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
       this.element_ef.forEach(element => {
         if (element.eventframes) {
-          let inProgressTime = '9999-12-31'
+          let inProgressTime = '9999'
 
           element.eventframes.forEach(item => {
               const start = new Date(item.StartTime).getTime();
-              const end = new Date(item.EndTime).getTime();
+              const end = new Date(item.EndTime).getTime();  //check if in pogress before making date object
               // tslint:disable-next-line:max-line-length
 
               if (item.EndTime.toString().indexOf(inProgressTime) > 0) {
@@ -473,10 +494,21 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   getDurationString(Milliseconds: number): string {
-    let seconds: number  = (Milliseconds / 1000) % 60 ;
-    let minutes: number = ((Milliseconds / (1000 * 60)) % 60);
-    let hours: number   = ((Milliseconds / (1000 * 60 * 60)) % 24);
-    return `${this.precisionRound(hours, 2)}:${this.precisionRound(minutes, 2)}:${this.precisionRound(seconds, 2)}`;
+    // let seconds: number  = (Milliseconds / 1000) % 60 ;
+    // let minutes: number = ((Milliseconds / (1000 * 60)) % 60);
+    // let hours: number   = ((Milliseconds / (1000 * 60 * 60)) % 24);
+    // return `${this.precisionRound(hours, -1)}:${this.precisionRound(minutes, -1)}:${this.precisionRound(seconds, -1)}`;
+
+    let seconds = Milliseconds / 1000;
+    // 2- Extract hours:
+    let hours = seconds / 3600 ; // 3,600 seconds in 1 hour
+    seconds = seconds % 3600; // seconds remaining after extracting hours
+    // 3- Extract minutes:
+    let minutes = seconds / 60; // 60 seconds in 1 minute
+    // 4- Keep only seconds not extracted to minutes:
+    seconds = seconds % 60;
+    return `${Math.round(hours)}:${Math.round(seconds)}:${Math.round(minutes)}`;
+
   }
 
   precisionRound(number, precision) {

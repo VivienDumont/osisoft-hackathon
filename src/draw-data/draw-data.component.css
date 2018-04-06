@@ -53,6 +53,7 @@
   height: 100px;
   padding:3px;
   text-align: right;
+  border-width: 3px;
 }            
 
 .row-1, .row-2, .row-3{
