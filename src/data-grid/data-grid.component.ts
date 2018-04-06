@@ -179,7 +179,10 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
         this.eventFrames = r.body[2].Content.Items.filter(x => x.TemplateName === this.eftype || x.TemplateName.indexOf(this.eftype)+1 || this.eftype.indexOf(x.TemplateName)+1);
 
-        this.eventFrames = this.eventFrames.slice(Math.max(this.eventFrames.length - 3, 1));
+        if(!this.isByTime){
+          this.eventFrames = this.eventFrames.slice(Math.max(this.eventFrames.length - 3, 1));
+        }
+        
         this.lst_range = [];
 
         this.eventFrames.forEach((ef, index) => {
@@ -237,7 +240,8 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
         this.lst_attribute[index_attr].Values[index] = {
           Value: value,
           idEF: index,
-          idAttr: index_attr
+          idAttr: index_attr,
+          UnitsAbbreviation: r.UnitsAbbreviation
         };
       },
       e => {

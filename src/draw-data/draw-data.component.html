@@ -15,7 +15,7 @@
           <span *ngIf="isStarActivate"><i class="fa fa-star fa-3"></i></span>
           <span *ngIf="!isStarActivate"><i class="fa fa-star-o fa-3"></i></span>
         </span>
-        <button (click)="GoBefore()">&lArr;</button>
+        <button (click)="GoBefore()"><i class="fa fa-arrow-left fa-2" aria-hidden="true"></i></button>
           Move by 3 events
           <span>
             <label class="switch">
@@ -24,7 +24,7 @@
             </label>
           </span>
           Move by Time (24h)
-          <button (click)="GoAfter()">&rArr;</button>
+          <button (click)="GoAfter()"><i class="fa fa-arrow-right fa-2" aria-hidden="true"></i></button>
 
       </nav>
 
@@ -60,7 +60,7 @@
             id="{{ val.Id }}"
             [style.background]="(IsBlank(val))? '#fff' : item.Color"
             [style.height]="eventHeight"
-            [style.color]="getColorByBgColor(item.Color)" [title]="!IsBlank(val)? 'val.Name, val.durationString, val.StartTime => val.EndTime' : ''"
+            [style.color]="getColorByBgColor(item.Color)" [title]="!IsBlank(val)? val.Name + ',&#10;' + val.durationString + ',&#10;' + val.StartTime + ' => ' + val.EndTime : ''"
             [style.border-color]="(val.bordercolor) ? val.bordercolor : 'transparent'"
             [style.border-style]="(val.bordercolor) ? 'inset' : 'hidden'"
             [style.border-width.px]="3">

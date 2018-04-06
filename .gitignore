@@ -30,6 +30,7 @@ testem.log
 #System Files
 .DS_Store
 Thumbs.db
+server-config.json
 
 # e2e
 /e2e/*.js
