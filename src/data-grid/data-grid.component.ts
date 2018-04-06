@@ -114,6 +114,8 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
           this.eventFrames = this.eventFrames.reverse();
         }
 
+        this.lst_attribute = [];
+
         this.lst_range = [];
         this.eventFrames.forEach((ef, index) => {
           const toadd = {
@@ -252,7 +254,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     if(this.isByTime){
       this.starttime = this.eventFrames[0].StartTime + '-24h';
       this.endtime = this.eventFrames[0].StartTime;
-      this.lst_attribute = [];
+      
     } else {
       this.starttime = this.eventFrames[0].StartTime;
     }
@@ -266,7 +268,6 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
   GoAfter(){
     if(this.eventFrames[this.eventFrames.length-1].EndTime !== '-'){
-        this.lst_attribute = [];
 
       this.starttime = this.eventFrames[this.eventFrames.length-1].EndTime;
       this.endtime = this.eventFrames[this.eventFrames.length-1].EndTime + '+24h';
