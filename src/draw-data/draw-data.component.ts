@@ -92,7 +92,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
   openGridDisplay(Id: string, index: number): void {
     // tslint:disable-next-line:max-line-length
-    window.open('display?id=F1EmwcQX-gVflkWbQKYW5nMT5Qvs6AcM0t6BGpYAANOjr-FgUElTUlYwMVxQSSBWSVNJT05cUEkgVklTSU9OXERPQ1VNRU5UU1xWRFVNT05UL1RFU1Qx&el_id=' + Id, '_blank');
+    const webid = this.element_ef[index].eventframes[this.element_ef[index].eventframes.length-1].WebId;
+    window.open('display?id=F1EmwcQX-gVflkWbQKYW5nMT5Qvs6AcM0t6BGpYAANOjr-FgUElTUlYwMVxQSSBWSVNJT05cUEkgVklTSU9OXERPQ1VNRU5UU1xWRFVNT05UL1RFU1Qx&webidEF=' + webid, '_blank');
     this.element_ef[index].showMenu = !this.element_ef[index].showMenu;
   }
 
@@ -110,7 +111,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     //make the call to method of the loop
     this.GetEventFramesMaster();
     //this.GetEventFrames();
-
+    this.isStarActivate = false;
     // this.intervalNum = setInterval(() => {
     //   this.GetEventFrames();
     // }, 10000);
@@ -120,6 +121,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     if(this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime !== '-'){
       
       this.startTimeMaster = this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime;
+
       const date_p24 = new Date(this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime);
       date_p24.setHours(date_p24.getHours() + 24);
       this.endTimeMaster = date_p24.toISOString();
@@ -132,11 +134,25 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       // this.intervalNum = setInterval(() => {
       //   this.GetEventFrames('ForwardFromStartTime');
       // }, 10000);
+      this.isStarActivate = false;
     }
   }
 
   ActivateStar(){
     this.isStarActivate = !this.isStarActivate;
+
+    if(this.isStarActivate){
+      if(this.isByTime){
+        const date_m24 = new Date();
+        date_m24.setHours(date_m24.getHours() -24);
+        this.startTimeMaster = date_m24.toISOString();
+        this.endTimeMaster = new Date().toUTCString();
+      } else {
+        this.startTimeMaster = new Date().toUTCString();
+      }
+
+      this.GetEventFramesMaster();
+    }
   }
 
   private GetEventFramesMaster(searchMode: string = 'BackwardFromStartTime') {
@@ -148,7 +164,9 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
     if(!this.startTimeMaster){
       let now = new Date();
-      now.setHours(now.getHours() - 8);
+      if(this.isByTime){
+        now.setHours(now.getHours() - 8);
+      }
       this.startTimeMaster = now.toUTCString();
     }
     if(!this.endTimeMaster){
@@ -198,7 +216,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
           this.startTime = items_master[0].StartTime;
           this.endTime = items_master[items_master.length-1].EndTime;
           if(this.endTime.indexOf('9999')+1){
-            this.endTime = new Date().toString();
+            this.endTime = new Date().toUTCString();
           }
         }
         
@@ -329,8 +347,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
         if (temp_start < new Date(ef.StartTime)) {
           const blankEF = {
-            StartTime: temp_start.toString(),
-            EndTime: temp_end.toString(),
+            StartTime: temp_start.toUTCString(),
+            EndTime: temp_end.toUTCString(),
             isBlank: true
           };
 
@@ -345,8 +363,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
     } else {
       eventframes[0] = {
-        StartTime: start.toString(),
-        EndTime: end.toString(),
+        StartTime: start.toUTCString(),
+        EndTime: end.toUTCString(),
         isBlank: true
       };
     }

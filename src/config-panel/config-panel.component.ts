@@ -60,6 +60,8 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     
         this.values.forEach(db => {
           db.elements.forEach(element => {
+            this.AnalysesElement(element)
+            this.elementsTOshow.push(element);
             this.GetElement(element);
           });
         });
@@ -72,12 +74,14 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
           r =>{
             element.elements = r.Items;
             element.elements.forEach(e => {
-              if(e.HasChildren){
-                this.GetElement(e);
-              } else {
-                this.AnalysesElement(e)
-                this.elementsTOshow.push(e);
-              }
+                if(e.HasChildren){
+                    this.AnalysesElement(e)
+                    this.elementsTOshow.push(e);
+                    this.GetElement(e);
+                } else {
+                    this.AnalysesElement(e)
+                    this.elementsTOshow.push(e);
+                }
             });
           },
           e=>{

@@ -11,7 +11,7 @@
     <div class="events" [style.background]="bkColor" #eventsDiv [ngStyle]="widthControl" >
       <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
       <nav class="header-nav" [style.width.px]="currentViewWidth">
-        <span (click)="ActivateStar()">
+        <span (click)="ActivateStar()" class="origin-star">
           <span *ngIf="isStarActivate">&#9733;</span>
           <span *ngIf="!isStarActivate">&#9734;</span>
         </span>

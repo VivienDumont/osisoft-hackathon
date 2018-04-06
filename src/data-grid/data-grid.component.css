@@ -81,3 +81,11 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+
+.origin-star{
+  font-size: 20px;
+}
+.origin-star:hover{
+  cursor: pointer;
+}

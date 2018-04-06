@@ -32,6 +32,8 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
   intervalNum: any;
 
+  isStarActivate: boolean = true; 
+
   webidElement = '';
   webidEF = '';
   eftype = '';
@@ -55,6 +57,17 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
       const value = param.split('=')[1];
       if(key === 'webidEF'){
         this.webidEF = value;
+      }
+
+      if(key === 'navigationState'){
+        this.isByTime = value === 'time';
+      }
+
+      if(key === 'startTime'){
+        this.starttime = value;
+      }
+      if(key === 'endTime'){
+        this.endtime = value;
       }
     });
     this.GetEventFramesInit();
@@ -118,6 +131,13 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   GetEventFramesInit() {
+    let url = '';
+    if(this.isByTime){
+      url = `https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`
+    } else {
+      url ="https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime={1}-3d&endtime={1}"
+    }
+
     const body = {
       "0":{
         "Method": "GET",
@@ -135,7 +155,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
       },
       "2":{
         "Method":"GET",
-        "Resource": "https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime={1}-3d&endtime={1}",
+        "Resource": url,
         "Parameters": [
           "$.1.Content.WebId",
           "$.0.Content.StartTime"
@@ -162,8 +182,8 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
         this.eventFrames.forEach((ef, index) => {
           const toadd = {
-            StartTime: ef.StartTime.replace('T', ' ').replace('Z', ''),
-            EndTime: (ef.EndTime.indexOf('9999') + 1)? '-' : ef.EndTime.replace('T', ' ').replace('Z', '')
+            StartTime: ef.StartTime.replace('T', ' ').replace('Z', '').slice(0, -3),
+            EndTime: (ef.EndTime.indexOf('9999') + 1)? '-' : ef.EndTime.replace('T', ' ').replace('Z', '').slice(0, -3)
           };
           this.lst_range.push(toadd);
           this.GetAttributes(ef, index);
@@ -181,19 +201,19 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
       r => {
         const attributes = r.Items;
         attributes.forEach(attr => {
-          let found = this.lst_attribute.find(x => x.Name && x.Name.toString().indexOf(attr.Name.toString())+1);
+          let found = this.lst_attribute.find(x => x.Name && x.Name.toString()===attr.Name.toString());
           if(!found){
             const to_add = {
               Name: attr.Name.toString(),
-              Values: []
+              Values: [],
+              IsManualDataEntry: attr.IsManualDataEntry,
+              HasToBeHide: attr.IsHidden || attr.IsExcluded
             };
             this.lst_attribute.push(to_add);
             found = to_add;
           }
 
-          const index_attr = this.lst_attribute.indexOf(found);
-
-          this.GetValueOfAttribute(attr, index, index_attr);
+          this.GetValueOfAttribute(attr, index, this.lst_attribute.indexOf(found));
           
         });
       },
@@ -208,10 +228,15 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     .subscribe(
       r => {
         let value = r.Value;
-        if(attr.HasChildren){
+        
+        if(value && value.Name){
           value = value.Value;
         }
-        this.lst_attribute[index_attr].Values[index] = value;
+        this.lst_attribute[index_attr].Values[index] = {
+          Value: value,
+          idEF: index,
+          idAttr: index_attr
+        };
       },
       e => {
         console.error(e);
@@ -233,7 +258,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     }
     //clearInterval(this.intervalNum);
     this.GetEventFrames();
-
+    this.isStarActivate = false;
     // this.intervalNum = setInterval(() => {
     //   this.GetEventFrames();
     // }, 10000);
@@ -241,19 +266,40 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
   GoAfter(){
     if(this.eventFrames[this.eventFrames.length-1].EndTime !== '-'){
-      if(this.isByTime){
         this.lst_attribute = [];
-      }
 
       this.starttime = this.eventFrames[this.eventFrames.length-1].EndTime;
       this.endtime = this.eventFrames[this.eventFrames.length-1].EndTime + '+24h';
       //clearInterval(this.intervalNum);
       this.GetEventFrames('ForwardFromStartTime');
-
+      this.isStarActivate = false;
       // this.intervalNum = setInterval(() => {
       //   this.GetEventFrames('ForwardFromStartTime');
       // }, 10000);
     }
+  }
+
+  ActivateStar(){
+    this.isStarActivate = !this.isStarActivate;
+
+    if(this.isStarActivate){
+      if(this.isByTime){
+        const date_m24 = new Date();
+        date_m24.setHours(date_m24.getHours() -24);
+        this.starttime = date_m24.toISOString();
+        this.endtime = new Date().toUTCString();
+      } else {
+        this.starttime = new Date().toUTCString();
+      }
+
+      this.GetEventFrames();
+    }
+
+    //go to original
+  }
+
+  trackByFn(index, item) {
+    return index; // or item.id
   }
 
 }
