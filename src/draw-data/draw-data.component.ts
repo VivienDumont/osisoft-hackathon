@@ -330,7 +330,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
             .subscribe(
               subs => {
                 if (subs.Value) {
-                  eventframe.bordercolor = subs.Name.toLowerCase();
+                  eventframe.bordercolor = subs.Value.Name.toLowerCase();
                 }
               }
             )
@@ -444,15 +444,23 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       this.element_ef.forEach(element => {
         if (element.eventframes) {
           let inProgressTime = '9999';
-          
-          
+
           element.eventframes.forEach(item => {
             const start = new Date(item.StartTime).getTime();
-            const end = new Date(item.EndTime).getTime(); //check if in progress before date object
-            // tslint:disable-next-line:max-line-length
-            if (item.EndTime.toString().indexOf(inProgressTime) > 0) {
+            item.StartTimeString = new Date(item.StartTime).toLocaleString()
+            let end;
+
+            if (item.EndTime.indexOf(inProgressTime) !== -1) {
+              console.log('item in progress');
+              end = new Date().getTime();
               item.durationString = 'In Progress';
+              item.EndTimeString = 'In Progress'
+
+              item.duration = ( (end) - (start) );
             } else {
+              end =  new Date(item.EndTime).getTime();
+              item.EndTimeString = new Date(item.EndTime).toLocaleString();
+
               item.duration = ( (end) - (start) );
 
               item.durationString = this.getDurationString(item.duration);
@@ -492,14 +500,21 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
           element.eventframes.forEach(item => {
               const start = new Date(item.StartTime).getTime();
-              const end = new Date(item.EndTime).getTime();  //check if in pogress before making date object
-              // tslint:disable-next-line:max-line-length
+              let end;
+              item.StartTimeString = new Date(item.StartTime).toLocaleString()
 
-              if (item.EndTime.toString().indexOf(inProgressTime) > 0) {
+              if (item.EndTime.indexOf(inProgressTime) !== -1) {
+                console.log('item in progress');
+                end = new Date().getTime();
                 item.durationString = 'In Progress';
-              } else {
-                item.duration = ((end) - (start));
+                item.EndTimeString = 'In Progress'
 
+                item.duration = ( (end) - (start) );
+              } else {
+                end =  new Date(item.EndTime).getTime();
+                item.EndTimeString = new Date(item.EndTime).toLocaleString();
+
+                item.duration = ( (end) - (start) );
                 item.durationString = this.getDurationString(item.duration);
               }
               // tslint:disable-next-line:max-line-length
@@ -533,7 +548,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     let minutes = seconds / 60; // 60 seconds in 1 minute
     // 4- Keep only seconds not extracted to minutes:
     seconds = seconds % 60;
-    return `${Math.round(hours)}:${Math.round(seconds)}:${Math.round(minutes)}`;
+    return `${Math.round(hours)}:${Math.round(minutes)}:${Math.round(seconds)}`;
 
   }
 

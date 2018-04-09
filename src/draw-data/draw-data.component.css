@@ -32,7 +32,7 @@
 .events {
   font-size: 12pt;
   /* overflow: auto; */
-  padding: 10px;
+  padding: 9px 0 0 2px;
   margin: 0 5px 0 0;
   width: 100%;
   height: 100%;
@@ -48,8 +48,9 @@
 
 .event{
   /* display:table; */
+  position: relative;
   border-radius: 3px;
-  overflow: hidden;
+  overflow: visible;
   height: 100px;
   padding:3px;
   text-align: right;
@@ -64,6 +65,8 @@
   flex-basis: 100%;
   text-align: left;
   font-size: 15px;
+  overflow: hidden;
+  width: inherit;
 }
 
 .row-0{
@@ -89,6 +92,7 @@
   font-size: 17px;
   z-index: 600;
   border-radius: 3px;
+  text-align: center;
 }
 
 .info{
@@ -176,23 +180,39 @@
   position: relative;
   display: inline-block;
   border-bottom: 1px dotted black;
+  z-index: 1
 }
 
-.tooltip .tooltiptext {
+.event .tooltiptext {
   visibility: hidden;
-  width: 120px;
+  /* width: 270px; */
+  width: max-content;
   background-color: black;
-  color: #fff;
+  color: white;
+  opacity: .877;
   text-align: center;
   border-radius: 6px;
-  padding: 5px 0;
+  padding: 5px 12px;
+  /* text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15); */
 
   /* Position the tooltip */
+  top:100%;
   position: absolute;
-  z-index: 1;
+  z-index: 999999;
 }
 
-.tooltip:hover .tooltiptext {
+/*.event .tooltiptext::after{
+  content: " ";
+  position: absolute;
+  bottom: 100%;  
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
+}*/
+
+.event:hover .tooltiptext {
   visibility: visible;
 }
 

@@ -40,15 +40,13 @@ export class ExtensionLibrary extends NgLibrary {
         SymbolInputType.Data,
         SymbolInputType.PathPrefix,
       ],
-      autoEventBindings:[
-        
+      autoEventBindings: [
       ],
       generalConfig: [
         {
           name: 'DrawData Options',
           isExpanded: true,
           configProps: [
-            { propName: 'isMasterEvent', displayName: 'Is Master Event', configType: ConfigPropType.Flag, defaultVal: true },
             { propName: 'defaultEventHeight', displayName: 'Default Event Height', configType: ConfigPropType.Num, defaultVal: 50 },
             { propName: 'bkColor', displayName: 'Background', configType: ConfigPropType.Color, defaultVal: 'white' },
             { propName: 'lineColor', displayName: 'Band Color', configType: ConfigPropType.Color, defaultVal: '#58a3b6' },
