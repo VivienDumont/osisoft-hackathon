@@ -24,6 +24,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   eventFrames: any = [];
   lst_range:any = [];
   lst_attribute:  any = [];
+  lst_attribute_to_display: any;
   element_ef: string = 'Element/EventType';
   starttime: string;
   endtime: string;
@@ -201,7 +202,12 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   GetAttributes(eventFrame, index) {
-    this.piWebApiService.eventFrame.getAttributes$(eventFrame.WebId)
+    const params = {
+      showExcluded: true,
+      showHidden: true
+    }
+
+    this.piWebApiService.eventFrame.getAttributes$(eventFrame.WebId, params)
     .subscribe(
       r => {
         const attributes = r.Items;
@@ -211,8 +217,8 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
             const to_add = {
               Name: attr.Name.toString(),
               Values: [],
-              IsManualDataEntry: attr.IsManualDataEntry,
-              HasToBeHide: attr.IsHidden || attr.IsExcluded
+              IsManualDataEntry: attr.IsManualDataEntry as boolean,
+              HasToBeHide: (attr.IsHidden as boolean) || (attr.IsExcluded as boolean)
             };
             this.lst_attribute.push(to_add);
             found = to_add;
@@ -221,6 +227,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
           this.GetValueOfAttribute(attr, index, this.lst_attribute.indexOf(found));
           
         });
+        this.lst_attribute_to_display = this.lst_attribute.filter(x => !x.HasToBeHide);
       },
       e => {
         console.error(e);
@@ -241,7 +248,8 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
           Value: value,
           idEF: index,
           idAttr: index_attr,
-          UnitsAbbreviation: r.UnitsAbbreviation
+          UnitsAbbreviation: r.UnitsAbbreviation,
+          WebId: attr.WebId
         };
       },
       e => {

@@ -1,3 +1,4 @@
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 <div>
     <div>
         <span (click)="HideShow()" class="hideshow">
@@ -11,27 +12,33 @@
             <div>Element/Event Frames</div>
             <div class="panel-ele">
                 <div>
+                    Databases :<br/>
+                    <select (change)="SelectDatabase($event.target.value)">
+                        <option value="" disabled selected>>Select a Database</option>
+                        <option *ngFor="let item of lst_database" [value]="item.WebId">{{item.Name}}</option>
+                    </select>
+                </div>
+                <div>
                     Elements :<br/>
                     <select (change)="SelectElement($event.target.value)">
-                        <option value="" disabled selected>>select an element</option>
+                        <option value="" disabled selected>>Select an Element</option>
                         <option *ngFor="let item of elementsTOshow" [value]="item.WebId">{{item.Name}}</option>
                     </select>
                 </div>
-                <br/><br/>
                 <div>
                     Event frames templates : <br/>
                     <select (change)="SelectEFType($event.target.value)">
-                        <option value="" disabled selected>>select an Event Frame template</option>
+                        <option value="" disabled selected>>Select an Event Frame Type</option>
                         <option *ngIf="!elementcategory; else IsElementCategory"></option>
                         <ng-template #IsElementCategory>
                             <option *ngFor="let item of elementcategory.analysesTemplateEventType" [value]="item.WebId">{{item.Name}}</option>
                         </ng-template>
                     </select><br/>
-                    <button (click)="Add()">Add</button>
+                    <button class="button-submit" (click)="Add()"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button>
                 </div>
                 <br/><br/>
                 <div>
-                    Selected elements/ef :<br/>
+                    Selected Element / Event Frame Type :<br/>
                     <table>
                         <thead>
                             <th>Element </th>
@@ -39,25 +46,17 @@
                             <th>Color </th>
                             <th>Master</th>
                         </thead>
-                        <tr *ngFor="let item of selectedELEF" (click)="SelectEFELRow(item)" [class.selected-row-panelconfig]="selectedelefRow && selectedelefRow.element.WebId===item.element.WebId && selectedelefRow.ef.WebId===item.ef.WebId">
+                        <tr *ngFor="let item of selectedELEF; let i = index" (click)="SelectEFELRow(item)" [class.selected-row-panelconfig]="selectedelefRow && selectedelefRow.element.WebId===item.element.WebId && selectedelefRow.ef.WebId===item.ef.WebId">
                             <td>{{item.element.Name}}</td>
                             <td>{{item.ef.Name}}</td>
-                            <td>
-                                <select [(ngModel)]="item.Color" [style.background-color]="item.Color">
-                                    <option *ngFor="let itemColor of lstColor" 
-                                            [style.background-color]="itemColor" 
-                                            [style.color]="getColorByBgColor(itemColor)" 
-                                            [selected]="itemColor === item.Color"
-                                            [value]="itemColor">{{itemColor}}</option>
-                                </select>
-                            </td>
+                            <td><input type="color" name="favcolor{{i}}" [value]="item.Color" [(ngModel)]="item.Color"></td>
                             <td><input type="checkbox" [(ngModel)]="item.master" (change)="NewMaster(item)"/></td>
                         </tr>
                     </table>
                     <div class="button-submit">
-                        <button (click)="GoUp()">Up</button>
-                        <button (click)="GoDown()">Down</button>
-                        <button (click)="Delete()">Del</button>
+                        <button (click)="GoUp()"><i class="fa fa-arrow-circle-up fa-2" aria-hidden="true"></i></button>
+                        <button (click)="GoDown()"><i class="fa fa-arrow-circle-down fa-2" aria-hidden="true"></i></button>
+                        <button (click)="Delete()"><i class="fa fa-trash fa-2" aria-hidden="true"></i></button>
                     </div>
                 </div>
             </div>
@@ -89,7 +88,7 @@
                             </thead>
                             <tr *ngFor="let item of AttributeofselectedELEF">
                                 <td>{{item.Name}}</td>
-                                <td><input type="number" min="0" max="6" [(ngModel)]="item.position" [value]="item.position" (change)="PositionAttribute(item)"/></td>
+                                <td><input type="number" min="0" max="6" [(ngModel)]="item.position" [value]="item.position" (change)="PositionAttribute(item)" (focus)="item.oldposition=item.position;"/></td>
                             </tr>
                         </table>
                         <br/>

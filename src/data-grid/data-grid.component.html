@@ -32,17 +32,15 @@
           <td>EndTime</td>
           <td *ngFor="let time of lst_range">{{time.EndTime}}</td>
         </tr>
-      <tr *ngFor="let attr of lst_attribute">
+      <tr *ngFor="let attr of lst_attribute_to_display">
         <td>{{attr.Name}}</td>
         <td *ngFor="let val of attr.Values; trackBy: trackByFn">
-          <span *ngIf="!attr.HasToBeHide">
             <span *ngIf="attr.IsManualDataEntry">
               <input type="text" [(ngModel)]="val.Value" [value]="val.Value"/>{{val.UnitsAbbreviation}}
             </span>
             <span *ngIf="!attr.IsManualDataEntry">
               {{val.Value}} {{val.UnitsAbbreviation}}
             </span>
-          </span>
         </td>
       </tr>
 
