@@ -36,7 +36,7 @@
         <td>{{attr.Name}}</td>
         <td *ngFor="let val of attr.Values; trackBy: trackByFn">
             <span *ngIf="attr.IsManualDataEntry">
-              <input type="text" [(ngModel)]="val.Value" [value]="val.Value"/>{{val.UnitsAbbreviation}}
+              <input type="text" [(ngModel)]="val.Value" [value]="val.Value" (keyup.enter)="SaveAttributeValue(val)"/>{{val.UnitsAbbreviation}}
             </span>
             <span *ngIf="!attr.IsManualDataEntry">
               {{val.Value}} {{val.UnitsAbbreviation}}

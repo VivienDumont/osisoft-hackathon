@@ -218,7 +218,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
               Name: attr.Name.toString(),
               Values: [],
               IsManualDataEntry: attr.IsManualDataEntry as boolean,
-              HasToBeHide: (attr.IsHidden as boolean) || (attr.IsExcluded as boolean)
+              HasToBeHide: ((attr.IsHidden as boolean) || (attr.IsExcluded as boolean))
             };
             this.lst_attribute.push(to_add);
             found = to_add;
@@ -313,6 +313,22 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
   trackByFn(index, item) {
     return index; // or item.id
+  }
+
+  SaveAttributeValue(val){
+    const payload = {
+      "Value": val.Value,
+      "Timestanmp": new Date().toUTCString()
+    };
+    this.piWebApiService.attribute.setValue$(val.WebId, payload)
+    .subscribe(
+      r => {
+        console.log('Save Sucess');
+      },
+      e => {
+        console.error(e);
+      }
+    )
   }
 
 }
