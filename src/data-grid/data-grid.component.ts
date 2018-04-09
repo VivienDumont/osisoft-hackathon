@@ -297,12 +297,10 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
     if(this.isStarActivate){
       if(this.isByTime){
-        const date_m24 = new Date();
-        date_m24.setHours(date_m24.getHours() -24);
-        this.starttime = date_m24.toISOString();
-        this.endtime = new Date().toUTCString();
+        this.starttime = '*-24h';
+        this.endtime = '*';
       } else {
-        this.starttime = new Date().toUTCString();
+        this.starttime = '*';
       }
 
       this.GetEventFrames();

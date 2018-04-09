@@ -31,7 +31,7 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     
     serverName: string = '';
     values = [];
-    listOfAttributeCategory:any = [];
+    listOfAttributeCategory:any;
 
     constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService) {
         this.lstColor.push('#b20000');
@@ -227,6 +227,8 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
                 this.selectedELEF[0].master=true;
             } 
         }
+        this.listOfAttributeCategory = null;
+        this.AttributeofselectedELEF = null;
     }
 
     SelectDatabase(item){

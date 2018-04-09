@@ -65,8 +65,8 @@
         <div>
             <div class="panel-at">
                 <div>Attribute Visible</div>
-                <div class="panel-at">
-                    <div>
+                <div class="panel-at" *ngIf="listOfAttributeCategory || AttributeofselectedELEF">
+                    <div *ngIf="listOfAttributeCategory.length">
                         Attribute Categories: <br/>
                         <table>
                             <thead>
@@ -79,7 +79,10 @@
                             </tr>
                         </table>
                     </div>
-                    <div>
+                    <div *ngIf="!listOfAttributeCategory.length">
+                        No Attribute Categories for the selected Element/EventFrame!
+                    </div>
+                    <div *ngIf="AttributeofselectedELEF.length">
                         Attributes For e/ef :<br/>
                         <table>
                             <thead>
@@ -91,11 +94,17 @@
                                 <td><input type="number" min="0" max="6" [(ngModel)]="item.position" [value]="item.position" (change)="PositionAttribute(item)" (focus)="item.oldposition=item.position;"/></td>
                             </tr>
                         </table>
-                        <br/>
-                        <button class="button-submit" (click)="SubmitConf()">Submit</button>
                     </div>
+                    <div *ngIf="!AttributeofselectedELEF.length">
+                            No Attribute for the selected Element/EventFrame!
+                    </div>
+                </div>
+                <div *ngIf="!(listOfAttributeCategory || AttributeofselectedELEF)">
+                    No Element/EventFrame selected!
                 </div>
             </div>
         </div>
+        <br/>
+        <button class="button-submit" (click)="SubmitConf()">Submit</button>
     </div>
 </div>
