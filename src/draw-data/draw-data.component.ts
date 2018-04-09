@@ -290,6 +290,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
           index++;
           req = r.body[index];
         }
+        console.log('redrawing component');
         this.redrawComponent();
       },
       e => {
@@ -436,7 +437,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       this.minControlWidth = 'inherit';
 
       this.widthControl = {
-        'width': 'inherit'
+        'width': '100%'
       }
 
       this.switchScrollState(false);
