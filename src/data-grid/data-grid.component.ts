@@ -143,7 +143,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     if(this.isByTime){
       url = `https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`
     } else {
-      url ="https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime={1}-3d&endtime={1}"
+      url ="https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime={1}-1w&endtime={1}"
     }
 
     const body = {
@@ -183,9 +183,9 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
         this.webidElement = r.body[1].Content.WebId;
         this.element_ef = r.body[1].Content.Name + ' | ' + this.eftype;
 
-        this.eventFrames = r.body[2].Content.Items.filter(x => x.TemplateName === this.eftype || x.TemplateName.indexOf(this.eftype)+1 || this.eftype.indexOf(x.TemplateName)+1);
+        this.eventFrames = r.body[2].Content.Items.filter(x => x.TemplateName.toString() === this.eftype || x.TemplateName.toString().indexOf(this.eftype)+1 || this.eftype.indexOf(x.TemplateName.toString())+1);
 
-        if(!this.isByTime){
+        if(!this.isByTime && this.eventFrames.length>3){
           this.eventFrames = this.eventFrames.slice(Math.max(this.eventFrames.length - 3, 1));
         }
         
