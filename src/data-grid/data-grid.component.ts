@@ -11,7 +11,7 @@ import { Location } from '@angular/common';
 
 
 @Component({
-  selector: 'example',
+  selector: 'data-grid',
   templateUrl: 'data-grid.component.html',
   styleUrls: ['data-grid.component.css']
 })
@@ -29,15 +29,20 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   starttime: string;
   endtime: string;
   isByTime: boolean = false;
+  typeOfSearch: string = 'BackwardFromStartTime';
+
   diffTime = 8; //in hour
 
   intervalNum: any;
 
-  isStarActivate: boolean = true; 
+  isStarActivate: boolean = false; 
 
   webidElement = '';
   webidEF = '';
   eftype = '';
+
+  isTreeReasonOpen:  boolean = false;
+  attributeForTreeReason: any = null;
 
   constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, private location: Location ){
 
@@ -82,13 +87,13 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     clearInterval(this.intervalNum);
   }
 
-  GetEventFrames(searchMode: string = 'BackwardFromStartTime'){
+  GetEventFrames(){
 
     let url = '';
     if(this.isByTime){
       url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`;
     } else {
-      url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&searchMode=${searchMode}`;
+      url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&searchMode=${this.typeOfSearch}`;
     }
 
     const body = {
@@ -111,7 +116,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
           this.eventFrames = this.eventFrames.slice(0,3);
         }
         
-        if(searchMode === 'BackwardFromStartTime'){
+        if(this.typeOfSearch === 'BackwardFromStartTime'){
           this.eventFrames = this.eventFrames.reverse();
         }
 
@@ -173,7 +178,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     .subscribe(
       r => {
         this.eftype = r.body[0].Content.TemplateName;
-        this.starttime = r.body[0].Content.EndTime;
+        //this.starttime = r.body[0].Content.EndTime;
         
         this.webidElement = r.body[1].Content.WebId;
         this.element_ef = r.body[1].Content.Name + ' | ' + this.eftype;
@@ -218,7 +223,8 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
               Name: attr.Name.toString(),
               Values: [],
               IsManualDataEntry: attr.IsManualDataEntry as boolean,
-              HasToBeHide: ((attr.IsHidden as boolean) || (attr.IsExcluded as boolean))
+              HasToBeHide: ((attr.IsHidden as boolean) || (attr.IsExcluded as boolean)),
+              HasReason: (attr.TraitName.toString().indexOf('Reason')+1)? true:false
             };
             this.lst_attribute.push(to_add);
             found = to_add;
@@ -240,12 +246,15 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     .subscribe(
       r => {
         let value = r.Value;
+        let name = '';
         
         if(value && value.Name){
+          name = value.Name.toString();
           value = value.Value;
         }
         this.lst_attribute[index_attr].Values[index] = {
           Value: value,
+          Name: name,
           idEF: index,
           idAttr: index_attr,
           UnitsAbbreviation: r.UnitsAbbreviation,
@@ -271,6 +280,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
       this.starttime = this.eventFrames[0].StartTime;
     }
     //clearInterval(this.intervalNum);
+    this.typeOfSearch = 'BackwardFromStartTime';
     this.GetEventFrames();
     this.isStarActivate = false;
     // this.intervalNum = setInterval(() => {
@@ -284,7 +294,8 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
       this.starttime = this.eventFrames[this.eventFrames.length-1].EndTime;
       this.endtime = this.eventFrames[this.eventFrames.length-1].EndTime + '+24h';
       //clearInterval(this.intervalNum);
-      this.GetEventFrames('ForwardFromStartTime');
+      this.typeOfSearch = 'ForwardFromStartTime';
+      this.GetEventFrames();
       this.isStarActivate = false;
       // this.intervalNum = setInterval(() => {
       //   this.GetEventFrames('ForwardFromStartTime');
@@ -315,18 +326,46 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
   SaveAttributeValue(val){
     const payload = {
-      "Value": val.Value,
-      "Timestanmp": new Date().toUTCString()
+      "Value": val.Value
     };
-    this.piWebApiService.attribute.setValue$(val.WebId, payload)
+
+    const body_batch = {
+      "0":{
+        "Method": "PUT",
+        "Resource": `https://pisrv01.pischool.int/piwebapi/attributes/${val.WebId}/value`,
+        "Content": JSON.stringify(payload),
+        "Headers": {
+          "Cache-Control": "no-cache"
+        }
+      }
+    };
+    //console.log(body_batch);
+    this.piWebApiService.batch.execute$(body_batch)
     .subscribe(
       r => {
-        console.log('Save Sucess');
+        console.log(r.body[0]);
+        if(200 <= r.body[0].Status && r.body[0].Status < 400){
+          console.log('Save Sucess');
+        } else {
+          console.log(r.body[0].Content.Errors);
+        }
+        
       },
       e => {
         console.error(e);
       }
-    )
+    );
+  }
+
+  OpenReasonTree(val){
+    this.isTreeReasonOpen = true;
+    this.attributeForTreeReason = val;
+  }
+
+  CloseReasonTree(event){
+    this.GetEventFrames();
+    this.attributeForTreeReason = null;
+    this.isTreeReasonOpen = false;
   }
 
 }

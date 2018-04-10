@@ -91,3 +91,25 @@ input:checked + .slider:before {
 .origin-star:hover{
   cursor: pointer;
 }
+
+.reasonTree{
+  width: 300px;
+  border: 2px solid blue;
+  background-color: #ffffff;
+  position: absolute;
+}
+
+.attribute-reason{
+  font-weight: bold;
+  cursor: none;
+  width: 50px;
+  height: 25px;
+  margin: auto;
+}
+
+.attribute-reason:hover{
+  font-weight: bold;
+  cursor: pointer;
+  width: 50px;
+  height: 25px;
+}

@@ -7,20 +7,20 @@ import { RouterModule, Routes, Router } from '@angular/router';
 import { NgLibrary, SymbolType, SymbolInputType, ConfigPropType } from './framework';
 import { LibModuleNgFactory } from './module.ngfactory';
 
-
 import { ExampleComponent } from './example/example.component';
 import { ExtractDataComponent } from './extract-data/extract-data.component';
 import { DrawDataComponent } from './draw-data/draw-data.component';
 import { ConfigPanelComponent } from './config-panel/config-panel.component';
 import { DataGridComponent } from './data-grid/data-grid.component';
+import { ReasonTreeComponent } from './reason-tree/reason-tree.component';
 
 // const routes: Router = [];
 
 @NgModule({
-  declarations: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent ],
+  declarations: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent, ReasonTreeComponent ],
   imports: [ CommonModule, FormsModule, RouterModule.forRoot([]) ],
-  exports: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent , DataGridComponent ],
-  entryComponents: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent ]
+  exports: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent , DataGridComponent, ReasonTreeComponent ],
+  entryComponents: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent, ReasonTreeComponent ]
 })
 
 export class LibModule { }
@@ -48,7 +48,6 @@ export class ExtensionLibrary extends NgLibrary {
           name: 'DrawData Options',
           isExpanded: true,
           configProps: [
-            { propName: 'isMasterEvent', displayName: 'Is Master Event', configType: ConfigPropType.Flag, defaultVal: true },
             { propName: 'defaultEventHeight', displayName: 'Default Event Height', configType: ConfigPropType.Num, defaultVal: 50 },
             { propName: 'bkColor', displayName: 'Background', configType: ConfigPropType.Color, defaultVal: 'white' },
             { propName: 'lineColor', displayName: 'Band Color', configType: ConfigPropType.Color, defaultVal: '#58a3b6' },
