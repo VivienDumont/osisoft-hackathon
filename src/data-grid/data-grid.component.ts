@@ -229,8 +229,12 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
             this.lst_attribute.push(to_add);
             found = to_add;
           }
+          const index_attr = this.lst_attribute.indexOf(found);
+          this.GetValueOfAttribute(attr, index, index_attr);
 
-          this.GetValueOfAttribute(attr, index, this.lst_attribute.indexOf(found));
+          if(attr.HasChildren as boolean){
+            this.GetAttributeOfAttribute(attr, index, index_attr);
+          }
           
         });
         this.lst_attribute_to_display = this.lst_attribute.filter(x => !x.HasToBeHide);
@@ -258,10 +262,48 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
           idEF: index,
           idAttr: index_attr,
           UnitsAbbreviation: r.UnitsAbbreviation,
-          WebId: attr.WebId
+          WebId: attr.WebId,
+          Limits: null
         };
       },
       e => {
+        console.error(e);
+      }
+    );
+  }
+
+  GetAttributeOfAttribute(attribute, indexEF, indexAttr){
+    this.piWebApiService.attribute.getAttributes$(attribute.WebId)
+    .subscribe(
+      r => {
+        const hi = r.Items.find(x => x.Name.toString() === 'Hi');
+        const lo = r.Items.find(x => x.Name.toString() === 'Lo');
+
+        if(hi && lo){
+          this.lst_attribute[indexAttr].Values[indexEF].Limits = {};
+          this.getValueOfAttributeOfAttribute(hi, indexEF, indexAttr);
+          this.getValueOfAttributeOfAttribute(lo, indexEF, indexAttr);
+        }
+
+      },
+      e => {
+        console.error(e);
+      }
+    );
+  }
+
+  getValueOfAttributeOfAttribute(attribute, indexEF, indexAttr){
+    this.piWebApiService.stream.getValue$(attribute.WebId)
+    .subscribe(
+      r=>{
+        if(attribute.Name.toString() === 'Hi'){
+          this.lst_attribute[indexAttr].Values[indexEF].Limits.High = r.Value;
+        }
+        if(attribute.Name.toString() === 'Lo'){
+          this.lst_attribute[indexAttr].Values[indexEF].Limits.Low = r.Value;
+        }
+      },
+      e=>{
         console.error(e);
       }
     );
@@ -368,4 +410,31 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     this.isTreeReasonOpen = false;
   }
 
+
+  GetColorOfEventFrame(event){
+    const indexEF = this.eventFrames.indexOf(event);
+    if(indexEF>=0){
+      const foundColor = this.lst_attribute.find(x => x.Name.toString() === 'EventFrameColor');
+      if(foundColor){
+        return foundColor.Values[indexEF].Name.toString().toLowerCase();
+      }
+    }
+    return this.bkColor;
+  }
+
+  HasLimits(val){
+    return (val && val.Limits)?true:false;
+  }
+
+  ColorTextIfLimits(val){
+    const inside = 'darkgreen';
+    const outside = 'red';
+    if(val && val.Limits){
+      const low = val.Limits.Low as number;
+      const value = val.Value as number;
+      const high = val.Limits.High as Number;
+      return (low <= value && value <= high)? inside : outside;
+    }
+    return 'black'
+  }
 }
