@@ -22,9 +22,7 @@ export class ReasonTreeComponent implements OnChanges, OnInit, OnDestroy{
 
     tree: any = {};
 
-    constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService){
-
-    }
+    constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService) { }
 
     GetTreeFromAttribute(){
         const body_batch={

@@ -13,14 +13,15 @@ import { DrawDataComponent } from './draw-data/draw-data.component';
 import { ConfigPanelComponent } from './config-panel/config-panel.component';
 import { DataGridComponent } from './data-grid/data-grid.component';
 import { ReasonTreeComponent } from './reason-tree/reason-tree.component';
+import { EventFrameZommComponent } from './eventframe-zoom/eventframe-zoom.component';
 
 // const routes: Router = [];
 
 @NgModule({
-  declarations: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent, ReasonTreeComponent ],
+  declarations: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent, ReasonTreeComponent, EventFrameZommComponent ],
   imports: [ CommonModule, FormsModule, RouterModule.forRoot([]) ],
-  exports: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent , DataGridComponent, ReasonTreeComponent ],
-  entryComponents: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent, ReasonTreeComponent ]
+  exports: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent , DataGridComponent, ReasonTreeComponent, EventFrameZommComponent ],
+  entryComponents: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent, ReasonTreeComponent, EventFrameZommComponent ]
 })
 
 export class LibModule { }

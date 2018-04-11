@@ -71,6 +71,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   isByTime: boolean = false;
 
   isStarActivate: boolean = true; 
+  typeOfSearch = 'BackwardFromStartTime';
 
   setInt: any;
 
@@ -98,6 +99,9 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     if (this.isByTime) {
       url += `&startTime=${this.startTimeMaster}`;
       url += `&endTime=${this.endTimeMaster}`;
+    } else {
+      url += `&startTime=${this.element_ef[0].eventframes[0].StartTime}`;
+      url += `&endTime=${this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime}`;
     }
     window.open(url, '_blank');
     this.element_ef[index].showMenu = (this.element_ef[index].showMenu) ? !this.element_ef[index].showMenu : true;
@@ -115,6 +119,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     //clearInterval(this.intervalNum);
 
     //make the call to method of the loop
+    this.typeOfSearch = 'BackwardFromStartTime';
     this.GetEventFramesMaster();
     //this.GetEventFrames();
     this.isStarActivate = false;
@@ -124,7 +129,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   GoAfter(){
-    if(this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime !== '-'){
+    if(!(this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime.indexOf('9999')+1)){
       
       this.startTimeMaster = this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime;
 
@@ -134,7 +139,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       //clearInterval(this.intervalNum);
 
       //make the call to method of the loop
-      this.GetEventFramesMaster('ForwardFromStartTime');
+      this.typeOfSearch = 'ForwardFromStartTime';
+      this.GetEventFramesMaster();
       // this.GetEventFrames('ForwardFromStartTime');
 
       // this.intervalNum = setInterval(() => {
@@ -161,7 +167,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     }
   }
 
-  private GetEventFramesMaster(searchMode: string = 'BackwardFromStartTime') {
+  private GetEventFramesMaster() {
     
     let url = '';
     let master_row = this.elementEfAttr[0];
@@ -182,7 +188,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     if(this.isByTime) {
       url = `${this.urlPiWebApi}/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&endtime=${this.endTimeMaster}`;
     } else {
-      url = `${this.urlPiWebApi}/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&searchMode=${searchMode}`;
+      url = `${this.urlPiWebApi}/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&searchMode=${this.typeOfSearch}`;
     }
 
     const body = {
@@ -195,7 +201,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     this.piWebApiService.batch.execute$(body)
     .subscribe(
       r => {
-        if(r.body[0].Content.Items.length == 0){
+        if(r.body[0].Content.Items.length == 0 && !this.isByTime){
           return;
         }
         
@@ -205,7 +211,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
           items_master = items_master.slice(0,3);
         }
         
-        if(searchMode === 'BackwardFromStartTime'){
+        if(this.typeOfSearch === 'BackwardFromStartTime' && !this.isByTime){
           items_master = items_master.reverse();
         }
 
@@ -383,6 +389,14 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
         temp_start = new Date(ef.EndTime);
         temp_end = new Date( (eventframes[index + 1]) ? eventframes[index + 1].StartTime : end )
+      }
+      const lastEndTime = (eventframes[eventframes.length-1].EndTime.indexOf('9999')+1)? new Date(): new Date(eventframes[eventframes.length-1].EndTime);
+      if(lastEndTime< end){
+        eventframes.push({
+          StartTime: lastEndTime.toUTCString(),
+          EndTime: end.toUTCString(),
+          isBlank: true
+        });
       }
 
     } else {
