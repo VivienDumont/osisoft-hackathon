@@ -93,10 +93,10 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     let url: string = 'display?id=F1EmwcQX-gVflkWbQKYW5nMT5Qvs6AcM0t6BGpYAANOjr-FgUElTUlYwMVxQSSBWSVNJT05cUEkgVklTSU9OXERPQ1VNRU5UU1xWRFVNT05UL1RFU1Qx';
     url += `&webidEF=${this.getMostRecentEventByElementId(index)}`;
     url += `&navigationState=${(this.isByTime) ? 'time' : '3events'}`;
-    // if (this.isByTime) {
-    //   url += `&startTime=${this.startTimeMaster}`;
-    //   url += `&endTime=${this.endTimeMaster}`;
-    // }
+    if (this.isByTime) {
+      url += `&startTime=${this.startTimeMaster}`;
+      url += `&endTime=${this.endTimeMaster}`;
+    }
     window.open(url, '_blank');
     this.element_ef[index].showMenu = (this.element_ef[index].showMenu) ? !this.element_ef[index].showMenu : true;
   }

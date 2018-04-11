@@ -11,7 +11,7 @@ import { Location } from '@angular/common';
 
 
 @Component({
-  selector: 'example',
+  selector: 'data-grid',
   templateUrl: 'data-grid.component.html',
   styleUrls: ['data-grid.component.css']
 })
@@ -24,19 +24,25 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   eventFrames: any = [];
   lst_range:any = [];
   lst_attribute:  any = [];
+  lst_attribute_to_display: any;
   element_ef: string = 'Element/EventType';
   starttime: string;
   endtime: string;
   isByTime: boolean = false;
+  typeOfSearch: string = 'BackwardFromStartTime';
+
   diffTime = 8; //in hour
 
   intervalNum: any;
 
-  isStarActivate: boolean = true; 
+  isStarActivate: boolean = false; 
 
   webidElement = '';
   webidEF = '';
   eftype = '';
+
+  isTreeReasonOpen:  boolean = false;
+  attributeForTreeReason: any = null;
 
   constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, private location: Location ){
 
@@ -81,13 +87,13 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     clearInterval(this.intervalNum);
   }
 
-  GetEventFrames(searchMode: string = 'BackwardFromStartTime'){
+  GetEventFrames(){
 
     let url = '';
     if(this.isByTime){
       url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`;
     } else {
-      url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&searchMode=${searchMode}`;
+      url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&searchMode=${this.typeOfSearch}`;
     }
 
     const body = {
@@ -110,9 +116,11 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
           this.eventFrames = this.eventFrames.slice(0,3);
         }
         
-        if(searchMode === 'BackwardFromStartTime'){
+        if(this.typeOfSearch === 'BackwardFromStartTime'){
           this.eventFrames = this.eventFrames.reverse();
         }
+
+        this.lst_attribute = [];
 
         this.lst_range = [];
         this.eventFrames.forEach((ef, index) => {
@@ -135,7 +143,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     if(this.isByTime){
       url = `https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`
     } else {
-      url ="https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime={1}-3d&endtime={1}"
+      url ="https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime={1}-1w&endtime={1}"
     }
 
     const body = {
@@ -170,14 +178,17 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     .subscribe(
       r => {
         this.eftype = r.body[0].Content.TemplateName;
-        this.starttime = r.body[0].Content.EndTime;
+        //this.starttime = r.body[0].Content.EndTime;
         
         this.webidElement = r.body[1].Content.WebId;
         this.element_ef = r.body[1].Content.Name + ' | ' + this.eftype;
 
-        this.eventFrames = r.body[2].Content.Items.filter(x => x.TemplateName === this.eftype || x.TemplateName.indexOf(this.eftype)+1 || this.eftype.indexOf(x.TemplateName)+1);
+        this.eventFrames = r.body[2].Content.Items.filter(x => x.TemplateName.toString() === this.eftype || x.TemplateName.toString().indexOf(this.eftype)+1 || this.eftype.indexOf(x.TemplateName.toString())+1);
 
-        this.eventFrames = this.eventFrames.slice(Math.max(this.eventFrames.length - 3, 1));
+        if(!this.isByTime && this.eventFrames.length>3){
+          this.eventFrames = this.eventFrames.slice(Math.max(this.eventFrames.length - 3, 1));
+        }
+        
         this.lst_range = [];
 
         this.eventFrames.forEach((ef, index) => {
@@ -196,7 +207,12 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   GetAttributes(eventFrame, index) {
-    this.piWebApiService.eventFrame.getAttributes$(eventFrame.WebId)
+    const params = {
+      showExcluded: true,
+      showHidden: true
+    }
+
+    this.piWebApiService.eventFrame.getAttributes$(eventFrame.WebId, params)
     .subscribe(
       r => {
         const attributes = r.Items;
@@ -206,16 +222,22 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
             const to_add = {
               Name: attr.Name.toString(),
               Values: [],
-              IsManualDataEntry: attr.IsManualDataEntry,
-              HasToBeHide: attr.IsHidden || attr.IsExcluded
+              IsManualDataEntry: attr.IsManualDataEntry as boolean,
+              HasToBeHide: ((attr.IsHidden as boolean) || (attr.IsExcluded as boolean)),
+              HasReason: (attr.TraitName.toString().indexOf('Reason')+1)? true:false
             };
             this.lst_attribute.push(to_add);
             found = to_add;
           }
+          const index_attr = this.lst_attribute.indexOf(found);
+          this.GetValueOfAttribute(attr, index, index_attr);
 
-          this.GetValueOfAttribute(attr, index, this.lst_attribute.indexOf(found));
+          if(attr.HasChildren as boolean){
+            this.GetAttributeOfAttribute(attr, index, index_attr);
+          }
           
         });
+        this.lst_attribute_to_display = this.lst_attribute.filter(x => !x.HasToBeHide);
       },
       e => {
         console.error(e);
@@ -228,17 +250,60 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     .subscribe(
       r => {
         let value = r.Value;
+        let name = '';
         
         if(value && value.Name){
+          name = value.Name.toString();
           value = value.Value;
         }
         this.lst_attribute[index_attr].Values[index] = {
           Value: value,
+          Name: name,
           idEF: index,
-          idAttr: index_attr
+          idAttr: index_attr,
+          UnitsAbbreviation: r.UnitsAbbreviation,
+          WebId: attr.WebId,
+          Limits: null
         };
       },
       e => {
+        console.error(e);
+      }
+    );
+  }
+
+  GetAttributeOfAttribute(attribute, indexEF, indexAttr){
+    this.piWebApiService.attribute.getAttributes$(attribute.WebId)
+    .subscribe(
+      r => {
+        const hi = r.Items.find(x => x.Name.toString() === 'Hi');
+        const lo = r.Items.find(x => x.Name.toString() === 'Lo');
+
+        if(hi && lo){
+          this.lst_attribute[indexAttr].Values[indexEF].Limits = {};
+          this.getValueOfAttributeOfAttribute(hi, indexEF, indexAttr);
+          this.getValueOfAttributeOfAttribute(lo, indexEF, indexAttr);
+        }
+
+      },
+      e => {
+        console.error(e);
+      }
+    );
+  }
+
+  getValueOfAttributeOfAttribute(attribute, indexEF, indexAttr){
+    this.piWebApiService.stream.getValue$(attribute.WebId)
+    .subscribe(
+      r=>{
+        if(attribute.Name.toString() === 'Hi'){
+          this.lst_attribute[indexAttr].Values[indexEF].Limits.High = r.Value;
+        }
+        if(attribute.Name.toString() === 'Lo'){
+          this.lst_attribute[indexAttr].Values[indexEF].Limits.Low = r.Value;
+        }
+      },
+      e=>{
         console.error(e);
       }
     );
@@ -252,11 +317,12 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     if(this.isByTime){
       this.starttime = this.eventFrames[0].StartTime + '-24h';
       this.endtime = this.eventFrames[0].StartTime;
-      this.lst_attribute = [];
+      
     } else {
       this.starttime = this.eventFrames[0].StartTime;
     }
     //clearInterval(this.intervalNum);
+    this.typeOfSearch = 'BackwardFromStartTime';
     this.GetEventFrames();
     this.isStarActivate = false;
     // this.intervalNum = setInterval(() => {
@@ -266,12 +332,12 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
   GoAfter(){
     if(this.eventFrames[this.eventFrames.length-1].EndTime !== '-'){
-        this.lst_attribute = [];
 
       this.starttime = this.eventFrames[this.eventFrames.length-1].EndTime;
       this.endtime = this.eventFrames[this.eventFrames.length-1].EndTime + '+24h';
       //clearInterval(this.intervalNum);
-      this.GetEventFrames('ForwardFromStartTime');
+      this.typeOfSearch = 'ForwardFromStartTime';
+      this.GetEventFrames();
       this.isStarActivate = false;
       // this.intervalNum = setInterval(() => {
       //   this.GetEventFrames('ForwardFromStartTime');
@@ -284,12 +350,10 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
     if(this.isStarActivate){
       if(this.isByTime){
-        const date_m24 = new Date();
-        date_m24.setHours(date_m24.getHours() -24);
-        this.starttime = date_m24.toISOString();
-        this.endtime = new Date().toUTCString();
+        this.starttime = '*-24h';
+        this.endtime = '*';
       } else {
-        this.starttime = new Date().toUTCString();
+        this.starttime = '*';
       }
 
       this.GetEventFrames();
@@ -302,4 +366,75 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     return index; // or item.id
   }
 
+  SaveAttributeValue(val){
+    const payload = {
+      "Value": val.Value
+    };
+
+    const body_batch = {
+      "0":{
+        "Method": "PUT",
+        "Resource": `https://pisrv01.pischool.int/piwebapi/attributes/${val.WebId}/value`,
+        "Content": JSON.stringify(payload),
+        "Headers": {
+          "Cache-Control": "no-cache"
+        }
+      }
+    };
+    //console.log(body_batch);
+    this.piWebApiService.batch.execute$(body_batch)
+    .subscribe(
+      r => {
+        console.log(r.body[0]);
+        if(200 <= r.body[0].Status && r.body[0].Status < 400){
+          console.log('Save Sucess');
+        } else {
+          console.log(r.body[0].Content.Errors);
+        }
+        
+      },
+      e => {
+        console.error(e);
+      }
+    );
+  }
+
+  OpenReasonTree(val){
+    this.isTreeReasonOpen = true;
+    this.attributeForTreeReason = val;
+  }
+
+  CloseReasonTree(event){
+    this.GetEventFrames();
+    this.attributeForTreeReason = null;
+    this.isTreeReasonOpen = false;
+  }
+
+
+  GetColorOfEventFrame(event){
+    const indexEF = this.eventFrames.indexOf(event);
+    if(indexEF>=0){
+      const foundColor = this.lst_attribute.find(x => x.Name.toString() === 'EventFrameColor');
+      if(foundColor){
+        return foundColor.Values[indexEF].Name.toString().toLowerCase();
+      }
+    }
+    return this.bkColor;
+  }
+
+  HasLimits(val){
+    return (val && val.Limits)?true:false;
+  }
+
+  ColorTextIfLimits(val){
+    const inside = 'darkgreen';
+    const outside = 'red';
+    if(val && val.Limits){
+      const low = val.Limits.Low as number;
+      const value = val.Value as number;
+      const high = val.Limits.High as Number;
+      return (low <= value && value <= high)? inside : outside;
+    }
+    return 'black'
+  }
 }

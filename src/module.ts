@@ -7,20 +7,20 @@ import { RouterModule, Routes, Router } from '@angular/router';
 import { NgLibrary, SymbolType, SymbolInputType, ConfigPropType } from './framework';
 import { LibModuleNgFactory } from './module.ngfactory';
 
-
 import { ExampleComponent } from './example/example.component';
 import { ExtractDataComponent } from './extract-data/extract-data.component';
 import { DrawDataComponent } from './draw-data/draw-data.component';
 import { ConfigPanelComponent } from './config-panel/config-panel.component';
 import { DataGridComponent } from './data-grid/data-grid.component';
+import { ReasonTreeComponent } from './reason-tree/reason-tree.component';
 
 // const routes: Router = [];
 
 @NgModule({
-  declarations: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent ],
+  declarations: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent, ReasonTreeComponent ],
   imports: [ CommonModule, FormsModule, RouterModule.forRoot([]) ],
-  exports: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent , DataGridComponent ],
-  entryComponents: [ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent ]
+  exports: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent , DataGridComponent, ReasonTreeComponent ],
+  entryComponents: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent, ReasonTreeComponent ]
 })
 
 export class LibModule { }

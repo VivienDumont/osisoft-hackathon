@@ -12,10 +12,10 @@
       <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
       <nav class="header-nav" [style.width.px]="currentViewWidth">
         <span (click)="ActivateStar()" class="origin-star">
-          <span *ngIf="isStarActivate">&#9733;</span>
-          <span *ngIf="!isStarActivate">&#9734;</span>
+          <span *ngIf="isStarActivate"><i class="fa fa-star fa-3"></i></span>
+          <span *ngIf="!isStarActivate"><i class="fa fa-star-o fa-3"></i></span>
         </span>
-        <button (click)="GoBefore()">&lArr;</button>
+        <button (click)="GoBefore()"><i class="fa fa-arrow-left fa-2" aria-hidden="true"></i></button>
           Move by 3 events
           <span>
             <label class="switch">
@@ -24,7 +24,7 @@
             </label>
           </span>
           Move by Time (24h)
-          <button (click)="GoAfter()">&rArr;</button>
+          <button (click)="GoAfter()"><i class="fa fa-arrow-right fa-2" aria-hidden="true"></i></button>
 
       </nav>
 

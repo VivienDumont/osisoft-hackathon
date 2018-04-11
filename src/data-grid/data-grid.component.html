@@ -1,13 +1,14 @@
-<div>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<div [style.background]="bkColor" [style.color]="fgColor">
     <table class="fixed">
       <tr>
         <td>{{element_ef}}</td>
         <td [attr.colspan]="eventFrames.length">
           <span (click)="ActivateStar()" class="origin-star">
-            <span *ngIf="isStarActivate">&#9733;</span>
-            <span *ngIf="!isStarActivate">&#9734;</span>
+              <span *ngIf="isStarActivate"><i class="fa fa-star fa-3"></i></span>
+              <span *ngIf="!isStarActivate"><i class="fa fa-star-o fa-3"></i></span>
           </span>
-          <button (click)="GoBefore()">&lArr;</button>
+          <button (click)="GoBefore()"><i class="fa fa-arrow-left fa-2" aria-hidden="true"></i></button>
           Move by 3 events
           <span>
             <label class="switch">
@@ -16,30 +17,41 @@
             </label>
           </span>
           Move by Time (24h)
-          <button (click)="GoAfter()">&rArr;</button>
+          <button (click)="GoAfter()"><i class="fa fa-arrow-right fa-2" aria-hidden="true"></i></button>
         </td> 
       </tr>
       <tr>
         <td>Event</td>
-        <td *ngFor="let event of eventFrames">{{event.Id}}</td>
+        <td *ngFor="let event of eventFrames" [attr.bgcolor]="GetColorOfEventFrame(event)">{{event.Name}}</td>
       </tr>
       <tr>
-        <td>Range</td>
-        <td *ngFor="let time of lst_range">{{time.StartTime}} => {{time.EndTime}}</td>
+        <td>StartTime</td>
+        <td *ngFor="let time of lst_range">{{time.StartTime}}</td>
       </tr>
-      <tr *ngFor="let attr of lst_attribute">
+      <tr>
+          <td>EndTime</td>
+          <td *ngFor="let time of lst_range">{{time.EndTime}}</td>
+        </tr>
+      <tr *ngFor="let attr of lst_attribute_to_display">
         <td>{{attr.Name}}</td>
-        <td *ngFor="let val of attr.Values; trackBy: trackByFn">
-          <span *ngIf="!attr.HasToBeHide">
+        <td *ngFor="let val of attr.Values; trackBy: trackByFn"  [title]="(HasLimits(val))? 'Limits : ' + val.Limits.Low + ' to ' + val.Limits.High : ''">
+          <div *ngIf="!attr.HasReason">
             <span *ngIf="attr.IsManualDataEntry">
-              <input type="text" [(ngModel)]="val.Value" [value]="val.Value"/>
+              <input type="text" [(ngModel)]="val.Value" [value]="val.Value" (keyup.enter)="SaveAttributeValue(val)"/>{{val.UnitsAbbreviation}}
             </span>
-            <span *ngIf="!attr.IsManualDataEntry">
-              {{val.Value}}
+            <span *ngIf="!attr.IsManualDataEntry" [style.color]="ColorTextIfLimits(val)">
+              {{val.Value+' '+val.UnitsAbbreviation}}
             </span>
-          </span>
+          </div>
+          <div *ngIf="attr.HasReason" (dblclick)="OpenReasonTree(val)" class="attribute-reason">
+              {{val.Name+' '+val.UnitsAbbreviation}}
+          </div>
+            
         </td>
       </tr>
 
     </table>
+    <div *ngIf="isTreeReasonOpen" class="reasonTree">
+      <reason-tree (askToClose)="CloseReasonTree($event)" [attribute]="attributeForTreeReason"></reason-tree>
+    </div>
 </div>

@@ -1,0 +1,29 @@
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+<div class="tree-body">
+    <div *ngIf="!!tree">
+    
+        <h3>{{tree.Text}}<button (click)="Close()"><i class="fa fa-times fa-2" aria-hidden="true"></i></button></h3>
+    
+        <ul class="tree">
+            <ng-template #recursiveTree let-list>
+                <li *ngFor="let item of list">
+                
+                    <span *ngIf="!!item.Children; else elseNotNode" class="Node" (click)="item.Collapse=!item.Collapse;">{{item.Text}}</span>
+                    
+                    <ng-template #elseNotNode>
+                        <span class="NotNode" (dblclick)="Action(item)">{{item.Text}}</span>
+                    </ng-template>
+                    
+                    <ul *ngIf="!!item.Children && item.Children != null && item.Children.length > 0 && !item.Collapse">
+                        <ng-container *ngTemplateOutlet="recursiveTree; context:{ $implicit: item.Children }"></ng-container>
+                    </ul>
+                
+                </li>
+            </ng-template>
+
+            <ng-container *ngTemplateOutlet="recursiveTree; context:{ $implicit: tree.Children}"></ng-container>
+        </ul>
+        
+    </div>
+</div>

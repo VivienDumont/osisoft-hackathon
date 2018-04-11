@@ -24,11 +24,14 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     AttributeofselectedELEF:any;
     selectedelefRow: any;
 
+    lst_database: any = [];
+    selectedDatabase: any;
+
     isShow: boolean = true;
     
     serverName: string = '';
     values = [];
-    listOfAttributeCategory:any = [];
+    listOfAttributeCategory:any;
 
     constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService) {
         this.lstColor.push('#b20000');
@@ -50,37 +53,37 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
     }
 
     BuildData(body) {
-        this.values = [];
-        body[1].Content.Items.forEach(db => {
-          const to_add = db;
-          const index = body[1].Content.Items.indexOf(db);
-          to_add.elements = body[2].Content.Items[index].Content.Items;
-          this.values.push(to_add);
-        });
-    
-        this.values.forEach(db => {
-          db.elements.forEach(element => {
-            this.AnalysesElement(element)
-            this.elementsTOshow.push(element);
-            this.GetElement(element);
-          });
-        });
-      }
+        this.lst_database = body[1].Content.Items;
+    }
 
-      private GetElement(element){
+    GetElement(element, arr){
 
         this.piWebApiService.element.getElements$(element.WebId)
         .subscribe(
           r =>{
-            element.elements = r.Items;
-            element.elements.forEach(e => {
+            r.Items.forEach(e => {
                 if(e.HasChildren){
-                    this.AnalysesElement(e)
-                    this.elementsTOshow.push(e);
-                    this.GetElement(e);
-                } else {
-                    this.AnalysesElement(e)
-                    this.elementsTOshow.push(e);
+                    this.GetElement(e, arr);
+                }
+                this.AnalysesElement(e);
+                arr.push(e);
+            });
+          },
+          e=>{
+            console.error(e);
+          }
+        );
+    }
+
+    AnalysesElement(element){
+        this.piWebApiService.element.getAnalyses$(element.WebId)
+        .subscribe(
+          r=>{
+            element.analysesTemplateEventType = [];
+            element.attributeTemplate = [];
+            r.Items.forEach(template => {
+                if (template.AnalysisRulePlugInName === 'EventFrame') {
+                    element.analysesTemplateEventType.push(template);
                 }
             });
           },
@@ -88,28 +91,9 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
             console.error(e);
           }
         );
-      }
+    }
 
-      AnalysesElement(element){
-        this.piWebApiService.element.getAnalyses$(element.WebId)
-        .subscribe(
-          r=>{
-            element.analysesTemplateEventType = [];
-            element.attributeTemplate = [];
-            r.Items.forEach(template => {
-              if (template.AnalysisRulePlugInName === 'EventFrame'){
-                element.analysesTemplateEventType.push(template);
-              } 
-              
-            });
-          },
-          e=>{
-            console.error(e);
-          }
-        );
-      }
-
-      GetAttributeFromEFTempate(element, template){
+    GetAttributeFromEFTempate(element, template){
         this.piWebApiService.element.getEventFrames$(element.WebId)
         .subscribe(
             r => {
@@ -140,7 +124,7 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
                 console.error(e);
             }
         );
-      }
+    }
 
     Get(){
         this.elementsTOshow = [];
@@ -158,15 +142,6 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
                 "ParentIds": [
                     "0"
                 ]
-            },
-            "2": {
-                "Method": "GET",
-                "RequestTemplate": {
-                    "Resource": "$.1.Content.Items[*].Links.Elements"
-                },
-                "ParentIds": [
-                    "1"
-                ]
             }
         };
     
@@ -181,16 +156,9 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
         );
     }
 
-    ngOnInit(){
-
-        
-    }
+    ngOnInit(){}
 
     ngOnChanges(changes) {
-        //console.log('config panel');
-        //console.log(this.paramIndex);
-        //console.log(this.selectedSymbols);
-        //console.log(changes);
         if(changes){
             if(changes.selectedSymbols){
                 if(changes.selectedSymbols.currentValue && changes.selectedSymbols.currentValue.length > 0){
@@ -231,7 +199,7 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
             element: this.elementcategory,
             ef: this.EFtemplate,
             master: false,
-            Color: '#b20000'
+            Color: this.getRandomColor()
         }
         
         if(this.selectedELEF.length == 0){
@@ -259,6 +227,33 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
                 this.selectedELEF[0].master=true;
             } 
         }
+        this.listOfAttributeCategory = null;
+        this.AttributeofselectedELEF = null;
+    }
+
+    SelectDatabase(item){
+        this.selectedDatabase = this.lst_database.find(x => x.WebId === item);
+        
+        if(!this.selectedDatabase.Elements){
+            this.selectedDatabase.Elements = [];
+            this.piWebApiService.assetDatabase.getElements$(this.selectedDatabase.WebId)
+            .subscribe(
+                res => {
+                    const elements = res.Items;
+                    elements.forEach(e => {
+                        this.selectedDatabase.Elements.push(e);
+                        if(e.HasChildren){
+                            this.GetElement(e, this.selectedDatabase.Elements);
+                        }
+                        this.AnalysesElement(e);
+                    });
+                },
+                e => {
+                    console.error(e);
+                }
+            )
+        }
+        this.elementsTOshow = this.selectedDatabase.Elements;
     }
 
     SelectElement(item){
@@ -274,16 +269,17 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
         
         this.listOfAttributeCategory = item.ef.attributesTemplateCategories;
 
-        //const lstToDisplay = this.selectedelefRow.ef.attributesTemplate.filter();
-
-
         this.AttributeofselectedELEF = this.selectedelefRow.ef.attributesTemplate;
     }
     NewMaster(item){
+        console.log(item);
         this.selectedELEF.forEach(x => {
             x.master=false;
         })
         item.master = true;
+        setTimeout(()=> {
+            item.master = true;
+        }, 500);
 
         const index_of_item = this.selectedELEF.indexOf(item);
         if(index_of_item < this.selectedELEF.length-1){
@@ -291,7 +287,20 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
         }
     }
     PositionAttribute(item){
-        
+        console.log(item);
+        if(item.oldposition === undefined){
+            item.oldposition = 0;
+        }
+        if(item.position){
+            const lst_same_pos = this.AttributeofselectedELEF.filter(x => x.position===item.position && x.Name!==item.Name);
+            console.log(lst_same_pos);
+
+            if(lst_same_pos.length){
+                lst_same_pos[0].position = item.oldposition;
+            }
+            item.oldposition = item.position;
+        }
+
     }
 
     SubmitConf(){
@@ -366,7 +375,13 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
         return arr;
     }
 
-    CheckPositionOfAttribute(attr){
-        //const 
+
+    getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
     }
 }
