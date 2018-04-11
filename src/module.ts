@@ -41,8 +41,7 @@ export class ExtensionLibrary extends NgLibrary {
         SymbolInputType.Data,
         SymbolInputType.PathPrefix,
       ],
-      autoEventBindings:[
-        
+      autoEventBindings: [
       ],
       generalConfig: [
         {

@@ -60,23 +60,37 @@
             id="{{ val.Id }}"
             [style.background]="(IsBlank(val))? '#fff' : item.Color"
             [style.height]="eventHeight"
-            [style.color]="getColorByBgColor(item.Color)" [title]="!IsBlank(val)? val.Name + ',&#10;' + val.durationString + ',&#10;' + val.StartTime + ' => ' + val.EndTime : ''"
+            [style.color]="getColorByBgColor(item.Color)" 
             [style.border-color]="(val.bordercolor) ? val.bordercolor : 'transparent'"
-            [style.border-style]="(val.bordercolor) ? 'inset' : 'hidden'"
-            [style.border-width.px]="3">
-
-            <div class="row-0" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
-              <div>Duration: {{ val.durationString }}</div>
-              <div>bordercolor: {{ val.bordercolor }}</div>
+            [style.border-style]="(val.bordercolor) ? 'solid' : 'hidden'"
+            [style.border-width.px]="4">
+            <!-- [title]="!IsBlank(val)? 'val.Name, val.durationString, val.StartTime => val.EndTime' : ''" -->
+            <div *ngIf="!val.isBlank" class="tooltiptext alert-success">
+              <div>{{val.Name}}</div> 
+              <div>Duration: {{val.durationString}}</div> 
+              <div>Start: {{val.StartTimeString}} => {{val.EndTimeString}}</div>
             </div>
+
+            <!-- <div class="row-0" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
+              <div>Duration: {{ val.durationString }}</div>
+            </div> -->
             <div class="row-1" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
               <div>{{ val.slot1 }}</div>
             </div>
             <div class="row-2" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
               <div>{{ val.slot2 }}</div>
             </div>
+            <div class="row-3" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
+              <div>{{ val.slot3 }}</div>
+            </div>
+            <div class="row-4" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
+              <div>{{ val.slot4 }}</div>
+            </div>
           </div>
         </div>
+
+        
+        
         <div class="event-row alert alert-info" [style.min-height.px]="eventHeight" *ngIf="item.eventframes?.length === 0">
             <strong> Notice!</strong>  &nbsp; No {{item.elementName}} / {{item.eventTypeName}} in selected time range.
         </div>
