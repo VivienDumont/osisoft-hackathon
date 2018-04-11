@@ -203,9 +203,10 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
           items_master = items_master.slice(0,3);
         }
         
-        if(searchMode === 'BackwardFromStartTime'){
+        if(searchMode === 'BackwardFromStartTime' && !this.isByTime){
           items_master = items_master.reverse();
         }
+        
 
         this.element_ef = [];
         
@@ -423,7 +424,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   // }
 
   redrawComponent() {
-    const timeManipulator = 100;
+    const timeManipulator = 1;
 
     let startTimeInMilliseconds = new Date(this.startTime).getTime() / timeManipulator;
     let endTimeInMilliseconds = new Date(this.endTime).getTime() / timeManipulator;
