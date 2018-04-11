@@ -52,7 +52,9 @@ export class ExtensionLibrary extends NgLibrary {
             { propName: 'bkColor', displayName: 'Background', configType: ConfigPropType.Color, defaultVal: 'white' },
             { propName: 'lineColor', displayName: 'Band Color', configType: ConfigPropType.Color, defaultVal: '#58a3b6' },
             { propName: 'minimumEventPixelWidth', displayName: 'Min Event Width', configType: ConfigPropType.Num, defaultVal: 25 },
-            { propName: 'showAttrInEventWidth', displayName: 'Event Width To Show Attr', configType: ConfigPropType.Num, defaultVal: 20 }
+            { propName: 'showAttrInEventWidth', displayName: 'Event Width To Show Attr', configType: ConfigPropType.Num, defaultVal: 20 },
+            { propName: 'datagridDisplay', displayName: 'Data Grid Display', configType: ConfigPropType.DocumentUrl },
+            { propName: 'urlPiWebApi', displayName: 'PiWebApi', configType: ConfigPropType.Text, defaultVal: 'https://pisrv01.pischool.int/piwebapi' }
           ]
         },
       ],
@@ -83,7 +85,8 @@ export class ExtensionLibrary extends NgLibrary {
           isExpanded: true,
           configProps: [
             { propName: 'bkColor', displayName: 'Background color', configType: ConfigPropType.Color, defaultVal: 'white' },
-            { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' }
+            { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' },
+            { propName: 'urlPiWebApi', displayName: 'PiWebApi', configType: ConfigPropType.Text, defaultVal: 'https://pisrv01.pischool.int/piwebapi' }
           ]
         }
       ],

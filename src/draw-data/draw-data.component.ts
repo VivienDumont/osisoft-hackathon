@@ -30,6 +30,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   @Input() endTimeCustom: string;
   @Input() minimumEventPixelWidth: number
   @Input() showAttrInEventWidth: number;
+  @Input() datagridDisplay: any;
+  @Input() urlPiWebApi: string;
 
   @Input() elementEfAttr: any;
 
@@ -90,7 +92,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
   openGridDisplay(Id: string, index: number): void {
     // tslint:disable-next-line:max-line-length
-    let url: string = 'display?id=F1EmwcQX-gVflkWbQKYW5nMT5Qvs6AcM0t6BGpYAANOjr-FgUElTUlYwMVxQSSBWSVNJT05cUEkgVklTSU9OXERPQ1VNRU5UU1xWRFVNT05UL1RFU1Qx';
+    let url: string = this.datagridDisplay;
     url += `&webidEF=${this.getMostRecentEventByElementId(index)}`;
     url += `&navigationState=${(this.isByTime) ? 'time' : '3events'}`;
     if (this.isByTime) {
@@ -178,9 +180,9 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     }
 
     if(this.isByTime) {
-      url = `https://pisrv01.pischool.int/piwebapi/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&endtime=${this.endTimeMaster}`;
+      url = `${this.urlPiWebApi}/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&endtime=${this.endTimeMaster}`;
     } else {
-      url = `https://pisrv01.pischool.int/piwebapi/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&searchMode=${searchMode}`;
+      url = `${this.urlPiWebApi}/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&searchMode=${searchMode}`;
     }
 
     const body = {
@@ -255,7 +257,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       if(index > 0){
         body[""+index] = {
           'Method': 'GET',
-          'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
+          'Resource': `${this.urlPiWebApi}/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
         }
       }
     });

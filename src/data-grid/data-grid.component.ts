@@ -20,6 +20,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   @Input() bkColor: string;
   @Input() data: any;
   @Input() pathPrefix: string;
+  @Input() urlPiWebApi: string;
   
   eventFrames: any = [];
   lst_range:any = [];
@@ -45,10 +46,11 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   attributeForTreeReason: any = null;
 
   constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, private location: Location ){
-
+    
   }
 
   ngOnChanges(changes) {
+    console.log(changes);
     if (changes) {
 
     }
@@ -91,9 +93,9 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
     let url = '';
     if(this.isByTime){
-      url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`;
+      url = `${this.urlPiWebApi}/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`;
     } else {
-      url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&searchMode=${this.typeOfSearch}`;
+      url = `${this.urlPiWebApi}/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&searchMode=${this.typeOfSearch}`;
     }
 
     const body = {
@@ -141,19 +143,19 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   GetEventFramesInit() {
     let url = '';
     if(this.isByTime){
-      url = `https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`
+      url = `${this.urlPiWebApi}/elements/{0}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`
     } else {
-      url ="https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime={1}-1w&endtime={1}"
+      url = this.urlPiWebApi + "/elements/{0}/eventframes?starttime={1}-1w&endtime={1}"
     }
 
     const body = {
       "0":{
         "Method": "GET",
-        "Resource": "https://pisrv01.pischool.int/piwebapi/eventframes/"+this.webidEF
+        "Resource": this.urlPiWebApi+"/eventframes/"+this.webidEF
       },
       "1":{
         "Method": "GET",
-        "Resource": "https://pisrv01.pischool.int/piwebapi/elements/{0}",
+        "Resource": this.urlPiWebApi+"/elements/{0}",
         "Parameters": [
           "$.0.Content.RefElementWebIds[0]"
         ],
@@ -224,7 +226,8 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
               Values: [],
               IsManualDataEntry: attr.IsManualDataEntry as boolean,
               HasToBeHide: ((attr.IsHidden as boolean) || (attr.IsExcluded as boolean)),
-              HasReason: (attr.TraitName.toString().indexOf('Reason')+1)? true:false
+              HasReason: (attr.TraitName.toString().indexOf('Reason')+1)? true:false,
+              IsEnum: (attr.Type.toString() === 'EnumerationValue')
             };
             this.lst_attribute.push(to_add);
             found = to_add;
@@ -234,6 +237,9 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
           if(attr.HasChildren as boolean){
             this.GetAttributeOfAttribute(attr, index, index_attr);
+          }
+          if(found.IsEnum){
+            this.getEnumerationOfAttribute(attr, index, index_attr);
           }
           
         });
@@ -309,6 +315,35 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     );
   }
 
+  getEnumerationOfAttribute(attr, indexEF, indexAttr){
+    const body_batch = {
+      '0':{
+        'Method': 'GET',
+        'Resource': attr.Links.EnumerationValues
+      }
+    };
+
+    this.piWebApiService.batch.execute$(body_batch)
+    .subscribe(
+      r => {
+        const items = r.body[0].Content.Items;
+        let enums = [];
+
+        items.forEach(item => {
+          const toAdd = {
+            Name: item.Name,
+            Value: item.Value
+          }
+          enums.push(toAdd);
+        });
+        this.lst_attribute[indexAttr].Enums = enums;
+      },
+      e => {
+        console.error(e);
+      }
+    );
+  }
+
   ToggleBetweemByEventByTime(){
     console.log('ToggleBetweemByEventByTime ' + this.isByTime);
   }
@@ -374,14 +409,14 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     const body_batch = {
       "0":{
         "Method": "PUT",
-        "Resource": `https://pisrv01.pischool.int/piwebapi/attributes/${val.WebId}/value`,
+        "Resource": `${this.urlPiWebApi}/attributes/${val.WebId}/value`,
         "Content": JSON.stringify(payload),
         "Headers": {
           "Cache-Control": "no-cache"
         }
       }
     };
-    //console.log(body_batch);
+    console.log(body_batch);
     this.piWebApiService.batch.execute$(body_batch)
     .subscribe(
       r => {
