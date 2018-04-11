@@ -142,6 +142,11 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
           }
           this.lst_range.push(toadd);
           this.GetAttributes(ef, index);
+
+          setTimeout(()=>{
+            (document.querySelectorAll('a.nav-link.dark')[9] as HTMLElement).click();
+            (document.querySelectorAll('a.nav-link.dark')[9] as HTMLElement).click();
+          }, 1000);
         });
       },
       e => {
@@ -193,7 +198,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
         this.eventFrames = r.body[2].Content.Items.filter(x => x.TemplateName.toString() === this.eftype || x.TemplateName.toString().indexOf(this.eftype)+1 || this.eftype.indexOf(x.TemplateName.toString())+1);
 
         if(!this.isByTime && this.eventFrames.length>3){
-          this.eventFrames = this.eventFrames.slice(Math.max(this.eventFrames.length - 3, 1));
+          //this.eventFrames = this.eventFrames.slice(Math.max(this.eventFrames.length - 3, 1));
         }
         
         this.lst_range = [];

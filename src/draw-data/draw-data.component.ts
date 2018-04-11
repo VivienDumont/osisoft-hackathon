@@ -111,7 +111,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     if(this.isByTime){
       const date_m24 = new Date(this.element_ef[0].eventframes[0].StartTime);
       date_m24.setHours(date_m24.getHours() -24);
-      this.startTimeMaster = date_m24.toISOString();
+      this.startTimeMaster = date_m24.toUTCString();
       this.endTimeMaster = this.element_ef[0].eventframes[0].StartTime;
     } else {
       this.startTimeMaster = this.element_ef[0].eventframes.find(ef => !ef.isBlank).StartTime;
@@ -135,7 +135,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
       const date_p24 = new Date(this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime);
       date_p24.setHours(date_p24.getHours() + 24);
-      this.endTimeMaster = date_p24.toISOString();
+      this.endTimeMaster = date_p24.toUTCString();
       //clearInterval(this.intervalNum);
 
       //make the call to method of the loop
@@ -157,7 +157,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       if(this.isByTime){
         const date_m24 = new Date();
         date_m24.setHours(date_m24.getHours() -24);
-        this.startTimeMaster = date_m24.toISOString();
+        this.startTimeMaster = date_m24.toUTCString();
         this.endTimeMaster = new Date().toUTCString();
       } else {
         this.startTimeMaster = new Date().toUTCString();
@@ -246,6 +246,10 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
 
         this.GetEventFrames();
+        setTimeout(()=>{
+          (document.querySelectorAll('a.nav-link.dark')[9] as HTMLElement).click();
+          (document.querySelectorAll('a.nav-link.dark')[9] as HTMLElement).click();
+        }, 1000);
       },
       e => {
         console.error(e);
@@ -468,7 +472,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
             item.StartTimeString = new Date(item.StartTime).toLocaleString()
             let end;
 
-            if (item.EndTime.indexOf(inProgressTime) !== -1) {
+            if (item.EndTime.indexOf(inProgressTime)+1) {
               console.log('item in progress');
               end = new Date().getTime();
               item.durationString = 'In Progress';
