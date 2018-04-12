@@ -53,7 +53,6 @@
   position: relative;
   border-radius: 3px;
   overflow: visible;
-  height: 100px;
   padding:3px;
   text-align: right;
   border-width: 3px;
@@ -183,7 +182,7 @@
   position: relative;
   display: inline-block;
   border-bottom: 1px dotted black;
-  z-index: 1
+  z-index: 1;
 }
 
 .event .tooltiptext {
@@ -202,6 +201,7 @@
   /* top:100%; */
   position: absolute;
   z-index: 999999;
+  pointer-events: none;
 }
 
 /*.event .tooltiptext::after{

@@ -36,6 +36,8 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   isByTime: boolean = false;
   typeOfSearch: string = 'BackwardFromStartTime';
 
+  isInit: boolean = true;
+
   diffTime = 8; //in hour
 
   intervalNum: any;
@@ -372,6 +374,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
       this.starttime = this.eventFrames[0].StartTime;
     }
     //clearInterval(this.intervalNum);
+    this.isInit = false;
     this.typeOfSearch = 'BackwardFromStartTime';
     this.GetEventFrames();
     this.isStarActivate = false;
@@ -386,6 +389,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
       this.starttime = this.eventFrames[this.eventFrames.length-1].EndTime;
       this.endtime = this.eventFrames[this.eventFrames.length-1].EndTime + '+24h';
       //clearInterval(this.intervalNum);
+      this.isInit = false;
       this.typeOfSearch = 'ForwardFromStartTime';
       this.GetEventFrames();
       this.isStarActivate = false;
@@ -405,7 +409,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
       } else {
         this.starttime = '*';
       }
-
+      this.isInit = false;
       this.GetEventFrames();
     }
 
@@ -455,9 +459,15 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   CloseReasonTree(event){
-    this.GetEventFrames();
+    if(this.isInit){
+      this.GetEventFramesInit();
+    } else {
+      this.GetEventFrames();
+    }
+    
     this.attributeForTreeReason = null;
     this.isTreeReasonOpen = false;
+
   }
 
 

@@ -58,15 +58,16 @@
         <div *ngFor="let val of item.eventframes;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
           id="{{ val.Id }}"
           [style.background]="(IsBlank(val))? '#fff' : item.Color"
-          [style.height]="eventHeight"
+          [style.height.px]="eventHeight"
           [style.color]="getColorByBgColor(item.Color)" 
           [style.border-color]="(val.bordercolor) ? val.bordercolor : 'transparent'"
           [style.border-style]="(val.bordercolor) ? 'solid' : 'hidden'"
           [style.border-width.px]="4"
+          (mousemove)="onMouseMoveOnEF($event, val)"
           (dblclick)="ZoomThisEF(item, val)"
           >
           <!-- [title]="!IsBlank(val)? 'val.Name, val.durationString, val.StartTime => val.EndTime' : ''" -->
-          <div *ngIf="!val.isBlank" class="tooltiptext alert-success">
+          <div *ngIf="!val.isBlank" id="TooltipEF{{val.Id}}" class="tooltiptext alert-success" [style.left]="val.leftTooltip">
             <div>{{val.Name}}</div> 
             <div>Duration: {{val.durationString}}</div> 
             <div>Start: {{val.StartTimeString}} => {{val.EndTimeString}}</div>

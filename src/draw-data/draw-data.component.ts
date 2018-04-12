@@ -88,15 +88,17 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
   }
 
-  onMouseMove(e) {
-    // let x = e.clientX - e.screenX,
-    //     y = e.clientY - e.screenY;
-    // this.tooltipPosotion = {
-    //   'top': (y) + 'px',
-    //   'left' : (x) + 'px'
-    // }
-    // tooltipSpan.style.top = (y + 20) + 'px';
-    // tooltipSpan.style.left = (x + 20) + 'px';
+  onMouseMoveOnEF(e, val) {
+    console.log(e);
+    const tooltipOfEF = document.getElementById('TooltipEF'+val.Id) as HTMLElement;
+    
+    let toLeft = e.offsetX;
+    
+    const widthTooltip = (tooltipOfEF)? tooltipOfEF.offsetWidth : 400;
+    if(e.clientX > this.currentViewWidth / 2){
+      toLeft -= widthTooltip;
+    }
+    val.leftTooltip = toLeft + 'px';
   }
 
   toggleCategoryMenu(index: number): void {
@@ -704,8 +706,6 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   ngOnChanges(changes) {
-    console.log('drawdata');
-    console.log(changes);
     if (changes.data) {
       // this.values = this.formatData();
     }
@@ -715,7 +715,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     }
 
     if (changes.defaultEventHeight) {
-      this.eventHeight = `${changes.defaultEventHeight}`;
+      this.eventHeight = `${changes.defaultEventHeight.currentValue}`;
       console.log(`new event height: ${this.eventHeight}`);
     }
 
