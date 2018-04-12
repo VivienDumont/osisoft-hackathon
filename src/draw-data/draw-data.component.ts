@@ -21,7 +21,6 @@ enum NavigationState{
   styleUrls: ['draw-data.component.css']
 })
 export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
-  @Input() primaryEvent: string;
   @Input() defaultEventHeight: number;
   @Input() bkColor: string;
   @Input() lineColor: string;
@@ -30,6 +29,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   @Input() endTimeCustom: string;
   @Input() minimumEventPixelWidth: number
   @Input() showAttrInEventWidth: number;
+  @Input() datagridDisplay: any;
+  @Input() urlPiWebApi: string;
 
   @Input() elementEfAttr: any;
 
@@ -69,9 +70,14 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   stop_search: boolean = false;
   isByTime: boolean = false;
 
-  isStarActivate: boolean = true;
+  isStarActivate: boolean = true; 
+  typeOfSearch = 'BackwardFromStartTime';
 
   setInt: any;
+
+  eventframeToZoom: any = null;
+  elementOfEFZoom:any = null;
+  isEFZoom:boolean = false;
 
   // tslint:disable-next-line:max-line-length
   constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService,
@@ -102,12 +108,15 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
   openGridDisplay(Id: string, index: number): void {
     // tslint:disable-next-line:max-line-length
-    let url: string = 'display?id=F1EmwcQX-gVflkWbQKYW5nMT5Qvs6AcM0t6BGpYAANOjr-FgUElTUlYwMVxQSSBWSVNJT05cUEkgVklTSU9OXERPQ1VNRU5UU1xWRFVNT05UL1RFU1Qx';
+    let url: string = this.datagridDisplay;
     url += `&webidEF=${this.getMostRecentEventByElementId(index)}`;
     url += `&navigationState=${(this.isByTime) ? 'time' : '3events'}`;
     if (this.isByTime) {
       url += `&startTime=${this.startTimeMaster}`;
       url += `&endTime=${this.endTimeMaster}`;
+    } else {
+      url += `&startTime=${this.element_ef[0].eventframes[0].StartTime}`;
+      url += `&endTime=${this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime}`;
     }
     window.open(url, '_blank');
     this.element_ef[index].showMenu = (this.element_ef[index].showMenu) ? !this.element_ef[index].showMenu : true;
@@ -117,7 +126,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     if(this.isByTime){
       const date_m24 = new Date(this.element_ef[0].eventframes[0].StartTime);
       date_m24.setHours(date_m24.getHours() -24);
-      this.startTimeMaster = date_m24.toISOString();
+      this.startTimeMaster = date_m24.toUTCString();
       this.endTimeMaster = this.element_ef[0].eventframes[0].StartTime;
     } else {
       this.startTimeMaster = this.element_ef[0].eventframes.find(ef => !ef.isBlank).StartTime;
@@ -125,6 +134,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     //clearInterval(this.intervalNum);
 
     //make the call to method of the loop
+    this.typeOfSearch = 'BackwardFromStartTime';
     this.GetEventFramesMaster();
     //this.GetEventFrames();
     this.isStarActivate = false;
@@ -134,17 +144,18 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   GoAfter(){
-    if(this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime !== '-'){
+    if(!(this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime.indexOf('9999')+1)){
       
       this.startTimeMaster = this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime;
 
       const date_p24 = new Date(this.element_ef[0].eventframes[this.element_ef[0].eventframes.length-1].EndTime);
       date_p24.setHours(date_p24.getHours() + 24);
-      this.endTimeMaster = date_p24.toISOString();
+      this.endTimeMaster = date_p24.toUTCString();
       //clearInterval(this.intervalNum);
 
       //make the call to method of the loop
-      this.GetEventFramesMaster('ForwardFromStartTime');
+      this.typeOfSearch = 'ForwardFromStartTime';
+      this.GetEventFramesMaster();
       // this.GetEventFrames('ForwardFromStartTime');
 
       // this.intervalNum = setInterval(() => {
@@ -161,7 +172,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       if(this.isByTime){
         const date_m24 = new Date();
         date_m24.setHours(date_m24.getHours() -24);
-        this.startTimeMaster = date_m24.toISOString();
+        this.startTimeMaster = date_m24.toUTCString();
         this.endTimeMaster = new Date().toUTCString();
       } else {
         this.startTimeMaster = new Date().toUTCString();
@@ -171,7 +182,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     }
   }
 
-  private GetEventFramesMaster(searchMode: string = 'BackwardFromStartTime') {
+  private GetEventFramesMaster() {
     
     let url = '';
     let master_row = this.elementEfAttr[0];
@@ -190,9 +201,9 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     }
 
     if(this.isByTime) {
-      url = `https://pisrv01.pischool.int/piwebapi/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&endtime=${this.endTimeMaster}`;
+      url = `${this.urlPiWebApi}/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&endtime=${this.endTimeMaster}`;
     } else {
-      url = `https://pisrv01.pischool.int/piwebapi/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&searchMode=${searchMode}`;
+      url = `${this.urlPiWebApi}/elements/${masterWebId}/eventframes?starttime=${this.startTimeMaster}&searchMode=${this.typeOfSearch}`;
     }
 
     const body = {
@@ -205,7 +216,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     this.piWebApiService.batch.execute$(body)
     .subscribe(
       r => {
-        if(r.body[0].Content.Items.length == 0){
+        if(r.body[0].Content.Items.length == 0 && !this.isByTime){
           return;
         }
         
@@ -215,7 +226,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
           items_master = items_master.slice(0,3);
         }
         
-        if(searchMode === 'BackwardFromStartTime' && !this.isByTime){
+        if(this.typeOfSearch === 'BackwardFromStartTime' && !this.isByTime){
           items_master = items_master.reverse();
         }
         
@@ -250,6 +261,10 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
 
         this.GetEventFrames();
+        setTimeout(()=>{
+          (document.querySelectorAll('a.nav-link.dark')[9] as HTMLElement).click();
+          (document.querySelectorAll('a.nav-link.dark')[9] as HTMLElement).click();
+        }, 1000);
       },
       e => {
         console.error(e);
@@ -268,7 +283,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       if(index > 0){
         body[""+index] = {
           'Method': 'GET',
-          'Resource': `https://pisrv01.pischool.int/piwebapi/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
+          'Resource': `${this.urlPiWebApi}/elements/${element.element.WebId}/eventframes?starttime=${this.startTime}&endtime=${this.endTime}`
         }
       }
     });
@@ -397,15 +412,13 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
         temp_start = new Date(ef.EndTime);
         temp_end = new Date( (eventframes[index + 1]) ? eventframes[index + 1].StartTime : end )
       }
-      //If we have gone through all of the events and there is still time on the end, add another blank event with the the start time of the last iterated event 
-      //and an end time of the end time of the selected time.
-      if (temp_end < end) {
-        const blankEF = {
-          StartTime: temp_end.toUTCString(),
+      const lastEndTime = (eventframes[eventframes.length-1].EndTime.indexOf('9999')+1)? new Date(): new Date(eventframes[eventframes.length-1].EndTime);
+      if(lastEndTime< end){
+        eventframes.push({
+          StartTime: lastEndTime.toUTCString(),
           EndTime: end.toUTCString(),
           isBlank: true
-        }
-        eventframes.splice(index + 1, 0, blankEF)
+        });
       }
 
     } else {
@@ -475,7 +488,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
             item.StartTimeString = new Date(item.StartTime).toLocaleString()
             let end;
 
-            if (item.EndTime.indexOf(inProgressTime) !== -1) {
+            if (item.EndTime.indexOf(inProgressTime)+1) {
               console.log('item in progress');
               end = new Date().getTime();
               item.durationString = 'In Progress';
@@ -732,5 +745,19 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   getColorByBgColor(bgColor) {
     if (!bgColor) { return ''; }
     return (parseInt(bgColor.replace('#', ''), 16) > 0xffffff / 2) ? '#000' : '#fff';
+  }
+
+  ZoomThisEF(item, val){
+    if(!val.isBlank){
+      this.isEFZoom = true;
+      this.elementOfEFZoom = item;
+      this.eventframeToZoom = val;
+    }
+  }
+
+  EFZoomAskToClose(event){
+    this.isEFZoom = false;
+    this.elementOfEFZoom = null;
+    this.eventframeToZoom = null;
   }
 }

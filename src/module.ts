@@ -13,14 +13,15 @@ import { DrawDataComponent } from './draw-data/draw-data.component';
 import { ConfigPanelComponent } from './config-panel/config-panel.component';
 import { DataGridComponent } from './data-grid/data-grid.component';
 import { ReasonTreeComponent } from './reason-tree/reason-tree.component';
+import { EventFrameZommComponent } from './eventframe-zoom/eventframe-zoom.component';
 
 // const routes: Router = [];
 
 @NgModule({
-  declarations: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent, ReasonTreeComponent ],
+  declarations: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent, ReasonTreeComponent, EventFrameZommComponent ],
   imports: [ CommonModule, FormsModule, RouterModule.forRoot([]) ],
-  exports: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent , DataGridComponent, ReasonTreeComponent ],
-  entryComponents: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent, ReasonTreeComponent ]
+  exports: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent , DataGridComponent, ReasonTreeComponent, EventFrameZommComponent ],
+  entryComponents: [ ExampleComponent, DrawDataComponent, ExtractDataComponent, ConfigPanelComponent, DataGridComponent, ReasonTreeComponent, EventFrameZommComponent ]
 })
 
 export class LibModule { }
@@ -51,7 +52,9 @@ export class ExtensionLibrary extends NgLibrary {
             { propName: 'bkColor', displayName: 'Background', configType: ConfigPropType.Color, defaultVal: 'white' },
             { propName: 'lineColor', displayName: 'Band Color', configType: ConfigPropType.Color, defaultVal: '#58a3b6' },
             { propName: 'minimumEventPixelWidth', displayName: 'Min Event Width', configType: ConfigPropType.Num, defaultVal: 25 },
-            { propName: 'showAttrInEventWidth', displayName: 'Event Width To Show Attr', configType: ConfigPropType.Num, defaultVal: 20 }
+            { propName: 'showAttrInEventWidth', displayName: 'Event Width To Show Attr', configType: ConfigPropType.Num, defaultVal: 20 },
+            { propName: 'datagridDisplay', displayName: 'Data Grid Display', configType: ConfigPropType.DocumentUrl },
+            { propName: 'urlPiWebApi', displayName: 'PiWebApi', configType: ConfigPropType.Text, defaultVal: 'https://pisrv01.pischool.int/piwebapi' }
           ]
         },
       ],
@@ -82,7 +85,8 @@ export class ExtensionLibrary extends NgLibrary {
           isExpanded: true,
           configProps: [
             { propName: 'bkColor', displayName: 'Background color', configType: ConfigPropType.Color, defaultVal: 'white' },
-            { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' }
+            { propName: 'fgColor', displayName: 'Color', configType: ConfigPropType.Color, defaultVal: 'black' },
+            { propName: 'urlPiWebApi', displayName: 'PiWebApi', configType: ConfigPropType.Text, defaultVal: 'https://pisrv01.pischool.int/piwebapi' }
           ]
         }
       ],

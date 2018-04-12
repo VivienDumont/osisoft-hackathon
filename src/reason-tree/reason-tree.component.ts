@@ -16,20 +16,19 @@ import { Location } from '@angular/common';
   styleUrls: ['reason-tree.component.css']
 })
 export class ReasonTreeComponent implements OnChanges, OnInit, OnDestroy{
-    @Input() attribute:any;
+    @Input() attribute: any;
+    @Input() urlPiWebApi: string;
     @Output() askToClose: EventEmitter<any> = new EventEmitter<any>();
 
     tree: any = {};
 
-    constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService){
-
-    }
+    constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService) { }
 
     GetTreeFromAttribute(){
         const body_batch={
             "0":{
                 "Method": "GET",
-                "Resource": `https://pisrv01.pischool.int/piwebapi/attributes/${this.attribute.WebId}`
+                "Resource": `${this.urlPiWebApi}/attributes/${this.attribute.WebId}`
             },
             "1":{
                 "Method":"GET",

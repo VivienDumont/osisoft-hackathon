@@ -24,6 +24,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   @ViewChild('view')   viewDiv: ElementRef;
   currentViewWidth: number;
 
+  @Input() urlPiWebApi: string;
   
   eventFrames: any = [];
   lst_range:any = [];
@@ -48,11 +49,12 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   isTreeReasonOpen:  boolean = false;
   attributeForTreeReason: any = null;
 
-  constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, private location: Location ){
-
+  constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService, private location: Location, @Inject(DOCUMENT) private document: any, ){
+    
   }
 
   ngOnChanges(changes) {
+    console.log(changes);
     if (changes) {
 
     }
@@ -79,7 +81,17 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
       if(key === 'endTime'){
         this.endtime = value;
       }
+
+      if(key === 'starActivate'){
+        this.isStarActivate = (value === 'true');
+      }
     });
+
+    if(this.isStarActivate){
+      this.endtime = '*';
+      this.starttime = (this.isByTime)? '*-24h':'*-3d';
+    }
+
     this.GetEventFramesInit();
 
     // this.intervalNum = setInterval(() => {
@@ -100,9 +112,9 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
     let url = '';
     if(this.isByTime){
-      url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`;
+      url = `${this.urlPiWebApi}/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`;
     } else {
-      url = `https://pisrv01.pischool.int/piwebapi/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&searchMode=${this.typeOfSearch}`;
+      url = `${this.urlPiWebApi}/elements/${this.webidElement}/eventframes?starttime=${this.starttime}&searchMode=${this.typeOfSearch}`;
     }
 
     const body = {
@@ -125,7 +137,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
           this.eventFrames = this.eventFrames.slice(0,3);
         }
         
-        if(this.typeOfSearch === 'BackwardFromStartTime'){
+        if(this.typeOfSearch === 'BackwardFromStartTime' && !this.isByTime){
           this.eventFrames = this.eventFrames.reverse();
         }
 
@@ -134,11 +146,16 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
         this.lst_range = [];
         this.eventFrames.forEach((ef, index) => {
           const toadd = {
-            StartTime: ef.StartTime.replace('T', ' ').replace('Z', ''),
-            EndTime: (ef.EndTime.indexOf('9999')+1)? '-' : ef.EndTime.replace('T', ' ').replace('Z', '')
+            StartTime: ef.StartTime.replace('T', ' ').replace('Z', '').slice(0, -3),
+            EndTime: (ef.EndTime.indexOf('9999')+1)? '-' : ef.EndTime.replace('T', ' ').replace('Z', '').slice(0, -3)
           }
           this.lst_range.push(toadd);
           this.GetAttributes(ef, index);
+
+          setTimeout(()=>{
+            (document.querySelectorAll('a.nav-link.dark')[9] as HTMLElement).click();
+            (document.querySelectorAll('a.nav-link.dark')[9] as HTMLElement).click();
+          }, 1000);
         });
       },
       e => {
@@ -148,21 +165,16 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   GetEventFramesInit() {
-    let url = '';
-    if(this.isByTime){
-      url = `https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`
-    } else {
-      url ="https://pisrv01.pischool.int/piwebapi/elements/{0}/eventframes?starttime={1}-1w&endtime={1}"
-    }
+    let url = `${this.urlPiWebApi}/elements/{0}/eventframes?starttime=${this.starttime}&endtime=${this.endtime}`    
 
     const body = {
       "0":{
         "Method": "GET",
-        "Resource": "https://pisrv01.pischool.int/piwebapi/eventframes/"+this.webidEF
+        "Resource": this.urlPiWebApi+"/eventframes/"+this.webidEF
       },
       "1":{
         "Method": "GET",
-        "Resource": "https://pisrv01.pischool.int/piwebapi/elements/{0}",
+        "Resource": this.urlPiWebApi+"/elements/{0}",
         "Parameters": [
           "$.0.Content.RefElementWebIds[0]"
         ],
@@ -195,7 +207,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
         this.eventFrames = r.body[2].Content.Items.filter(x => x.TemplateName.toString() === this.eftype || x.TemplateName.toString().indexOf(this.eftype)+1 || this.eftype.indexOf(x.TemplateName.toString())+1);
 
         if(!this.isByTime && this.eventFrames.length>3){
-          this.eventFrames = this.eventFrames.slice(Math.max(this.eventFrames.length - 3, 1));
+          //this.eventFrames = this.eventFrames.slice(Math.max(this.eventFrames.length - 3, 1));
         }
         
         this.lst_range = [];
@@ -233,7 +245,8 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
               Values: [],
               IsManualDataEntry: attr.IsManualDataEntry as boolean,
               HasToBeHide: ((attr.IsHidden as boolean) || (attr.IsExcluded as boolean)),
-              HasReason: (attr.TraitName.toString().indexOf('Reason')+1)? true:false
+              HasReason: (attr.TraitName.toString().indexOf('Reason')+1)? true:false,
+              IsEnum: (attr.Type.toString() === 'EnumerationValue')
             };
             this.lst_attribute.push(to_add);
             found = to_add;
@@ -243,6 +256,9 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
           if(attr.HasChildren as boolean){
             this.GetAttributeOfAttribute(attr, index, index_attr);
+          }
+          if(found.IsEnum){
+            this.getEnumerationOfAttribute(attr, index, index_attr);
           }
           
         });
@@ -318,8 +334,33 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     );
   }
 
-  ToggleBetweemByEventByTime(){
-    console.log('ToggleBetweemByEventByTime ' + this.isByTime);
+  getEnumerationOfAttribute(attribute, indexEF, indexAttr){
+    const body_batch = {
+      '0':{
+        'Method': 'GET',
+        'Resource': attribute.Links.EnumerationValues
+      }
+    };
+
+    this.piWebApiService.batch.execute$(body_batch)
+    .subscribe(
+      r => {
+        const items = r.body[0].Content.Items;
+        let enums = [];
+
+        items.forEach(item => {
+          const toAdd = {
+            Name: item.Name,
+            Value: item.Value
+          }
+          enums.push(toAdd);
+        });
+        this.lst_attribute[indexAttr].Enums = enums;
+      },
+      e => {
+        console.error(e);
+      }
+    );
   }
 
   GoBefore(){
@@ -383,14 +424,14 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     const body_batch = {
       "0":{
         "Method": "PUT",
-        "Resource": `https://pisrv01.pischool.int/piwebapi/attributes/${val.WebId}/value`,
+        "Resource": `${this.urlPiWebApi}/attributes/${val.WebId}/value`,
         "Content": JSON.stringify(payload),
         "Headers": {
           "Cache-Control": "no-cache"
         }
       }
     };
-    //console.log(body_batch);
+    console.log(body_batch);
     this.piWebApiService.batch.execute$(body_batch)
     .subscribe(
       r => {

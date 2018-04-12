@@ -281,3 +281,10 @@ input:checked + .slider:before {
 
 
 
+.EFZoomPopUp{
+  direction: ltr;
+  position: absolute;
+  left: 200px;
+  top: 200px;
+  z-index: 99999999;
+}

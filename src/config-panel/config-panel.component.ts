@@ -282,7 +282,7 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
         }, 500);
 
         const index_of_item = this.selectedELEF.indexOf(item);
-        if(index_of_item < this.selectedELEF.length-1){
+        if(index_of_item <= this.selectedELEF.length-1){
             this.selectedELEF = this.MoveIndexOf(this.selectedELEF, index_of_item, 0);
         }
     }
