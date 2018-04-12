@@ -354,10 +354,6 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
     );
   }
 
-  ToggleBetweemByEventByTime(){
-    console.log('ToggleBetweemByEventByTime ' + this.isByTime);
-  }
-
   GoBefore(){
     if(this.isByTime){
       this.starttime = this.eventFrames[0].StartTime + '-24h';

@@ -1,3 +1,41 @@
-<div>
-    Event frame!!!!
+<div class="zoomEF card">
+    <div [style.background]="elementOfEF.Color" [style.color]="getColorByBgColor(elementOfEF.Color)">
+        <button (click)="CloseZoom()"><i class="fa fa-times fa-2 input-blackcolor" aria-hidden="true"></i></button>
+        <h3>{{eventframe.Name}}</h3>
+        
+        <div *ngIf="eventframe.lstCompleteAttribute.length">
+            <div *ngFor="let attr of eventframe.lstCompleteAttribute">
+                
+                <span *ngIf="!attr.HasReason">
+                    {{attr.Name + ' : '}}
+                    <span *ngIf="attr.IsManualDataEntry">
+                        <span *ngIf="attr.IsEnum">
+                            <select class="input-blackcolor" [(ngModel)]="attr.Value" (change)="SaveAttributeValue(attr)">
+                                <option *ngFor="let e of attr.Enums" [value]="e.Value" [selected]="attr.Value===e.Value">{{e.Name}}</option>
+                            </select>
+                        </span>
+        
+                        <span *ngIf="!attr.IsEnum">
+                            <input class="input-blackcolor" type="text" [(ngModel)]="attr.Value" [value]="attr.Value" (keyup.enter)="SaveAttributeValue(attr)"/>{{attr.UnitsAbbreviation}}
+                        </span>
+                    </span>
+        
+                    <span *ngIf="!attr.IsManualDataEntry">
+                        {{ (attr.NameValue === '')? attr.Value + ' ' + attr.UnitsAbbreviation : attr.NameValue}}
+                    </span>
+                </span>
+        
+                <span *ngIf="attr.HasReason" (dblclick)="OpenReasonTree(attr)" class="attribute-reason">
+                    {{attr.Name + ' : ' + attr.NameValue}}
+                </span>
+            </div>
+        </div>
+        <div *ngIf="!eventframe.lstCompleteAttribute.length">
+            No Attribute for this Event Frame!!
+        </div>
+    </div>
+
+    <div *ngIf="isTreeReasonOpen" class="reasonTree">
+        <reason-tree (askToClose)="CloseReasonTree($event)" [attribute]="attributeForTreeReason" [urlPiWebApi]="urlPiWebApi"></reason-tree>
+    </div>
 </div>

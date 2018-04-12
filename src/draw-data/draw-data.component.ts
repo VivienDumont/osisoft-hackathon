@@ -21,7 +21,6 @@ enum NavigationState{
   styleUrls: ['draw-data.component.css']
 })
 export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
-  @Input() primaryEvent: string;
   @Input() defaultEventHeight: number;
   @Input() bkColor: string;
   @Input() lineColor: string;
@@ -74,6 +73,10 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   typeOfSearch = 'BackwardFromStartTime';
 
   setInt: any;
+
+  eventframeToZoom: any = null;
+  elementOfEFZoom:any = null;
+  isEFZoom:boolean = false;
 
   // tslint:disable-next-line:max-line-length
   constructor(@Inject(PIWEBAPI_TOKEN) private piWebApiService: PiWebApiService,
@@ -729,5 +732,19 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   getColorByBgColor(bgColor) {
     if (!bgColor) { return ''; }
     return (parseInt(bgColor.replace('#', ''), 16) > 0xffffff / 2) ? '#000' : '#fff';
+  }
+
+  ZoomThisEF(item, val){
+    if(!val.isBlank){
+      this.isEFZoom = true;
+      this.elementOfEFZoom = item;
+      this.eventframeToZoom = val;
+    }
+  }
+
+  EFZoomAskToClose(event){
+    this.isEFZoom = false;
+    this.elementOfEFZoom = null;
+    this.eventframeToZoom = null;
   }
 }

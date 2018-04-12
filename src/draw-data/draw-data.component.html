@@ -6,97 +6,100 @@
 
 
   
-  <div class="view" #view [ngClass]="scrollState">
-    <!-- <div class="events" [style.background]="bkColor" #eventsDiv [style.width]="minControlWidth" [ngStyle]="widthControl"  > -->
-    <div class="events" [style.background]="bkColor" #eventsDiv [ngStyle]="widthControl" >
-      <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
-      <nav class="header-nav" [style.width.px]="currentViewWidth">
-        <span (click)="ActivateStar()" class="origin-star">
-          <span *ngIf="isStarActivate"><i class="fa fa-star fa-3"></i></span>
-          <span *ngIf="!isStarActivate"><i class="fa fa-star-o fa-3"></i></span>
+<div class="view" #view [ngClass]="scrollState">
+  <!-- <div class="events" [style.background]="bkColor" #eventsDiv [style.width]="minControlWidth" [ngStyle]="widthControl"  > -->
+  <div class="events" [style.background]="bkColor" #eventsDiv [ngStyle]="widthControl" >
+    <!-- <div *ngFor="let event of elementAndFrameList" class="event-row" > -->
+    <nav class="header-nav" [style.width.px]="currentViewWidth">
+      <span (click)="ActivateStar()" class="origin-star">
+        <span *ngIf="isStarActivate"><i class="fa fa-star fa-3"></i></span>
+        <span *ngIf="!isStarActivate"><i class="fa fa-star-o fa-3"></i></span>
+      </span>
+      <button (click)="GoBefore()"><i class="fa fa-arrow-left fa-2" aria-hidden="true"></i></button>
+        Move by 3 events
+        <span>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="isByTime" [value]="isByTime">
+            <span class="slider round" ></span>
+          </label>
         </span>
-        <button (click)="GoBefore()"><i class="fa fa-arrow-left fa-2" aria-hidden="true"></i></button>
-          Move by 3 events
-          <span>
-            <label class="switch">
-              <input type="checkbox" [(ngModel)]="isByTime" [value]="isByTime">
-              <span class="slider round" ></span>
-            </label>
-          </span>
-          Move by Time (24h)
-          <button (click)="GoAfter()"><i class="fa fa-arrow-right fa-2" aria-hidden="true"></i></button>
+        Move by Time (24h)
+        <button (click)="GoAfter()"><i class="fa fa-arrow-right fa-2" aria-hidden="true"></i></button>
+    </nav>
 
-      </nav>
+    <div *ngFor="let item of element_ef; let i = index">
 
-      <div *ngFor="let item of element_ef; let i = index">
-
-        <div *ngIf='i === 0' class="info first" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} 
-          
-          <span class="header-adjust"> <i  class="fa fa-bars fa-lg btn btn-info" (click)="toggleCategoryMenu(i)"></i></span>
-          <div id="myDropdown" class="dropdown-content" [style.visibility]="(item?.showMenu) ? 'visible' : 'hidden'">
-              <li *ngIf="item.attributesTemplateCategories.length > 0">
-                <a *ngFor="let category of item.attributesTemplateCategories" (click)="openGridDisplay(item.efWebId, i)">{{category.name}}</a>
-              </li>
-              <li *ngIf="item.attributesTemplateCategories.length < 0">No Category Data</li>
-          </div>
-
-        </div>
-         
-        <div *ngIf='i > 0' class="info" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} 
-
-          <span class="header-adjust"> <i class="fa fa-bars fa-lg btn btn-info" (click)="toggleCategoryMenu(i)"></i> </span> 
-          <div id="myDropdown" class="dropdown-content" [style.visibility]="(item?.showMenu) ? 'visible' : 'hidden'">
-              <li *ngIf="item.attributesTemplateCategories.length > 0">
-                <a *ngFor="let category of item.attributesTemplateCategories" (click)="openGridDisplay(item.efWebId, i)">{{ category.name }}</a>
-              </li>
-              <li *ngIf="item.attributesTemplateCategories.length < 0">No Category Data</li>
-          </div>
-
-        </div>
-
-        <!-- START EVENT ROW DRAWING -->
-        <div class="event-row" [style.min-height.px]="eventHeight" *ngIf="item.eventframes?.length > 0">
-          <div *ngFor="let val of item.eventframes;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
-            id="{{ val.Id }}"
-            [style.background]="(IsBlank(val))? '#fff' : item.Color"
-            [style.height]="eventHeight"
-            [style.color]="getColorByBgColor(item.Color)" 
-            [style.border-color]="(val.bordercolor) ? val.bordercolor : 'transparent'"
-            [style.border-style]="(val.bordercolor) ? 'solid' : 'hidden'"
-            [style.border-width.px]="4">
-            <!-- [title]="!IsBlank(val)? 'val.Name, val.durationString, val.StartTime => val.EndTime' : ''" -->
-            <div *ngIf="!val.isBlank" class="tooltiptext alert-success">
-              <div>{{val.Name}}</div> 
-              <div>Duration: {{val.durationString}}</div> 
-              <div>Start: {{val.StartTimeString}} => {{val.EndTimeString}}</div>
-            </div>
-
-            <!-- <div class="row-0" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
-              <div>Duration: {{ val.durationString }}</div>
-            </div> -->
-            <div class="row-1" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
-              <div>{{ val.slot1 }}</div>
-            </div>
-            <div class="row-2" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
-              <div>{{ val.slot2 }}</div>
-            </div>
-            <div class="row-3" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
-              <div>{{ val.slot3 }}</div>
-            </div>
-            <div class="row-4" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
-              <div>{{ val.slot4 }}</div>
-            </div>
-          </div>
-        </div>
-
+      <div *ngIf='i === 0' class="info first" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} 
         
-        
-        <div class="event-row alert alert-info" [style.min-height.px]="eventHeight" *ngIf="item.eventframes?.length === 0">
-            <strong> Notice!</strong>  &nbsp; No {{item.elementName}} / {{item.eventTypeName}} in selected time range.
+        <span class="header-adjust"> <i  class="fa fa-bars fa-lg btn btn-info" (click)="toggleCategoryMenu(i)"></i></span>
+        <div id="myDropdown" class="dropdown-content" [style.visibility]="(item?.showMenu) ? 'visible' : 'hidden'">
+            <li *ngIf="item.attributesTemplateCategories.length > 0">
+              <a *ngFor="let category of item.attributesTemplateCategories" (click)="openGridDisplay(item.efWebId, i)">{{category.name}}</a>
+            </li>
+            <li *ngIf="item.attributesTemplateCategories.length < 0">No Category Data</li>
         </div>
-        <br/>
+
       </div>
-    </div>
+        
+      <div *ngIf='i > 0' class="info" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} 
 
-   
-  
+        <span class="header-adjust"> <i class="fa fa-bars fa-lg btn btn-info" (click)="toggleCategoryMenu(i)"></i> </span> 
+        <div id="myDropdown" class="dropdown-content" [style.visibility]="(item?.showMenu) ? 'visible' : 'hidden'">
+            <li *ngIf="item.attributesTemplateCategories.length > 0">
+              <a *ngFor="let category of item.attributesTemplateCategories" (click)="openGridDisplay(item.efWebId, i)">{{ category.name }}</a>
+            </li>
+            <li *ngIf="item.attributesTemplateCategories.length < 0">No Category Data</li>
+        </div>
+
+      </div>
+
+      <!-- START EVENT ROW DRAWING -->
+      <div class="event-row" [style.min-height.px]="eventHeight" *ngIf="item.eventframes?.length > 0">
+        <div *ngFor="let val of item.eventframes;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
+          id="{{ val.Id }}"
+          [style.background]="(IsBlank(val))? '#fff' : item.Color"
+          [style.height]="eventHeight"
+          [style.color]="getColorByBgColor(item.Color)" 
+          [style.border-color]="(val.bordercolor) ? val.bordercolor : 'transparent'"
+          [style.border-style]="(val.bordercolor) ? 'solid' : 'hidden'"
+          [style.border-width.px]="4"
+          (dblclick)="ZoomThisEF(item, val)"
+          >
+          <!-- [title]="!IsBlank(val)? 'val.Name, val.durationString, val.StartTime => val.EndTime' : ''" -->
+          <div *ngIf="!val.isBlank" class="tooltiptext alert-success">
+            <div>{{val.Name}}</div> 
+            <div>Duration: {{val.durationString}}</div> 
+            <div>Start: {{val.StartTimeString}} => {{val.EndTimeString}}</div>
+          </div>
+
+          <!-- <div class="row-0" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
+            <div>Duration: {{ val.durationString }}</div>
+          </div> -->
+          <div class="row-1" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
+            <div>{{ val.slot1 }}</div>
+          </div>
+          <div class="row-2" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
+            <div>{{ val.slot2 }}</div>
+          </div>
+          <div class="row-3" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
+            <div>{{ val.slot3 }}</div>
+          </div>
+          <div class="row-4" *ngIf="!IsBlank(val)" [style.visibility]="(val?.showAttr) ? 'visible' : 'hidden'">
+            <div>{{ val.slot4 }}</div>
+          </div>
+        </div>
+      </div>
+
+      
+      
+      <div class="event-row alert alert-info" [style.min-height.px]="eventHeight" *ngIf="item.eventframes?.length === 0">
+          <strong> Notice!</strong>  &nbsp; No {{item.elementName}} / {{item.eventTypeName}} in selected time range.
+      </div>
+      <br/>
+    </div>
+  </div>
+
+  <div class="EFZoomPopUp" *ngIf="isEFZoom">
+    <eventframe-zoom (askToClose)="EFZoomAskToClose($event)" [eventframe]="eventframeToZoom" [elementOfEF]="elementOfEFZoom" [urlPiWebApi]="urlPiWebApi"></eventframe-zoom>
+  </div>
+</div>
