@@ -41,6 +41,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   intervalNum: any;
 
   isStarActivate: boolean = false; 
+  starColor: string;
 
   webidElement = '';
   webidEF = '';
@@ -397,6 +398,8 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
   ActivateStar(){
     this.isStarActivate = !this.isStarActivate;
+
+    this.starColor = (this.isStarActivate ? 'yellow' : 'white')
 
     if(this.isStarActivate){
       if(this.isByTime){
