@@ -21,84 +21,69 @@
             <button (click)="GoAfter()"><i class="fa fa-arrow-right fa-2" aria-hidden="true"></i></button>
           </span> 
         </div>
-
-        <!-- <span (click)="ActivateStar()" class="origin-star">
-          <span *ngIf="isStarActivate"><i class="fa fa-star fa-3"></i></span>
-          <span *ngIf="!isStarActivate"><i class="fa fa-star-o fa-3"></i></span>
-        </span>
-        <button (click)="GoBefore()"><i class="fa fa-arrow-left fa-2" aria-hidden="true"></i></button>
-          Move by 3 events
-          <span>
-            <label class="switch">
-              <input type="checkbox" [(ngModel)]="isByTime" [value]="isByTime">
-              <span class="slider round" ></span>
-            </label>
-          </span>
-          Move by Time (24h)
-          <button (click)="GoAfter()"><i class="fa fa-arrow-right fa-2" aria-hidden="true"></i></button> -->
-
       </nav>
   <table class="fixed table table-striped table-bordered dt-responsive nowrap">
-      <!-- <tr>
-        <td>{{element_ef}}</td>
-        <td [attr.colspan]="eventFrames.length">
-          <span (click)="ActivateStar()" class="origin-star">
-              <span *ngIf="isStarActivate"><i class="fa fa-star fa-3"></i></span>
-              <span *ngIf="!isStarActivate"><i class="fa fa-star-o fa-3"></i></span>
-          </span>
-          <button (click)="GoBefore()"><i class="fa fa-arrow-left fa-2" aria-hidden="true"></i></button>
-          Move by 3 events
-          <span>
-            <label class="switch">
-              <input type="checkbox" [(ngModel)]="isByTime" [value]="isByTime">
-              <span class="slider round" ></span>
-            </label>
-          </span>
-          Move by Time (24h)
-          <button (click)="GoAfter()"><i class="fa fa-arrow-right fa-2" aria-hidden="true"></i></button>
-        </td> 
-      </tr> -->
       <tr>
         <td>Event</td>
-        <td *ngFor="let event of eventFrames" [attr.bgcolor]="GetColorOfEventFrame(event)">{{event.Name}}</td>
+        
       </tr>
       <tr>
         <td>StartTime</td>
-        <td *ngFor="let time of lst_range">{{time.StartTime}}</td>
+        
       </tr>
       <tr>
           <td>EndTime</td>
-          <td *ngFor="let time of lst_range">{{time.EndTime}}</td>
+        
         </tr>
       <tr *ngFor="let attr of lst_attribute_to_display">
         <td>{{attr.Name}}</td>
-        <td *ngFor="let val of attr.Values; trackBy: trackByFn"  [title]="(HasLimits(val))? 'Limits : ' + val.Limits.Low + ' to ' + val.Limits.High : ''">
-
-          <div *ngIf="!attr.HasReason">
-            
-            <span *ngIf="attr.IsManualDataEntry">
-              <span *ngIf="attr.IsEnum">
-                  <select [(ngModel)]="val.Value" (change)="SaveAttributeValue(val)">
-                    <option *ngFor="let e of attr.Enums" [value]="e.Value" [selected]="val.Value===e.Value">{{e.Name}}</option>
-                  </select>
-              </span>
-
-              <span *ngIf="!attr.IsEnum">
-                  <input type="text" [(ngModel)]="val.Value" [value]="val.Value" (keyup.enter)="SaveAttributeValue(val)"/>{{val.UnitsAbbreviation}}
-              </span>
-            </span>
-
-            <span *ngIf="!attr.IsManualDataEntry" [style.color]="ColorTextIfLimits(val)">
-              {{ (val.Name === '')? val.Value + ' ' + val.UnitsAbbreviation : val.Name}}
-            </span>
-          </div>
-
-          <div *ngIf="attr.HasReason" (dblclick)="OpenReasonTree(val)" class="attribute-reason">
-              {{val.Name}}
-          </div>
-        </td>
+        
       </tr>
 
+    </table>
+
+    <table  class="fixed table table-striped table-bordered dt-responsive nowrap">
+        <tr>
+          
+          <td *ngFor="let event of eventFrames" [attr.bgcolor]="GetColorOfEventFrame(event)">{{event.Name}}</td>
+        </tr>
+        <tr>
+          
+          <td *ngFor="let time of lst_range">{{time.StartTime}}</td>
+        </tr>
+        <tr>
+          
+          <td *ngFor="let time of lst_range">{{time.EndTime}}</td>
+        </tr>
+        <tr *ngFor="let attr of lst_attribute_to_display">
+          
+          <td *ngFor="let val of attr.Values; trackBy: trackByFn"  [title]="(HasLimits(val))? 'Limits : ' + val.Limits.Low + ' to ' + val.Limits.High : ''">
+  
+            <div *ngIf="!attr.HasReason">
+              
+              <span *ngIf="attr.IsManualDataEntry">
+                <span *ngIf="attr.IsEnum">
+                    <select [(ngModel)]="val.Value" (change)="SaveAttributeValue(val)">
+                      <option *ngFor="let e of attr.Enums" [value]="e.Value" [selected]="val.Value===e.Value">{{e.Name}}</option>
+                    </select>
+                </span>
+  
+                <span *ngIf="!attr.IsEnum">
+                    <input type="text" [(ngModel)]="val.Value" [value]="val.Value" (keyup.enter)="SaveAttributeValue(val)"/>{{val.UnitsAbbreviation}}
+                </span>
+              </span>
+  
+              <span *ngIf="!attr.IsManualDataEntry" [style.color]="ColorTextIfLimits(val)">
+                {{ (val.Name === '')? val.Value + ' ' + val.UnitsAbbreviation : val.Name}}
+              </span>
+            </div>
+  
+            <div *ngIf="attr.HasReason" (dblclick)="OpenReasonTree(val)" class="attribute-reason">
+                {{val.Name}}
+            </div>
+          </td>
+        </tr>
+    
     </table>
     <div *ngIf="isTreeReasonOpen" class="reasonTree">
       <reason-tree (askToClose)="CloseReasonTree($event)" [attribute]="attributeForTreeReason" [urlPiWebApi]="urlPiWebApi"></reason-tree>
