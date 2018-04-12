@@ -38,7 +38,7 @@
   width: 100%;
   height: 100%;
   direction: ltr;
-  background: url(../assets/images/polka-dots.png)
+  background: transparent;
 }
 
 .event-row{

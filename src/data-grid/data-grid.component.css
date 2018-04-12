@@ -1,7 +1,13 @@
+.view{
+  width: 100%;
+  height: 100%;
+}
+
 table {
   width: 100%;
   margin: 20px auto;
   table-layout: auto;
+  margin-top: 33px;
 }
 
 .fixed {
@@ -112,4 +118,20 @@ input:checked + .slider:before {
   cursor: pointer;
   width: 50px;
   height: 25px;
+}
+
+/* header */
+.header-nav{
+  position: fixed;
+  height: 34px;
+  left: 2px;
+  top: 35px;
+  margin-top: -36px;
+  padding-top: 5px;
+  background: hsla(189, 63%, 25%, 0.74);
+  display: block;
+  font-size: 17px;
+  z-index: 600;
+  border-radius: 3px;
+  text-align: center;
 }

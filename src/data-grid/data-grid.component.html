@@ -1,7 +1,45 @@
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-<div [style.background]="bkColor" [style.color]="fgColor">
-    <table class="fixed">
-      <tr>
+<div class="view" #view [style.background]="bkColor" [style.color]="fgColor">
+  
+    <nav class="header-nav" [style.width.px]="currentViewWidth">
+        <div>
+          <span>{{element_ef}}</span>
+          <span [attr.colspan]="eventFrames.length">
+            <span (click)="ActivateStar()" class="origin-star">
+                <span *ngIf="isStarActivate"><i class="fa fa-star fa-3"></i></span>
+                <span *ngIf="!isStarActivate"><i class="fa fa-star-o fa-3"></i></span>
+            </span>
+            <button (click)="GoBefore()"><i class="fa fa-arrow-left fa-2" aria-hidden="true"></i></button>
+            Move by 3 events
+            <span>
+              <label class="switch">
+                <input type="checkbox" [(ngModel)]="isByTime" [value]="isByTime">
+                <span class="slider round" ></span>
+              </label>
+            </span>
+            Move by Time (24h)
+            <button (click)="GoAfter()"><i class="fa fa-arrow-right fa-2" aria-hidden="true"></i></button>
+          </span> 
+        </div>
+
+        <!-- <span (click)="ActivateStar()" class="origin-star">
+          <span *ngIf="isStarActivate"><i class="fa fa-star fa-3"></i></span>
+          <span *ngIf="!isStarActivate"><i class="fa fa-star-o fa-3"></i></span>
+        </span>
+        <button (click)="GoBefore()"><i class="fa fa-arrow-left fa-2" aria-hidden="true"></i></button>
+          Move by 3 events
+          <span>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="isByTime" [value]="isByTime">
+              <span class="slider round" ></span>
+            </label>
+          </span>
+          Move by Time (24h)
+          <button (click)="GoAfter()"><i class="fa fa-arrow-right fa-2" aria-hidden="true"></i></button> -->
+
+      </nav>
+  <table class="fixed table table-striped table-bordered dt-responsive nowrap">
+      <!-- <tr>
         <td>{{element_ef}}</td>
         <td [attr.colspan]="eventFrames.length">
           <span (click)="ActivateStar()" class="origin-star">
@@ -19,7 +57,7 @@
           Move by Time (24h)
           <button (click)="GoAfter()"><i class="fa fa-arrow-right fa-2" aria-hidden="true"></i></button>
         </td> 
-      </tr>
+      </tr> -->
       <tr>
         <td>Event</td>
         <td *ngFor="let event of eventFrames" [attr.bgcolor]="GetColorOfEventFrame(event)">{{event.Name}}</td>

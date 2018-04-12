@@ -63,12 +63,13 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   inProgress = true;
   scrollState = {};
   widthControl = {};
+  tooltipPosotion = {};
   completed = true;
   scrollOn: boolean;
   stop_search: boolean = false;
   isByTime: boolean = false;
 
-  isStarActivate: boolean = true; 
+  isStarActivate: boolean = true;
 
   setInt: any;
 
@@ -79,6 +80,17 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
               private renderer: Renderer2,
               private changeDetector: ChangeDetectorRef) {
 
+  }
+
+  onMouseMove(e) {
+    // let x = e.clientX - e.screenX,
+    //     y = e.clientY - e.screenY;
+    // this.tooltipPosotion = {
+    //   'top': (y) + 'px',
+    //   'left' : (x) + 'px'
+    // }
+    // tooltipSpan.style.top = (y + 20) + 'px';
+    // tooltipSpan.style.left = (x + 20) + 'px';
   }
 
   toggleCategoryMenu(index: number): void {
@@ -364,8 +376,9 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     if (eventframes.length > 0) {
       let temp_start = start;
       let temp_end = new Date(eventframes[0].StartTime);
+      let index;
 
-      for (let index = 0; index < eventframes.length; index++) {
+      for (index = 0; index < eventframes.length; index++) {
         const ef = eventframes[index];
         let next_ef = false;
 
@@ -383,6 +396,16 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
         temp_start = new Date(ef.EndTime);
         temp_end = new Date( (eventframes[index + 1]) ? eventframes[index + 1].StartTime : end )
+      }
+      //If we have gone through all of the events and there is still time on the end, add another blank event with the the start time of the last iterated event 
+      //and an end time of the end time of the selected time.
+      if (temp_end < end) {
+        const blankEF = {
+          StartTime: temp_end.toUTCString(),
+          EndTime: end.toUTCString(),
+          isBlank: true
+        }
+        eventframes.splice(index + 1, 0, blankEF)
       }
 
     } else {

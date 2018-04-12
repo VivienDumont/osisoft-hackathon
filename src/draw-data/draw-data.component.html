@@ -56,7 +56,7 @@
 
         <!-- START EVENT ROW DRAWING -->
         <div class="event-row" [style.min-height.px]="eventHeight" *ngIf="item.eventframes?.length > 0">
-          <div *ngFor="let val of item.eventframes;" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
+          <div *ngFor="let val of item.eventframes;" (document:mousemove)="onMouseMove($event)" class="event card" [style.width.px]="val.width" [style.min-width.px]="minimumEventPixelWidth" [class.in-progress]="inProgress"  
             id="{{ val.Id }}"
             [style.background]="(IsBlank(val))? '#fff' : item.Color"
             [style.height]="eventHeight"
@@ -65,7 +65,7 @@
             [style.border-style]="(val.bordercolor) ? 'solid' : 'hidden'"
             [style.border-width.px]="4">
             <!-- [title]="!IsBlank(val)? 'val.Name, val.durationString, val.StartTime => val.EndTime' : ''" -->
-            <div *ngIf="!val.isBlank" class="tooltiptext alert-success">
+            <div *ngIf="!val.isBlank" class="tooltiptext alert-success" [ngStyle]="tooltipPosotion">
               <div>{{val.Name}}</div> 
               <div>Duration: {{val.durationString}}</div> 
               <div>Start: {{val.StartTimeString}} => {{val.EndTimeString}}</div>

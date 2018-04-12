@@ -3,7 +3,7 @@
  * Copyright © 2017-2018 OSIsoft, LLC. All rights reserved.
  * Use of this source code is governed by the terms in the accompanying LICENSE file.
  */
-import { Component, Input, OnChanges, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, OnDestroy, Inject, ViewChild, ElementRef } from '@angular/core';
 import { PiWebApiService } from '@osisoft/piwebapi';
 import { DOCUMENT } from '@angular/platform-browser';
 import { PIWEBAPI_TOKEN } from '../framework';
@@ -20,6 +20,10 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   @Input() bkColor: string;
   @Input() data: any;
   @Input() pathPrefix: string;
+
+  @ViewChild('view')   viewDiv: ElementRef;
+  currentViewWidth: number;
+
   
   eventFrames: any = [];
   lst_range:any = [];
@@ -85,6 +89,11 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
   ngOnDestroy() {
     clearInterval(this.intervalNum);
+  }
+
+  ngAfterViewChecked() {
+    // this.currentViewWidth = this.eventsDiv.nativeElement.offsetWidth;
+    this.currentViewWidth = this.viewDiv.nativeElement.offsetWidth;
   }
 
   GetEventFrames(){
