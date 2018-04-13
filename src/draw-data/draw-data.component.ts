@@ -333,7 +333,11 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   GetAttributeAndValue(eventframe, index){
-    this.piWebApiService.eventFrame.getAttributes$(eventframe.WebId)
+    const params = {
+      showHidden: true,
+      showExcluded: true
+    };
+    this.piWebApiService.eventFrame.getAttributes$(eventframe.WebId, params)
     .subscribe(
       r => {
         let lst_toAdd = [];
@@ -348,7 +352,11 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
               .subscribe(
                 r_a => {
                   if(found.position > 0){
-                    eventframe["slot" + found.position] = a.Name + ' : ' + r_a.Value;
+                    let value = r_a.Value;
+                    if(value && value.Name){
+                      value = value.Name;
+                    }
+                    eventframe["slot" + found.position] = a.Name + ' : ' + value;
                   }
                 },
                 e_a => {
@@ -762,5 +770,6 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     this.isEFZoom = false;
     this.elementOfEFZoom = null;
     this.eventframeToZoom = null;
+    this.GetEventFramesMaster();
   }
 }

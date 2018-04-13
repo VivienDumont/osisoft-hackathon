@@ -160,6 +160,7 @@ input:checked + .slider:before {
 
 .fontSize15{
   font-size: 15px;
+  float: left;
 }
 .origin-star{
   float: right;

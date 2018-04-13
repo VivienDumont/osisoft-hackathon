@@ -59,13 +59,13 @@
   margin-right: 3px;
 }            
 
-.row-1, .row-2, .row-3{
+.row-1, .row-2, .row-3, .row-4, .row-5{
   display: flex;
   white-space: nowrap;
   overflow-x: hidden;
 }
 
-.row-1 div, .row-2 div, .row-3 div{
+.row-1 div, .row-2 div, .row-3 div, .row-4 div, .row-5 div{
   flex-basis: 100%;
   text-align: left;
   font-size: 15px;
