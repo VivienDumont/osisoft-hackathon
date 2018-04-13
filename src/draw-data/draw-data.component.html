@@ -42,7 +42,7 @@
 
     <div *ngFor="let item of element_ef; let i = index">
 
-      <div *ngIf='i === 0' class="info first" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} 
+      <div *ngIf='i === 0' class="info first" [style.background]="lineColor" [style.color]="getColorByBgColor(lineColor)" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} 
         
         <span class="header-adjust"> <i  class="fa fa-bars fa-lg btn btn-info" (click)="toggleCategoryMenu(i)"></i></span>
         <div id="myDropdown" class="dropdown-content" [style.visibility]="(item?.showMenu) ? 'visible' : 'hidden'">
@@ -54,7 +54,7 @@
 
       </div>
         
-      <div *ngIf='i > 0' class="info" [style.width.px]="currentViewWidth"> {{item.elementName}} / {{item.eventTypeName}} 
+      <div *ngIf='i > 0' class="info" [style.background]="lineColor" [style.color]="getColorByBgColor(lineColor)" [style.width.px]="currentViewWidth" > {{item.elementName}} / {{item.eventTypeName}} 
 
         <span class="header-adjust"> <i class="fa fa-bars fa-lg btn btn-info" (click)="toggleCategoryMenu(i)"></i> </span> 
         <div id="myDropdown" class="dropdown-content" [style.visibility]="(item?.showMenu) ? 'visible' : 'hidden'">
