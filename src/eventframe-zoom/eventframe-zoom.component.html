@@ -1,37 +1,55 @@
-<div class="zoomEF card">
-    <div [style.background]="elementOfEF.Color" [style.color]="getColorByBgColor(elementOfEF.Color)">
-        <button (click)="CloseZoom()"><i class="fa fa-times fa-2 input-blackcolor" aria-hidden="true"></i></button>
-        <h3>{{eventframe.Name}}</h3>
+<div class="card" style="border-radius:8px">
+    <div class="zoomEF touch-up" [style.background]="elementOfEF.Color" [style.color]="getColorByBgColor(elementOfEF.Color)">
+        <div>
+            <i class="fa fa-times fa-2 close-btn" (click)="CloseZoom()" aria-hidden="true"></i>
+        </div>
+        <div class="name">{{eventframe.Name}}</div>
         
-        <div *ngIf="eventframe.lstCompleteAttribute.length">
+        <div class="wrapper" *ngIf="eventframe.lstCompleteAttribute.length">
             <div *ngFor="let attr of eventframe.lstCompleteAttribute">
                 
-                <span *ngIf="!attr.HasReason">
-                    {{attr.Name + ' : '}}
-                    <span *ngIf="attr.IsManualDataEntry">
-                        <span *ngIf="attr.IsEnum">
-                            <select class="input-blackcolor" [(ngModel)]="attr.Value" (change)="SaveAttributeValue(attr)">
+                <div class="flexy" *ngIf="!attr.HasReason">
+                    <div class="attr-names flex-item">
+                        {{attr.Name + ' : '}}
+                    </div>
+                    <!-- <div> -->
+                    <div class="attr-value flex-item"  *ngIf="attr.IsManualDataEntry">
+                        <div *ngIf="attr.IsEnum">
+                            <select class="input input-blackcolor" [(ngModel)]="attr.Value" (change)="SaveAttributeValue(attr)">
                                 <option *ngFor="let e of attr.Enums" [value]="e.Value" [selected]="attr.Value===e.Value">{{e.Name}}</option>
                             </select>
-                        </span>
+                        </div>
         
-                        <span *ngIf="!attr.IsEnum">
-                            <input class="input-blackcolor" type="text" [(ngModel)]="attr.Value" [value]="attr.Value" (keyup.enter)="SaveAttributeValue(attr)"/>{{attr.UnitsAbbreviation}}
-                        </span>
-                    </span>
+                        <div class="input flex-item" *ngIf="!attr.IsEnum">
+                            <input class="input input-blackcolor" type="text" [(ngModel)]="attr.Value" [value]="attr.Value" (keyup.enter)="SaveAttributeValue(attr)"/>{{attr.UnitsAbbreviation}}
+                        </div>
+                    </div>
+                    <!-- </div> -->
+                    <div class="flexy"> 
+                        <div class="flex-item" *ngIf="!attr.IsManualDataEntry">
+                            {{ (attr.NameValue === '')? attr.Value + ' ' + attr.UnitsAbbreviation : attr.NameValue}}
+                        </div>
+                    </div>
+                </div>
         
-                    <span *ngIf="!attr.IsManualDataEntry">
-                        {{ (attr.NameValue === '')? attr.Value + ' ' + attr.UnitsAbbreviation : attr.NameValue}}
-                    </span>
-                </span>
-        
-                <span *ngIf="attr.HasReason" (dblclick)="OpenReasonTree(attr)" class="attribute-reason">
-                    {{attr.Name + ' : ' + attr.NameValue}}
-                </span>
+               <!-- <div class="flexy"> -->
+                <div class="flexy attribute-reason" *ngIf="attr.HasReason" (dblclick)="OpenReasonTree(attr)" >
+                    <div class="flex-item"> 
+                        {{ attr.Name }} :
+                    </div>
+                    <div *ngIf="!attr.NameValue" class="flex-item">
+                        No Reason Selected <small>click to select reason</small>
+                        <!-- {{ attr.NameValue === '' ? 'No Reason Selected <small>select reason</small>' : attr.NameValue }} -->
+                    </div>
+                    <div *ngIf="attr.NameValue" class="flex-item">
+                            {{ attr.NameValue  }}
+                    </div>
+                </div>
+               <!-- </div> -->
             </div>
         </div>
         <div *ngIf="!eventframe.lstCompleteAttribute.length">
-            No Attribute for this Event Frame!!
+            No Attributes for this Event Frame!!
         </div>
     </div>
 

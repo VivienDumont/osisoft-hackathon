@@ -107,6 +107,16 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     // this.element_ef[index].showMenu = !this.element_ef[index].showMenu;
   }
 
+  openCategoryMenu(index: number): void {
+    console.log("opening menu");
+    this.element_ef[index].showMenu = true;
+  }
+
+  closeCategoryMenu(index: number): void {
+    console.log("closing menu");
+    this.element_ef[index].showMenu = false;
+  }
+
   openGridDisplay(Id: string, index: number): void {
     // tslint:disable-next-line:max-line-length
     let url: string = this.datagridDisplay;
@@ -762,5 +772,6 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     this.isEFZoom = false;
     this.elementOfEFZoom = null;
     this.eventframeToZoom = null;
+    this.GetEventFramesMaster();
   }
 }
