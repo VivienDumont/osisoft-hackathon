@@ -19,6 +19,8 @@ td,
 th {
   border-collapse: collapse;
   white-space: nowrap;
+  min-width: unset;
+  width: 500px;
 }
 
 th,
@@ -27,6 +29,7 @@ td {
   border: solid 1px;
   text-align: center;
   white-space: nowrap;
+  height: 55px;
 }
 
 
@@ -134,4 +137,15 @@ input:checked + .slider:before {
   z-index: 600;
   border-radius: 3px;
   text-align: center;
+}
+
+
+.first-col{
+  width: 30%;
+  float: left;
+}
+
+.other-col{
+  float: left;
+  overflow-x: auto;
 }

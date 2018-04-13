@@ -23,6 +23,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
   @ViewChild('view')   viewDiv: ElementRef;
   currentViewWidth: number;
+  minwidthCell: number;
 
   @Input() urlPiWebApi: string;
   
@@ -35,6 +36,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   endtime: string;
   isByTime: boolean = false;
   typeOfSearch: string = 'BackwardFromStartTime';
+  widthOfSecondColumn: number = 400;
 
   isInit: boolean = true;
 
@@ -108,6 +110,8 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   ngAfterViewChecked() {
     // this.currentViewWidth = this.eventsDiv.nativeElement.offsetWidth;
     this.currentViewWidth = this.viewDiv.nativeElement.offsetWidth;
+    this.widthOfSecondColumn = this.currentViewWidth*70/100;
+    this.minwidthCell = this.currentViewWidth*30/100;
   }
 
   GetEventFrames(){
