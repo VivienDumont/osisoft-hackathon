@@ -73,7 +73,7 @@ export class ExtensionLibrary extends NgLibrary {
       name: 'data-grid-symbol',
       displayName: 'Data Grid Symbol',
       dataParams: { shape: 'single' },
-      thumbnail: '^/assets/images/example.svg',
+      thumbnail: '^/assets/images/grid-list.png',
       compCtor: DataGridComponent,
       inputs: [
         SymbolInputType.Data,
