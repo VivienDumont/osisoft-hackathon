@@ -37,6 +37,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   // OSI PI input variables
   @Input() data: any;
   @Input() pathPrefix: string;
+  @Input() cursorTime: any;
   // @Input() events: any;
 
   // global variable controls
@@ -90,7 +91,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   onMouseMoveOnEF(e, val) {
-    console.log(e);
+    //console.log(e);
     const tooltipOfEF = document.getElementById('TooltipEF'+val.Id) as HTMLElement;
     
     let toLeft = e.offsetX;
@@ -110,12 +111,12 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   openCategoryMenu(index: number): void {
-    console.log("opening menu");
+    //console.log("opening menu");
     this.element_ef[index].showMenu = true;
   }
 
   closeCategoryMenu(index: number): void {
-    console.log("closing menu");
+    //console.log("closing menu");
     this.element_ef[index].showMenu = false;
   }
 
@@ -333,7 +334,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
           index++;
           req = r.body[index];
         }
-        console.log('redrawing component');
+        //console.log('redrawing component');
         this.redrawComponent();
       },
       e => {
@@ -472,12 +473,12 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     // new RegExp('([\d\w-.]+?\.(a[cdefgilmnoqrstuwz]|b[abdefghijmnorstvwyz]|c[acdfghiklmnoruvxyz]|d[ejkmnoz]|e[ceghrst]|f[ijkmnor]|g[abdefghilmnpqrstuwy]|h[kmnrtu]|i[delmnoqrst]|j[emop]|k[eghimnprwyz]|l[abcikrstuvy]|m[acdghklmnopqrstuvwxyz]|n[acefgilopruz]|om|p[aefghklmnrstwy]|qa|r[eouw]|s[abcdeghijklmnortuvyz]|t[cdfghjkmnoprtvwz]|u[augkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]|aero|arpa|biz|com|coop|edu|info|int|gov|mil|museum|name|net|org|pro)(\b|\W(?<!&|=)(?!\.\s|\.{3}).*?))(\s|$)')
 
     // if (!dateRegEx.test(this.startTime)) {
-    //   console.log('start date is relative');
+    //   //console.log('start date is relative');
     //   this.getAbsoluteDateFromRelativeTime(this.startTime);
     // }
 
     // if (!dateRegEx.test(this.endTime)) {
-    //   console.log('start date is relative');
+    //   //console.log('start date is relative');
     //   this.getAbsoluteDateFromRelativeTime(this.endTime);
     // }
   // }
@@ -491,7 +492,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
     this.shortestEventDuration = this.getShortestEventDuraion() / timeManipulator;
 
-    console.log('calulation result: ' + ((this.shortestEventDuration / durationInMilliseconds) * this.currentViewWidth))
+    //console.log('calulation result: ' + ((this.shortestEventDuration / durationInMilliseconds) * this.currentViewWidth))
     // We are able to fit all of the events within the symbol view without going below the smallest pixel size allowed
     if ( ((this.shortestEventDuration / durationInMilliseconds) * this.currentViewWidth) > this.minimumEventPixelWidth) {
       this.minControlWidth = 'inherit';
@@ -501,7 +502,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       }
 
       this.switchScrollState(false);
-      // console.log('no need for scroll bar');
+      // //console.log('no need for scroll bar');
       this.element_ef.forEach(element => {
         if (element.eventframes) {
           let inProgressTime = '9999';
@@ -512,7 +513,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
             let end;
 
             if (item.EndTime.indexOf(inProgressTime)+1) {
-              console.log('item in progress');
+              //console.log('item in progress');
               end = new Date().getTime();
               item.durationString = 'In Progress';
               item.EndTimeString = 'In Progress'
@@ -536,7 +537,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
             }
           },
           e => {
-            console.log(e);
+            //console.log(e);
           }
           )
           //
@@ -552,7 +553,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
         'width': `${updatedWidth}px`
       }
 
-      console.log(`screen size too small to display properly`);
+      //console.log(`screen size too small to display properly`);
       this.switchScrollState(true);
 
       this.element_ef.forEach(element => {
@@ -565,7 +566,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
               item.StartTimeString = new Date(item.StartTime).toLocaleString()
 
               if (item.EndTime.indexOf(inProgressTime) !== -1) {
-                console.log('item in progress');
+                //console.log('item in progress');
                 end = new Date().getTime();
                 item.durationString = 'In Progress';
                 item.EndTimeString = 'In Progress'
@@ -587,7 +588,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
               }
             },
             e => {
-              console.log(e);
+              //console.log(e);
             }
           )
         }
@@ -645,11 +646,11 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   
           },
           e => {
-            console.log(e);
+            //console.log(e);
           }
         )
       } else {
-        console.log(`no event frames to show`);
+        //console.log(`no event frames to show`);
       }
     });
 
@@ -660,13 +661,13 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   getAbsoluteDateFromRelativeTime(dateString: string): string {
     let relDateStringArray: string[] = dateString.split('')
     let dateObject = new Date();
-    console.log(relDateStringArray);
+    //console.log(relDateStringArray);
     let startChar = relDateStringArray[0];
     let mathSignChar = relDateStringArray[1];
     let numberChar: any = relDateStringArray[2];
     let rangeTypeChar = relDateStringArray[3];
 
-    console.log(startChar + mathSignChar + numberChar + rangeTypeChar);
+    //console.log(startChar + mathSignChar + numberChar + rangeTypeChar);
     // set starting day
     if (startChar === '*') {
       dateObject.toDateString();
@@ -681,7 +682,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
       // set the day one day ago
       dateObject.setDate(day - 1)
     } else {
-      console.log('incorrect date string');
+      //console.log('incorrect date string');
     }
     return dateString;
   }
@@ -706,8 +707,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   ngOnInit() {
     this.ReSetInterval();
     // this.viewDiv.nativeElement.onscroll = function(e){
-    //   console.log('is scrolling');
-    //   console.log(e);
+    //   //console.log('is scrolling');
+    //   //console.log(e);
     // }
   }
 
@@ -727,6 +728,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   ngOnChanges(changes) {
+    //console.log(changes);
     if (changes.data) {
       // this.values = this.formatData();
     }
@@ -737,12 +739,12 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
     if (changes.defaultEventHeight) {
       this.eventHeight = `${changes.defaultEventHeight.currentValue}`;
-      console.log(`new event height: ${this.eventHeight}`);
+      //console.log(`new event height: ${this.eventHeight}`);
     }
 
     if (changes.elementEfAttr) {
       if (changes.elementEfAttr.currentValue) {
-        console.log('element ef attr');
+        //console.log('element ef attr');
         this.elementEfAttr = changes.elementEfAttr.currentValue;
         this.ReSetInterval();
       }

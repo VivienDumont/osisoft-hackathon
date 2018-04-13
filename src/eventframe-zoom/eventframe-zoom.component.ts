@@ -187,15 +187,15 @@ export class EventFrameZommComponent implements OnChanges, OnInit, OnDestroy{
           }
         }
       };
-      console.log(body_batch);
+      //console.log(body_batch);
       this.piWebApiService.batch.execute$(body_batch)
       .subscribe(
         r => {
-          console.log(r.body[0]);
+          //console.log(r.body[0]);
           if(200 <= r.body[0].Status && r.body[0].Status < 400){
-            console.log('Save Sucess');
+            //console.log('Save Sucess');
           } else {
-            console.log(r.body[0].Content.Errors);
+            //console.log(r.body[0].Content.Errors);
           }
           
         },

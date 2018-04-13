@@ -37,8 +37,8 @@ export class ExtractDataComponent implements OnChanges, OnDestroy {
       const all_input_datetime = this.document.querySelectorAll('pv-datetime input[type="text"]');
       this.startTime = all_input_datetime[all_input_datetime.length-2].value;
       this.endTime = all_input_datetime[all_input_datetime.length-1].value;
-      //console.log(this.startTime);
-      //console.log(this.endTime);
+      ////console.log(this.startTime);
+      ////console.log(this.endTime);
       
       this.GetEventFrame(
         {
@@ -54,7 +54,7 @@ export class ExtractDataComponent implements OnChanges, OnDestroy {
     if (this.id_setinter) {
       clearInterval(this.id_setinter);
     }
-    //console.log('destroy');
+    ////console.log('destroy');
   }
  
   BuildData(body) {
@@ -71,7 +71,7 @@ export class ExtractDataComponent implements OnChanges, OnDestroy {
       });
       this.AnalysesDatabase(db);
     });
-    //console.log(this.values);
+    ////console.log(this.values);
   }
 
   private GetElement(element){
@@ -155,8 +155,8 @@ export class ExtractDataComponent implements OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes) {
-    console.log('extract data');
-    console.log(changes);
+    //console.log('extract data');
+    //console.log(changes);
     if(changes.serverName){
       this.serverName = changes.serverName.currentValue;
 

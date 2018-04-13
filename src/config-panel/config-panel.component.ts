@@ -272,7 +272,7 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
         this.AttributeofselectedELEF = this.selectedelefRow.ef.attributesTemplate;
     }
     NewMaster(item){
-        console.log(item);
+        //console.log(item);
         this.selectedELEF.forEach(x => {
             x.master=false;
         })
@@ -287,13 +287,13 @@ export class ConfigPanelComponent implements ConfigComponent, OnInit{
         }
     }
     PositionAttribute(item){
-        console.log(item);
+        //console.log(item);
         if(item.oldposition === undefined){
             item.oldposition = 0;
         }
         if(item.position){
             const lst_same_pos = this.AttributeofselectedELEF.filter(x => x.position===item.position && x.Name!==item.Name);
-            console.log(lst_same_pos);
+            //console.log(lst_same_pos);
 
             if(lst_same_pos.length){
                 lst_same_pos[0].position = item.oldposition;

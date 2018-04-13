@@ -39,7 +39,7 @@ export class ExtensionLibrary extends NgLibrary {
       compCtor: DrawDataComponent,
       inputs: [
         SymbolInputType.Data,
-        SymbolInputType.PathPrefix,
+        SymbolInputType.PathPrefix
       ],
       autoEventBindings: [
       ],
