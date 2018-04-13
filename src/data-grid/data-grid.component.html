@@ -57,7 +57,7 @@
       </tr>
       <tr *ngFor="let attr of lst_attribute_to_display">
         
-        <td *ngFor="let val of attr.Values; trackBy: trackByFn"  [title]="(HasLimits(val))? 'Limits : ' + val.Limits.Low + ' to ' + val.Limits.High : ''">
+        <td *ngFor="let val of attr.Values; trackBy: trackByFn" [style.color]="ColorTextIfLimits(val)"  [title]="(HasLimits(val))? 'Limits : ' + val.Limits.Low + ' to ' + val.Limits.High : ''">
 
           <div *ngIf="!attr.HasReason">
             

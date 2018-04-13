@@ -48,6 +48,7 @@ export class ExtensionLibrary extends NgLibrary {
           name: 'DrawData Options',
           isExpanded: true,
           configProps: [
+            { propName: 'serverName', displayName: 'Server Name', configType: ConfigPropType.Text, defaultVal: 'PISRV01' },
             { propName: 'defaultEventHeight', displayName: 'Default Event Height', configType: ConfigPropType.Num, defaultVal: 50 },
             { propName: 'bkColor', displayName: 'Background', configType: ConfigPropType.Color, defaultVal: 'white' },
             { propName: 'lineColor', displayName: 'Band Color', configType: ConfigPropType.Color, defaultVal: '#58a3b6' },
@@ -73,7 +74,7 @@ export class ExtensionLibrary extends NgLibrary {
       name: 'data-grid-symbol',
       displayName: 'Data Grid Symbol',
       dataParams: { shape: 'single' },
-      thumbnail: '^/assets/images/example.svg',
+      thumbnail: '^/assets/images/grid-list.png',
       compCtor: DataGridComponent,
       inputs: [
         SymbolInputType.Data,
