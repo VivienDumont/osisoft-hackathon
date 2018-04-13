@@ -92,7 +92,7 @@
   left: 0px;
   margin-top: -36px;
   padding-top: 13px;
-  background: hsla(155, 93%, 35%, 0.7);
+  /* background: hsla(155, 93%, 35%, 0.7); */
   display: block;
   flex-basis: 100%;
   font-size: 17px;
