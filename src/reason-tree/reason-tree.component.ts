@@ -62,11 +62,17 @@ export class ReasonTreeComponent implements OnChanges, OnInit, OnDestroy{
                    this.tree.Children.push(to_add);
                });
                
+               setTimeout(()=>{
+                (document.querySelectorAll('a.nav-link.dark')[9] as HTMLElement).click();
+                (document.querySelectorAll('a.nav-link.dark')[9] as HTMLElement).click();
+              }, 1000);
 
                const lst_with_parent = lst_reason.filter(x => x.Parent.toString() !== '');
                lst_with_parent.forEach(element => {
                    this.FindParent(this.tree.Children, element);
                });
+
+
             },
             e => {
                 console.error(e);

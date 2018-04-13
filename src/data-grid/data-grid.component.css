@@ -19,6 +19,8 @@ td,
 th {
   border-collapse: collapse;
   white-space: nowrap;
+  min-width: unset;
+  width: 500px;
 }
 
 th,
@@ -27,6 +29,7 @@ td {
   border: solid 1px;
   text-align: center;
   white-space: nowrap;
+  height: 50px;
 }
 
 
@@ -104,6 +107,7 @@ input:checked + .slider:before {
   border: 2px solid blue;
   background-color: #ffffff;
   position: absolute;
+  z-index: 999999999;
 }
 
 .attribute-reason{
@@ -142,6 +146,22 @@ input:checked + .slider:before {
   text-align: center;
 }
 
+
+.first-col{
+  width: 30%;
+  float: left;
+  font-size: 20px;
+}
+
+.other-col{
+  float: left;
+  overflow-x: auto;
+}
+
+.fontSize15{
+  font-size: 15px;
+  float: left;
+}
 .origin-star{
   float: right;
   padding-right: 15px;

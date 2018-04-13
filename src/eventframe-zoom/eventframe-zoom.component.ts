@@ -164,8 +164,6 @@ export class EventFrameZommComponent implements OnChanges, OnInit, OnDestroy{
       );
     }
 
-    
-
     ngOnDestroy(){
 
     }

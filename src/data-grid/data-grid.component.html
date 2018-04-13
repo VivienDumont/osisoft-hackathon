@@ -3,55 +3,60 @@
 
 <div class="view" #view [style.background]="bkColor" [style.color]="fgColor">
   
-    <nav class="header-nav" [style.width.px]="currentViewWidth">
-        <div>
-          <span class="time-navigation">
-            <span>{{element_ef}}</span>
-            <span [attr.colspan]="eventFrames.length">
-              
-              <i (click)="GoBefore()" class="fa fa-arrow-left fa-2" aria-hidden="true"></i>
-              Move by 3 events
-              <span>
-                <label class="switch">
-                  <input type="checkbox" [(ngModel)]="isByTime" [value]="isByTime">
-                  <span class="slider round" ></span>
-                </label>
-              </span>
-              Move by Time (24h)
-              <i (click)="GoAfter()" class="fa fa-arrow-right fa-2" aria-hidden="true"></i>
-            </span> 
+  <nav class="header-nav" [style.width.px]="currentViewWidth">
+    <div>
+      <span class="time-navigation">
+        <span>{{element_ef}}</span>
+        <span [attr.colspan]="eventFrames.length">
+          
+          <i (click)="GoBefore()" class="fa fa-arrow-left fa-2" aria-hidden="true"></i>
+          Move by 3 events
+          <span>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="isByTime" [value]="isByTime">
+              <span class="slider round" ></span>
+            </label>
           </span>
+          Move by Time (24h)
+          <i (click)="GoAfter()" class="fa fa-arrow-right fa-2" aria-hidden="true"></i>
+        </span> 
+      </span>
 
-          <span (click)="ActivateStar()" class="origin-star" title="Go To Today">
-            <span *ngIf="isStarActivate"><i class="fa fa-star fa-3 faa-pulse faa-slow" [style.color]="starColor"></i></span>
-            <span *ngIf="!isStarActivate"><i class="fa fa-star-o fa-3 faa-pulse faa-slow" [style.color]="starColor"></i></span>
-          </span>
-        </div>
-      </nav>
-  <div>
-  <table class="fixed table table-striped table-bordered dt-responsive nowrap">
-      <thead>
-          <tr>
-              <th class="zui-sticky-col">Event</th>
-              <th>StartTime</th>
-              <th>EndTime</th>
-          </tr>
-      </thead>
+      <span (click)="ActivateStar()" class="origin-star" title="Go To Today">
+        <span *ngIf="isStarActivate"><i class="fa fa-star fa-3 faa-pulse faa-slow" [style.color]="starColor"></i></span>
+        <span *ngIf="!isStarActivate"><i class="fa fa-star-o fa-3 faa-pulse faa-slow" [style.color]="starColor"></i></span>
+      </span>
+    </div>
+  </nav>
+
+  <table class="fixed table table-striped table-bordered dt-responsive nowrap first-col">
+    <tr>
+      <td>Event</td>
+    </tr>
+    <tr>
+      <td>StartTime</td>
+    </tr>
+    <tr>
+        <td>EndTime</td>
+      </tr>
+    <tr *ngFor="let attr of lst_attribute_to_display">
+      <td>{{attr.Name}}</td>
+    </tr>
+  </table>
+
+  <div class="other-col" [style.width.px]="widthOfSecondColumn">
+    <table  class="fixed table table-striped table-bordered dt-responsive nowrap fontSize15" >
       <tr>
-        <td>Event</td>
         <td *ngFor="let event of eventFrames" [attr.bgcolor]="GetColorOfEventFrame(event)">{{event.Name}}</td>
       </tr>
       <tr>
-        <td>StartTime</td>
-        <td *ngFor="let time of lst_range">{{time.StartTime}}</td>
-        
+        <td *ngFor="let time of lst_range" >{{time.StartTime}}</td>
       </tr>
       <tr>
-          <td>EndTime</td>
-          <td *ngFor="let time of lst_range">{{time.EndTime}}</td>
-        </tr>
+        <td *ngFor="let time of lst_range" >{{time.EndTime}}</td>
+      </tr>
       <tr *ngFor="let attr of lst_attribute_to_display">
-        <td>{{attr.Name}}</td>
+        
         <td *ngFor="let val of attr.Values; trackBy: trackByFn"  [title]="(HasLimits(val))? 'Limits : ' + val.Limits.Low + ' to ' + val.Limits.High : ''">
 
           <div *ngIf="!attr.HasReason">
@@ -78,10 +83,13 @@
           </div>
         </td>
       </tr>
-
-  </table>
+  
+    </table>
   </div>
-    <div *ngIf="isTreeReasonOpen" class="reasonTree">
-      <reason-tree (askToClose)="CloseReasonTree($event)" [attribute]="attributeForTreeReason" [urlPiWebApi]="urlPiWebApi"></reason-tree>
-    </div>
+
+
+  <div *ngIf="isTreeReasonOpen" class="reasonTree">
+    <reason-tree (askToClose)="CloseReasonTree($event)" [attribute]="attributeForTreeReason" [urlPiWebApi]="urlPiWebApi"></reason-tree>
+  </div>
+
 </div>

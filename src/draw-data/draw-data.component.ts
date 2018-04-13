@@ -89,15 +89,17 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
   }
 
-  onMouseMove(e) {
-    // let x = e.clientX - e.screenX,
-    //     y = e.clientY - e.screenY;
-    // this.tooltipPosotion = {
-    //   'top': (y) + 'px',
-    //   'left' : (x) + 'px'
-    // }
-    // tooltipSpan.style.top = (y + 20) + 'px';
-    // tooltipSpan.style.left = (x + 20) + 'px';
+  onMouseMoveOnEF(e, val) {
+    console.log(e);
+    const tooltipOfEF = document.getElementById('TooltipEF'+val.Id) as HTMLElement;
+    
+    let toLeft = e.offsetX;
+    
+    const widthTooltip = (tooltipOfEF)? tooltipOfEF.offsetWidth : 400;
+    if(e.clientX > this.currentViewWidth / 2){
+      toLeft -= widthTooltip;
+    }
+    val.leftTooltip = toLeft + 'px';
   }
 
   toggleCategoryMenu(index: number): void {
@@ -341,7 +343,11 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   GetAttributeAndValue(eventframe, index){
-    this.piWebApiService.eventFrame.getAttributes$(eventframe.WebId)
+    const params = {
+      showHidden: true,
+      showExcluded: true
+    };
+    this.piWebApiService.eventFrame.getAttributes$(eventframe.WebId, params)
     .subscribe(
       r => {
         let lst_toAdd = [];
@@ -356,7 +362,11 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
               .subscribe(
                 r_a => {
                   if(found.position > 0){
-                    eventframe["slot" + found.position] = a.Name + ' : ' + r_a.Value;
+                    let value = r_a.Value;
+                    if(value && value.Name){
+                      value = value.Name;
+                    }
+                    eventframe["slot" + found.position] = a.Name + ' : ' + value;
                   }
                 },
                 e_a => {
@@ -717,8 +727,6 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   ngOnChanges(changes) {
-    console.log('drawdata');
-    console.log(changes);
     if (changes.data) {
       // this.values = this.formatData();
     }
@@ -728,7 +736,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
     }
 
     if (changes.defaultEventHeight) {
-      this.eventHeight = `${changes.defaultEventHeight}`;
+      this.eventHeight = `${changes.defaultEventHeight.currentValue}`;
       console.log(`new event height: ${this.eventHeight}`);
     }
 

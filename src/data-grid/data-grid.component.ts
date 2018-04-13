@@ -23,6 +23,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
 
   @ViewChild('view')   viewDiv: ElementRef;
   currentViewWidth: number;
+  minwidthCell: number;
 
   @Input() urlPiWebApi: string;
   
@@ -35,6 +36,9 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   endtime: string;
   isByTime: boolean = false;
   typeOfSearch: string = 'BackwardFromStartTime';
+  widthOfSecondColumn: number = 400;
+
+  isInit: boolean = true;
 
   diffTime = 8; //in hour
 
@@ -107,6 +111,8 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   ngAfterViewChecked() {
     // this.currentViewWidth = this.eventsDiv.nativeElement.offsetWidth;
     this.currentViewWidth = this.viewDiv.nativeElement.offsetWidth;
+    this.widthOfSecondColumn = this.currentViewWidth*70/100;
+    this.minwidthCell = this.currentViewWidth*30/100;
   }
 
   GetEventFrames(){
@@ -373,6 +379,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
       this.starttime = this.eventFrames[0].StartTime;
     }
     //clearInterval(this.intervalNum);
+    this.isInit = false;
     this.typeOfSearch = 'BackwardFromStartTime';
     this.GetEventFrames();
     this.isStarActivate = false;
@@ -387,6 +394,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
       this.starttime = this.eventFrames[this.eventFrames.length-1].EndTime;
       this.endtime = this.eventFrames[this.eventFrames.length-1].EndTime + '+24h';
       //clearInterval(this.intervalNum);
+      this.isInit = false;
       this.typeOfSearch = 'ForwardFromStartTime';
       this.GetEventFrames();
       this.isStarActivate = false;
@@ -408,7 +416,7 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
       } else {
         this.starttime = '*';
       }
-
+      this.isInit = false;
       this.GetEventFrames();
     }
 
@@ -458,9 +466,15 @@ export class DataGridComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   CloseReasonTree(event){
-    this.GetEventFrames();
+    if(this.isInit){
+      this.GetEventFramesInit();
+    } else {
+      this.GetEventFrames();
+    }
+    
     this.attributeForTreeReason = null;
     this.isTreeReasonOpen = false;
+
   }
 
 
