@@ -7,7 +7,7 @@ table {
   width: 100%;
   margin: 20px auto;
   table-layout: auto;
-  margin-top: 33px;
+  margin-top: 50px;
 }
 
 .fixed {
@@ -40,6 +40,7 @@ td {
   width: 30px;
   height: 17px;
   vertical-align: middle;
+  margin-bottom: 0px;
 }
 
 /* Hide default HTML checkbox */
@@ -125,16 +126,21 @@ input:checked + .slider:before {
 }
 
 /* header */
+.fa-star, .fa-star-o, .fa-arrow-right, .fa-arrow-left{
+  cursor: pointer;
+}
+
 .header-nav{
   position: fixed;
-  height: 34px;
-  left: 2px;
-  top: 35px;
-  margin-top: -36px;
-  padding-top: 5px;
-  background: hsla(189, 63%, 25%, 0.74);
+  height: 51px;
+  left: 0px;
+  top: 30px;
+  margin-top: -30px;
+  padding-top: 12px;
+  background: #3f4244;
+  color: white;
   display: block;
-  font-size: 17px;
+  font-size: 20px;
   z-index: 600;
   border-radius: 3px;
   text-align: center;
@@ -154,4 +160,13 @@ input:checked + .slider:before {
 
 .fontSize15{
   font-size: 15px;
+}
+.origin-star{
+  float: right;
+  padding-right: 15px;
+}
+
+.time-navigation{
+  float:left;
+  padding-left: 15px;
 }

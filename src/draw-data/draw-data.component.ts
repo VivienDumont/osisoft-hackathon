@@ -65,6 +65,7 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
   scrollState = {};
   widthControl = {};
   tooltipPosotion = {};
+  starColor:string = 'yellow';
   completed = true;
   scrollOn: boolean;
   stop_search: boolean = false;
@@ -169,6 +170,8 @@ export class DrawDataComponent implements OnChanges, OnInit, OnDestroy {
 
   ActivateStar(){
     this.isStarActivate = !this.isStarActivate;
+
+    this.starColor = (this.isStarActivate ? 'yellow' : 'white')
 
     if(this.isStarActivate){
       if(this.isByTime){

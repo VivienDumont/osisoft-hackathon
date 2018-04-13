@@ -1,25 +1,31 @@
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome-animation/0.1.0/font-awesome-animation.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
 <div class="view" #view [style.background]="bkColor" [style.color]="fgColor">
   
   <nav class="header-nav" [style.width.px]="currentViewWidth">
     <div>
-      <span>{{element_ef}}</span>
-      <span [attr.colspan]="eventFrames.length">
-        <span (click)="ActivateStar()" class="origin-star">
-            <span *ngIf="isStarActivate"><i class="fa fa-star fa-3"></i></span>
-            <span *ngIf="!isStarActivate"><i class="fa fa-star-o fa-3"></i></span>
-        </span>
-        <button (click)="GoBefore()"><i class="fa fa-arrow-left fa-2" aria-hidden="true"></i></button>
-        Move by 3 events
-        <span>
-          <label class="switch">
-            <input type="checkbox" [(ngModel)]="isByTime" [value]="isByTime">
-            <span class="slider round" ></span>
-          </label>
-        </span>
-        Move by Time (24h)
-        <button (click)="GoAfter()"><i class="fa fa-arrow-right fa-2" aria-hidden="true"></i></button>
-      </span> 
+      <span class="time-navigation">
+        <span>{{element_ef}}</span>
+        <span [attr.colspan]="eventFrames.length">
+          
+          <i (click)="GoBefore()" class="fa fa-arrow-left fa-2" aria-hidden="true"></i>
+          Move by 3 events
+          <span>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="isByTime" [value]="isByTime">
+              <span class="slider round" ></span>
+            </label>
+          </span>
+          Move by Time (24h)
+          <i (click)="GoAfter()" class="fa fa-arrow-right fa-2" aria-hidden="true"></i>
+        </span> 
+      </span>
+
+      <span (click)="ActivateStar()" class="origin-star" title="Go To Today">
+        <span *ngIf="isStarActivate"><i class="fa fa-star fa-3 faa-pulse faa-slow" [style.color]="starColor"></i></span>
+        <span *ngIf="!isStarActivate"><i class="fa fa-star-o fa-3 faa-pulse faa-slow" [style.color]="starColor"></i></span>
+      </span>
     </div>
   </nav>
 
